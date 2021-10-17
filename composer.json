@@ -1,0 +1,31 @@
+{
+    "name": "socoladaica/laravel-audit",
+    "description": "",
+    "authors": [
+        {
+            "name": "Socola Đại Ca",
+            "email": "SocolaDaiCa@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SocolaDaiCa\\LaravelAudit\\Providers\\LaravelAuditServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SocolaDaiCa\\LaravelAudit\\": "src",
+            "SocolaDaiCa\\LaravelAudit\\Database\\": "database",
+            "SocolaDaiCa\\LaravelAudit\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "spatie/once": "^2.2",
+        "doctrine/common": "^3.1"
+    }
+}

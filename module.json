@@ -1,0 +1,13 @@
+{
+    "name": "LaravelAudit",
+    "alias": "laravelaudit",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SocolaDaiCa\\LaravelAudit\\Providers\\LaravelAuditServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

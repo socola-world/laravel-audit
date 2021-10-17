@@ -1,0 +1,54 @@
+# Laravel Audit
+
+
+Update phpunit.xml
+
+add `testsuite` into `testsuites`
+```shell
+<testsuite name="Audit">
+    <directory suffix="Test.php">./vendor/socoladaica/laravel-audit/tests</directory>
+</testsuite>
+```
+
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true">
+    <testsuites>
+        <testsuite name="Audit">
+            <directory suffix="Test.php">./vendor/socoladaica/laravel-audit/tests</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./app</directory>
+        </whitelist>
+    </filter>
+    <php>
+        <server name="APP_ENV" value="testing"/>
+        <server name="BCRYPT_ROUNDS" value="4"/>
+        <server name="CACHE_DRIVER" value="array"/>
+        <server name="DB_CONNECTION" value="sqlite"/>
+        <server name="DB_DATABASE" value=":memory:"/>
+        <server name="MAIL_DRIVER" value="array"/>
+        <server name="QUEUE_CONNECTION" value="sync"/>
+        <server name="SESSION_DRIVER" value="array"/>
+    </php>
+</phpunit>
+
+```
+
+
+```shell
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
+```
