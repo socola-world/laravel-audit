@@ -1,17 +1,24 @@
 # Laravel Audit
 
+## Instalation
 
-Update phpunit.xml
+```shell
+composer require socoladaica/laravel-audit
+
+composer require socoladaica/laravel-audit:dev-main
+```
+
+## Update phpunit.xml
 
 add `testsuite` into `testsuites`
-```shell
+```xml
 <testsuite name="Audit">
     <directory suffix="Test.php">./vendor/socoladaica/laravel-audit/tests</directory>
 </testsuite>
 ```
 
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
@@ -48,7 +55,13 @@ add `testsuite` into `testsuites`
 
 ```
 
-
 ```shell
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
+```
+
+## TestCase
+
+```shell
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Http\\RequestTest"
+
 ```

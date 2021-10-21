@@ -51,7 +51,7 @@ class ModelTest extends TestCase
         $columnsNotExist = array_diff($model->getFillable(), array_keys($columns));
         static::assertEmpty(
             $columnsNotExist,
-            $this->echo($modelReflection->getName(), "column of \$fillable not Exist", $columnsNotExist)
+            $this->echo($modelReflection->getName(), "column of \$fillable not exist in database", $columnsNotExist)
         );
     }
 

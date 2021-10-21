@@ -3,6 +3,7 @@
 namespace SocolaDaiCa\LaravelAudit\Tests;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
@@ -204,5 +205,26 @@ and run "composer dumpautoload" again'
         }
 
         return $str;
+    }
+
+    /* dataProvider */
+
+    public function requests()
+    {
+        return once(function () {
+            $this->refreshApplication();
+
+            return $this->getReflectionClass()
+                ->filter(function (\ReflectionClass $item) {
+                    return $item->isSubclassOf(FormRequest::class);
+                })
+                ->map(function (\ReflectionClass $item) {
+                    return [
+                        $item
+                    ];
+                })
+                ->toArray()
+            ;
+        });
     }
 }

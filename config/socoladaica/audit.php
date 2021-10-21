@@ -245,7 +245,7 @@ return [
                 'edit_pin',
                 'game_type',
                 'limit_type',
-//                'color', /* cần confirm */
+                'color',
                 'structure_id',
                 'spot_id',
                 'timer_id',
@@ -329,7 +329,7 @@ return [
                 'transaction_date',
                 'is_paid',
                 'description',
-//                'button_name', /* cần làm thêm */
+                'button_name',
                 'created_by',
                 'deleted_by',
                 'created_at',
@@ -357,7 +357,7 @@ return [
                 'amount',
                 'fee',
                 'description',
-//                'button_name', /* cần confirm */
+                'button_name',
                 'transaction_date',
                 'is_paid',
                 'created_by',
@@ -488,6 +488,7 @@ return [
                 'user_id',
                 'group_id',
                 'total_point',
+                'last_transaction_date',
                 'created_at',
                 'updated_at',
                 'deleted_at',
