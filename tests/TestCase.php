@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Validator;
 use Spatie\Once\Cache;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -209,7 +210,7 @@ and run "composer dumpautoload" again'
 
     /* dataProvider */
 
-    public function requests()
+    public function requestDataProvider()
     {
         return once(function () {
             $this->refreshApplication();
@@ -218,10 +219,56 @@ and run "composer dumpautoload" again'
                 ->filter(function (\ReflectionClass $item) {
                     return $item->isSubclassOf(FormRequest::class);
                 })
-                ->map(function (\ReflectionClass $item) {
+                ->map(function (\ReflectionClass $requestReflectionClass) {
+
+                    $requestClassName = trim($requestReflectionClass->getName(), "\\");
+                    $className = str_replace('\\', '__', $requestClassName);
+
+                    $class = sprintf('class %s extends %s {
+                        protected function failedValidation($validator)
+                        {
+
+                        }
+
+                        public function authorize()
+                        {
+                            return true;
+                        }
+
+                        public function getValidator()
+                        {
+                            return $this->getValidatorInstance();
+                        }
+                    }', $className, $requestClassName);
+
+                    if (class_exists($className) === false) {
+                        eval($class);
+                    }
+
+                    /**
+                     * @type \Illuminate\Foundation\Http\FormRequest $request
+                     */
+//                    $request = new $className();
+                    try {
+                        $request = app($className);
+                        /**
+                         * @type Validator $validator
+                         */
+                        $validator = $request->getValidator();
+                    } catch (\Exception $exception) {
+                        $this->echo('Cant Create Request instance', $requestReflectionClass->getName());
+                        $request = null;
+                        $validator = null;
+                    }
+
                     return [
-                        $item
+                        $requestReflectionClass,
+                        $request,
+                        $validator,
                     ];
+                })
+                ->filter(function ($item) {
+                    return $item[1] !== null;
                 })
                 ->toArray()
             ;

@@ -27,13 +27,12 @@ class ModelTest extends TestCase
                 continue;
             }
 
-            $needFillable[] = $column->getName();
+            $columnsNeedFillable[] = $column->getName();
         }
 
         static::assertEmpty(
             $columnsNeedFillable,
-            "{$modelReflection->getName()} \$fillable missing ".
-            json_encode($columnsNeedFillable, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
+            $this->echo($modelReflection->getName(), "\$fillable missing", $columnsNeedFillable)
         );
 
         static::assertEmpty(
@@ -46,7 +45,7 @@ class ModelTest extends TestCase
     /**
      * @dataProvider modelDataProvider
      */
-    public function test_column_of_fillable_not_exist(\ReflectionClass $modelReflection, Model $model, array $columns)
+    public function test_column_of_fillable_not_exist_in_database(\ReflectionClass $modelReflection, Model $model, array $columns)
     {
         $columnsNotExist = array_diff($model->getFillable(), array_keys($columns));
         static::assertEmpty(
@@ -58,12 +57,12 @@ class ModelTest extends TestCase
     /**
      * @dataProvider modelDataProvider
      */
-    public function test_column_of_guared_not_exist(\ReflectionClass $modelReflection, Model $model, array $columns): void
+    public function test_column_of_guared_not_exist_in_database(\ReflectionClass $modelReflection, Model $model, array $columns): void
     {
         $columnsNotExist = array_diff($model->getGuarded(), [...array_keys($columns), '*']);
         static::assertEmpty(
             $columnsNotExist,
-            $this->echo($modelReflection->getName(), "column of \$guarded not Exist", $columnsNotExist)
+            $this->echo($modelReflection->getName(), "column of \$guarded not exist in database", $columnsNotExist)
         );
     }
 
