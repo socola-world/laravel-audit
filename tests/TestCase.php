@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
+use SocolaDaiCa\LaravelAudit\Helper;
 use Spatie\Once\Cache;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -21,10 +22,6 @@ class TestCase extends \Tests\TestCase
     public function getReflectionClass()
     {
         return once(function () {
-            $loader = require 'vendor/autoload.php';
-
-            $classes = $loader->getClassMap();
-
             $composer = json_decode(file_get_contents("composer.json"));
 
             $this->assertTrue(
@@ -41,37 +38,7 @@ class TestCase extends \Tests\TestCase
 and run "composer dumpautoload" again'
             );
 
-            $autoloadPsr4 = array_keys(
-                (array) data_get($composer, 'autoload.psr-4', [])
-            );
-
-            return collect($classes)
-                ->keys()
-                ->filter(function ($item) use ($autoloadPsr4) {
-                    return Str::startsWith($item, $autoloadPsr4);
-                })
-                ->map(function ($item) {
-                    return new \ReflectionClass($item);
-                })
-            ;
-        });
-    }
-
-    /**
-     * @return Collection|\ReflectionMethod[]
-     */
-    public function getReflectionClassMethods()
-    {
-        return once(function () {
-            return $this->getReflectionClass()
-                ->map(function (\ReflectionClass $reflectionClass) {
-                    return collect($reflectionClass->getMethods())
-                        ->filter(function (\ReflectionMethod $reflectionMethod) use (&$reflectionClass) {
-                            return $reflectionMethod->class === $reflectionClass->getName();
-                        });
-                })
-                ->flatten(1)
-            ;
+            return Helper::getReflectionClass();
         });
     }
 

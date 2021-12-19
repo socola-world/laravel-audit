@@ -64,4 +64,23 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
 ```shell
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Http\\RequestTest"
 
+ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\RequestTest"
+
+```
+
+```php
+"repositories": [
+    {
+        "type": "path",
+        "url": "../socola-cms-demo-v2/cms-dev/laravel-audit"
+    }
+]
+```
+
+```
+"socoladaica/laravel-audit": "dev-develop"
+```
+
+```scss
+ $app->loadEnvironmentFrom('.env');
 ```

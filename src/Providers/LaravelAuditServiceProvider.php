@@ -37,7 +37,7 @@ class LaravelAuditServiceProvider extends ServiceProvider
 //        );
 //        $this->registerTranslations();
 //        $this->registerConfig();
-//        $this->registerViews();
+        $this->registerViews();
 //        $this->loadMigrationsFrom(module_path($this->moduleName, 'database/migrations'));
     }
 
@@ -48,7 +48,7 @@ class LaravelAuditServiceProvider extends ServiceProvider
      */
     public function register()
     {
-//        $this->app->register(RouteServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
     }
 
     /**
@@ -73,15 +73,34 @@ class LaravelAuditServiceProvider extends ServiceProvider
      */
     public function registerViews()
     {
-        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
+//        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
+//
+//        $this->publishes([
+//            __DIR__.'/../../resources/views' => resource_path('vendor/socoladaica/laravel-audit'),
+//        ], ['views', $this->moduleNameLower . '-module-views']);
+//
+//        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [__DIR__.'/../../resources/views']), $this->moduleNameLower);
+//        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
+//
+//        $sourcePath = module_path($this->moduleName, 'resources/views');
+//
+//        $this->publishes([
+//            $sourcePath => $viewPath
+//        ], ['views', $this->moduleNameLower . '-module-views']);
+//
+//        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
 
-        $sourcePath = module_path($this->moduleName, 'resources/views');
+//        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
+//
+//        $sourcePath = __DIR__.'/../../resources/views';
+//
+//        $this->publishes([
+//            $sourcePath => $viewPath
+//        ], ['views', $this->moduleNameLower . '-module-views']);
 
-        $this->publishes([
-            $sourcePath => $viewPath
-        ], ['views', $this->moduleNameLower . '-module-views']);
+//        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
 
-        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'laravel-audit');
     }
 
     /**

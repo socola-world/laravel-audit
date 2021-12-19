@@ -49,7 +49,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::middleware('web')
             ->namespace($this->moduleNamespace)
-            ->group(module_path('LaravelAudit', '/routes/web.php'));
+            ->group(__DIR__.'/../../routes/web.php');
     }
 
     /**
@@ -64,6 +64,6 @@ class RouteServiceProvider extends ServiceProvider
         Route::prefix('api')
             ->middleware('api')
             ->namespace($this->moduleNamespace)
-            ->group(module_path('LaravelAudit', '/routes/api.php'));
+            ->group(__DIR__.'/../../routes/api.php');
     }
 }
