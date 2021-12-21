@@ -62,18 +62,18 @@ class ValidatorX extends Validator {
         return $this->errorMessagesV2;
     }
 
+    public $withoutMessageRules = [
+        'Nullable',
+        'Sometimes',
+    ];
+
     function addFailureMessage($realRule, $attribute, $rule, $parameters = [], $rawMessage = null)
     {
-        if (
-            in_array(
-                $rawMessage ?? $this->getMessage($attribute, $rule),
-                [
-                    "validation.nullable",
-                    "validation.exclude_if",
-                    'validation.sometimes',
-                ]
-            )
-        ) {
+        if (in_array($rule, $this->excludeRules)) {
+            return;
+        }
+
+        if (in_array($rule, $this->withoutMessageRules)) {
             return;
         }
 
@@ -115,19 +115,37 @@ class ValidatorX extends Validator {
         return parent::getAttributeType($attribute);
     }
 
-    public static function make(Validator $v)
+    /**
+     * @param Validator $v
+     * @param \Illuminate\Foundation\Http\FormRequest|FormRequest $request
+     * @return ValidatorX
+     */
+    public static function make(\Illuminate\Foundation\Http\FormRequest $request)
     {
         $translator = app(\Illuminate\Translation\Translator::class);
+
+        /**
+         * @var Validator $requestValidator
+         */
+        $requestValidator = $request->getValidator();
+
         $validator = new self(
             $translator,
             [],
-            $v->getRules(),
-            $v->customMessages,
-            $v->customAttributes
+            $request->getContainer()->call([$request, 'rules']),
+            $requestValidator->customMessages,
+            $requestValidator->customAttributes
         );
+//        $validator = new self(
+//            $translator,
+//            [],
+//            $v->getRules(),
+//            $v->customMessages,
+//            $v->customAttributes
+//        );
 
-        $validator->addReplacers($v->replacers);
-        $validator->customValues = $v->customValues;
+        $validator->addReplacers($requestValidator->replacers);
+        $validator->customValues = $requestValidator->customValues;
 
         return $validator;
     }

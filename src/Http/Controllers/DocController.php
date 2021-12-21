@@ -88,16 +88,8 @@ class DocController extends Controller
                     break;
                 }
 
-//                if ($route->getActionName() == 'App\Http\Controllers\StoreManager\Tournament\EventController@update') {
-//                    dd('a', $item, $request);
-//                }
-
                 if ($request) {
-                    /**
-                     * @var Validator $validator
-                     */
-                    $validator = $request->getValidator();
-
+                    $validator = ValidatorX::make($request);
                     $item['rules'] = $validator->getRules();
 
                     foreach ($item['rules'] as &$rules) {
@@ -105,29 +97,9 @@ class DocController extends Controller
                     }
 
                     $item['attributes'] = $validator->customAttributes;
-//                    if ($item['controller'] == 'App\Http\Controllers\StoreManager\SeriesController') {
-//                        dd($validator);
-//////                        dd($validator->messages());
-//////                        dd($validator->replacers);
-//                    }
-
-
-                    $y = ValidatorX::make($validator);
-                    $item['messages'] = $y->availableErrors();
-
-//                    if ($item['controller'] == 'App\Http\Controllers\Admin\StoreController') {
-////                        dd($validator);
-////                        dd($validator->messages());
-//                    }
+                    $item['messages'] = $validator->availableErrors();
                 }
             }
-
-
-//            if ($route->getActionName() == 'App\Http\Controllers\StoreManager\Tournament\EventController@update') {
-//                dd($item);
-//                dd($validator->customAttributes);
-//                dd('x');
-//            }
             $items[] = $item;
         }
 
