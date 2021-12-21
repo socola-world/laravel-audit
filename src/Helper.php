@@ -55,22 +55,8 @@ class Helper
     public static function getRequest($requestClassName)
     {
         $className = str_replace('\\', '__', $requestClassName);
-
         $class = sprintf('class %s extends %s {
-            protected function failedValidation($validator)
-            {
-
-            }
-
-            public function authorize()
-            {
-                return true;
-            }
-
-            public function getValidator()
-            {
-                return $this->getValidatorInstance();
-            }
+            use SocolaDaiCa\LaravelAudit\FormRequestTrait;
         }', $className, $requestClassName);
 
         if (class_exists($className) === false) {

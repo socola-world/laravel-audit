@@ -115,7 +115,7 @@ class ValidatorX extends Validator {
         return parent::getAttributeType($attribute);
     }
 
-    public static function make(Validator $v)
+    public static function make(Validator $v, \Illuminate\Foundation\Http\FormRequest $request)
     {
         $translator = app(\Illuminate\Translation\Translator::class);
         $validator = new self(
