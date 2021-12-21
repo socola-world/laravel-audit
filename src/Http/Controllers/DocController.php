@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Helper;
 use SocolaDaiCa\LaravelAudit\ValidatorX;
+use function Sodium\compare;
 
 class DocController extends Controller
 {
@@ -103,8 +104,15 @@ class DocController extends Controller
             $items[] = $item;
         }
 
+        $items = collect($items)->sort(function ($a, $b) {
+            return compare($a['controller'], $b['controller']) ?: compare($a['method'], $b['method']);
+        })->values()->toArray();
+
+        $groupItems = collect($items)->groupBy('controller');
+
         return view('laravel-audit::pages.docs.index', [
             'items' => $items,
+            'groupItems' => $groupItems,
         ]);
     }
 }
