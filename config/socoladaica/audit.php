@@ -3,7 +3,7 @@
 return [
     'database' => [
         'tables' => [
-            
+
         ]
     ]
 ];

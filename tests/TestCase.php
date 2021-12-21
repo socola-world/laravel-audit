@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -172,6 +173,10 @@ and run "composer dumpautoload" again'
             }
         }
 
+        if ($str) {
+            $str = "<!--\n\n{$str}\n\n-->";
+//
+        }
         return $str;
     }
 
@@ -239,6 +244,13 @@ and run "composer dumpautoload" again'
                 })
                 ->toArray()
             ;
+        });
+    }
+
+    static function getDatabaseTables()
+    {
+        return once(function () {
+            return DB::connection()->getDoctrineSchemaManager()->listTableNames();
         });
     }
 }
