@@ -18,61 +18,61 @@ class RequestTest extends TestCase
 //    ) {
 //        dd($requestReflectionClass->getName());
 //    }
-    protected $typeDontTogethers = [
-        ['image', 'mimes'],
-        ['required', 'nullable'],
-        ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
-    ];
-
-    /**
-     * @dataProvider requestDataProvider
-     */
-    public function test_rules_dont_together(
-        \ReflectionClass $requestReflectionClass,
-                         $request,
-        Validator $validator
-    ) {
-        foreach ($validator->getRules() as $inputName => $inputRules) {
-            foreach ($this->typeDontTogethers as $typeDontTogether) {
-                $intersect = array_intersect(
-                    $typeDontTogether,
-                    array_values(array_filter($inputRules, fn($item) => is_string($item)))
-                );
-
-                $this->assertLessThanOrEqual(
-                    1,
-                    count($intersect),
-                    $this->echo(
-                        $requestReflectionClass->getName(),
-                        $inputName,
-                        'dont put rules',
-                        $intersect,
-                        'together',
-                    )
-                );
-            }
-        }
-    }
-
-    /**
-     * @dataProvider requestDataProvider
-     */
-    public function test_mising_attributes(\ReflectionClass $requestReflectionClass, $request): void
-    {
-        $rules = $request->rules();
-        $attributes = $request->attributes();
-        $missingAttributes = array_diff(
-            array_keys($rules),
-            array_keys($attributes)
-        );
-        $missingAttributes = array_values($missingAttributes);
-
-        $this->assertCount(
-            0,
-            $missingAttributes,
-            $this->echo($requestReflectionClass->getName(), "missing attributes", $missingAttributes)
-        );
-    }
+//    protected $typeDontTogethers = [
+//        ['image', 'mimes'],
+//        ['required', 'nullable'],
+//        ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
+//    ];
+//
+//    /**
+//     * @dataProvider requestDataProvider
+//     */
+//    public function test_rules_dont_together(
+//        \ReflectionClass $requestReflectionClass,
+//                         $request,
+//        Validator $validator
+//    ) {
+//        foreach ($validator->getRules() as $inputName => $inputRules) {
+//            foreach ($this->typeDontTogethers as $typeDontTogether) {
+//                $intersect = array_intersect(
+//                    $typeDontTogether,
+//                    array_values(array_filter($inputRules, fn($item) => is_string($item)))
+//                );
+//
+//                $this->assertLessThanOrEqual(
+//                    1,
+//                    count($intersect),
+//                    $this->echo(
+//                        $requestReflectionClass->getName(),
+//                        $inputName,
+//                        'dont put rules',
+//                        $intersect,
+//                        'together',
+//                    )
+//                );
+//            }
+//        }
+//    }
+//
+//    /**
+//     * @dataProvider requestDataProvider
+//     */
+//    public function test_mising_attributes(\ReflectionClass $requestReflectionClass, $request): void
+//    {
+//        $rules = $request->rules();
+//        $attributes = $request->attributes();
+//        $missingAttributes = array_diff(
+//            array_keys($rules),
+//            array_keys($attributes)
+//        );
+//        $missingAttributes = array_values($missingAttributes);
+//
+//        $this->assertCount(
+//            0,
+//            $missingAttributes,
+//            $this->echo($requestReflectionClass->getName(), "missing attributes", $missingAttributes)
+//        );
+//    }
 
 //    protected $ruleCompares = [
 //        'between',

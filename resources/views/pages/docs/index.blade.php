@@ -31,6 +31,52 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>利用画面 (Usage screen)</th>
+                        <th>フォルダ (Folder)</th>
+                        <th>クラス名 (Class Name)</th>
+                        <th>メソッド名 (Method Name)</th>
+                        <th>概要 (Overview)</th>
+                        <th>Middleware</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @php($groupIndex = 0)
+                        @foreach($groupItems as $groupController => $groupItem)
+                            @foreach($groupItem as $itemIndex => $item)
+                                <tr>
+                                    <td class="text-center">{{ ++$groupIndex }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    @if($itemIndex == 0)
+                                        <td rowspan="{{ count($groupItem) }}">{{ $item['controller'] }}</td>
+                                    @endif
+                                    <td>
+                                        <a href="#{{ $item['action'] }}">
+                                            <strong>
+                                                {{ $item['method'] }}
+                                            </strong>
+                                        </a>
+                                    </td>
+                                    <td></td>
+                                    <td>
+                                        @foreach($item['middlewares'] as $middleware)
+                                            <span class="badge">{{ $middleware }}</span>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 @foreach($items as $item)
                     {{--            @if (empty($item['rules']) || $item['controller'] != 'App\Http\Controllers\Admin\StoreController')--}}
                     {{--                @continue--}}
@@ -41,7 +87,7 @@
                     <div class="table-responsive">
                         <table class="table table-bordered t1">
                             <tr>
-                                <th>クラス名 (ClassName)</th>
+                                <th>クラス名 (Class Name)</th>
                                 <td>{{ $item['controller'] }}</td>
                             </tr>
                             <tr>
@@ -49,7 +95,7 @@
                                 <td>{{ $item['method'] }}</td>
                             </tr>
                             <tr>
-                                <th>(Middleware)</th>
+                                <th>Middleware</th>
                                 <td>
                                     @foreach($item['middlewares'] as $middleware)
                                         <span class="badge">{{ $middleware }}</span>
@@ -100,20 +146,6 @@
                     @else
                         <h3 class="sss">リクエストボディ(Request Body)</h3>
                     @endif
-
-                    {{--            @php--}}
-                    {{--                $method = new ReflectionMethod($controller, $item->getActionMethod());--}}
-                    {{--                dump($method->getParameters());--}}
-                    {{--            @endphp--}}
-                    {{--            <table class="table table-bordered">--}}
-                    {{--                <tr>--}}
-                    {{--                    <th>項番<br>(Item number)</th>--}}
-                    {{--                    <th>パラメター名<br>(Parameter name)</th>--}}
-                    {{--                    <th>データタイプ<br>(Type)</th>--}}
-                    {{--                    <th>フォーマット<br>(Format)</th>--}}
-                    {{--                    <th>説明<br>(Explanation)</th>--}}
-                    {{--                </tr>--}}
-                    {{--            </table>--}}
 
                     <div class="table-responsive">
                         <table class="table table-bordered">
