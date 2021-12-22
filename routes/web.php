@@ -11,6 +11,6 @@
 |
 */
 
-Route::prefix('laravel-audit')->group(function() {
+Route::prefix('laravel-audit')->group(function () {
     Route::resource('docs', 'DocController')->only(['index']);
 });

@@ -12,7 +12,7 @@ class Helper
     public static function getReflectionClass()
     {
         return once(function () {
-            $composer = json_decode(file_get_contents("composer.json"));
+            $composer = json_decode(file_get_contents('composer.json'));
 
             $loader = require 'vendor/autoload.php';
 
@@ -29,8 +29,7 @@ class Helper
                 })
                 ->map(function ($item) {
                     return new \ReflectionClass($item);
-                })
-            ;
+                });
         });
     }
 
@@ -47,8 +46,7 @@ class Helper
                             return $reflectionMethod->class === $reflectionClass->getName();
                         });
                 })
-                ->flatten(1)
-            ;
+                ->flatten(1);
         });
     }
 
@@ -65,7 +63,7 @@ class Helper
 
         try {
             /**
-             * @type \Illuminate\Foundation\Http\FormRequest $request
+             * @var \Illuminate\Foundation\Http\FormRequest $request
              */
             $request = app($className);
 //            /**
@@ -88,8 +86,7 @@ class Helper
                     return $item->isSubclassOf(FormRequest::class);
                 })
                 ->map(function (\ReflectionClass $requestReflectionClass) {
-
-                    $requestClassName = trim($requestReflectionClass->getName(), "\\");
+                    $requestClassName = trim($requestReflectionClass->getName(), '\\');
                     $className = str_replace('\\', '__', $requestClassName);
 
                     $class = sprintf('class %s extends %s {
@@ -113,14 +110,14 @@ class Helper
                         eval($class);
                     }
 
-                    /**
+                    /*
                      * @type \Illuminate\Foundation\Http\FormRequest $request
                      */
 //                    $request = new $className();
                     try {
                         $request = app($className);
                         /**
-                         * @type Validator $validator
+                         * @var Validator $validator
                          */
                         $validator = $request->getValidator();
                     } catch (\Exception $exception) {
@@ -138,8 +135,7 @@ class Helper
                 ->filter(function ($item) {
                     return $item[1] !== null;
                 })
-                ->toArray()
-            ;
+                ->toArray();
         });
     }
 }

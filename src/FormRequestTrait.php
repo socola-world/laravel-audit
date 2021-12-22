@@ -8,7 +8,6 @@ trait FormRequestTrait
 {
     protected function failedValidation($validator)
     {
-
     }
 
     public function authorize()

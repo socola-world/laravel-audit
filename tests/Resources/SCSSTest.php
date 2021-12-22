@@ -16,7 +16,7 @@ class SCSSTest extends TestCase
 ////        dd($this->getResources());
 //    }
 
-    /**
+    /*
      * @dataProvider resourcesStyleDataProvider
      */
 //    public function test_dont_use_id(SplFileInfo $splFileInfo, string $content)

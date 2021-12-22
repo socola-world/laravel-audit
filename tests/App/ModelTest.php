@@ -3,8 +3,6 @@
 namespace SocolaDaiCa\LaravelAudit\Tests\App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
@@ -12,10 +10,12 @@ class ModelTest extends TestCase
 {
     /**
      * @dataProvider modelDataProvider
+     *
+     * @test
      */
-    public function test_model_table_not_exist_in_database(\ReflectionClass $modelReflection, Model $model, array $columns)
+    public function model_table_not_exist_in_database(\ReflectionClass $modelReflection, Model $model, array $columns)
     {
-        $this->assertTrue(
+        static::assertTrue(
             in_array(
                 $model->getTable(),
                 $this->getDatabaseTables(),
@@ -38,7 +38,7 @@ class ModelTest extends TestCase
         $columnsNotExist = array_diff($model->getFillable(), array_keys($columns));
         static::assertEmpty(
             $columnsNotExist,
-            $this->echo($modelReflection->getName(), "column of \$fillable not exist in database", $columnsNotExist)
+            $this->echo($modelReflection->getName(), 'column of $fillable not exist in database', $columnsNotExist)
         );
     }
 
@@ -47,7 +47,7 @@ class ModelTest extends TestCase
         $columnsNotExist = array_diff($model->getGuarded(), [...array_keys($columns), '*']);
         static::assertEmpty(
             $columnsNotExist,
-            $this->echo($modelReflection->getName(), "column of \$guarded not exist in database", $columnsNotExist)
+            $this->echo($modelReflection->getName(), 'column of $guarded not exist in database', $columnsNotExist)
         );
     }
 
@@ -71,17 +71,17 @@ class ModelTest extends TestCase
 
         static::assertEmpty(
             $columnsNeedFillable,
-            $this->echo($modelReflection->getName(), "\$fillable missing", $columnsNeedFillable)
+            $this->echo($modelReflection->getName(), '$fillable missing', $columnsNeedFillable)
         );
 
         static::assertEmpty(
             $columnsNeedGuarded,
-            "{$modelReflection->getName()} \$guarded missing ".
-            json_encode($columnsNeedGuarded, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
+            "{$modelReflection->getName()} \$guarded missing "
+            .json_encode($columnsNeedGuarded, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
         );
     }
 
-////    public function test_fillable()
+    ////    public function test_fillable()
 ////    {
 ////        $this->getModelReflectionClass()->each(/**
 ////         * @throws \Doctrine\DBAL\Exception

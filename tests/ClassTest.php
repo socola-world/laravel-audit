@@ -4,7 +4,10 @@ namespace SocolaDaiCa\LaravelAudit\Tests;
 
 class ClassTest extends TestCase
 {
-    public function test_method_lines()
+    /**
+     * @test
+     */
+    public function method_lines()
     {
 //        $maxLines = 100;
 //        $this->getReflectionClassMethods()->each(function (\ReflectionMethod $reflectionMethod) use ($maxLines) {

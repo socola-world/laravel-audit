@@ -84,3 +84,10 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Http\\Request
 ```scss
  $app->loadEnvironmentFrom('.env');
 ```
+
+## Shell
+
+```shell
+vendor\bin\php-cs-fixer.bat --config=.php_cs.php
+vendor\bin\php-cs-fixer.bat --config=.php_cs.php
+```
