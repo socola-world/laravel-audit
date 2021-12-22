@@ -27,6 +27,6 @@
     "require": {
         "spatie/once": "^2.2",
         "doctrine/common": "^3.1",
-        "laravel/laravel": "^v6|^v7|^v8"
+        "laravel/framework": "^v6|^v7|^v8"
     }
 }
