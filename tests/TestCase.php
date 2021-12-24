@@ -174,8 +174,8 @@ and run "composer dumpautoload" again'
         }
 
         if ($str) {
-            $str = "<!--\n\n{$str}\n\n-->";
-//
+            $str = "\e[41;97m{$str}\e[0m";
+//            $str = "<!--\n\n{$str}\n\n-->";
         }
         return $str;
     }

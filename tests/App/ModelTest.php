@@ -31,6 +31,8 @@ class ModelTest extends TestCase
         $this->follow_test_column_of_fillable_not_exist_in_database($modelReflection, $model, $columns);
         $this->follow_test_column_of_guared_not_exist_in_database($modelReflection, $model, $columns);
         $this->follow_test_fillable_or_guarded_missing($modelReflection, $model, $columns);
+        $this->follow_test_hidden($modelReflection, $model, $columns);
+        $this->follow_test_soft_delete($modelReflection, $model, $columns);
     }
 
     public function follow_test_column_of_fillable_not_exist_in_database(\ReflectionClass $modelReflection, Model $model, array $columns)
@@ -79,6 +81,68 @@ class ModelTest extends TestCase
             "{$modelReflection->getName()} \$guarded missing ".
             json_encode($columnsNeedGuarded, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
         );
+    }
+
+    protected $columnsShouldHidden = [
+        'password',
+        'current_password',
+        'password_confirmation',
+        'token',
+        'access_token',
+        'remember_token',
+        'verification_token',
+    ];
+
+    public function follow_test_hidden(\ReflectionClass $modelReflection, Model $model, array $columns)
+    {
+        $hiddenMissingColumns = array_keys($columns);
+        $hiddenMissingColumns = array_diff($hiddenMissingColumns, $model->getHidden());
+        $hiddenMissingColumns = array_intersect($hiddenMissingColumns, $this->columnsShouldHidden);
+        $hiddenMissingColumns = array_values($hiddenMissingColumns);
+
+        $this->assertEmpty(
+            $hiddenMissingColumns,
+            $this->echo(
+                $modelReflection->name,
+                'mising hidden',
+                $hiddenMissingColumns,
+            )
+        );
+    }
+
+    public function follow_test_soft_delete(\ReflectionClass $modelReflection, Model $model, array $columns)
+    {
+        $hasSoftDeletesTrail = in_array(
+            'Illuminate\Database\Eloquent\SoftDeletes',
+            $modelReflection->getTraitNames()
+        );
+
+        if ($hasSoftDeletesTrail) {
+            $this->assertArrayHasKey(
+                $model->getDeletedAtColumn(),
+                $columns,
+                $this->echo(
+                    $modelReflection->name,
+                    'SoftDeletes',
+                    'missing',
+                    $model->getDeletedAtColumn(),
+                    'in database'
+                )
+            );
+        }
+
+        $hasDeletedAtColumn = array_key_exists('deleted_at', $columns);
+
+        if ($hasDeletedAtColumn) {
+            self::assertTrue(
+                $hasSoftDeletesTrail,
+                $this->echo(
+                    $modelReflection->name,
+                    'missing trail',
+                    'Illuminate\Database\Eloquent\SoftDeletes'
+                )
+            );
+        }
     }
 
 ////    public function test_fillable()
