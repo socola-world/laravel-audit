@@ -75,6 +75,13 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Http\\Request
         "url": "../socola-cms-demo-v2/cms-dev/laravel-audit"
     }
 ]
+
+"repositories": [
+    {
+        "type": "path",
+        "url": "../labs/laravel-audit"
+    }
+]
 ```
 
 ```
@@ -83,4 +90,11 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Http\\Request
 
 ```scss
  $app->loadEnvironmentFrom('.env');
+```
+
+## Shell
+
+```shell
+vendor\bin\php-cs-fixer.bat --config=.php_cs.php fix
+vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.php fix
 ```

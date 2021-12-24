@@ -2,7 +2,6 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
@@ -93,7 +92,7 @@ class RequestTest extends TestCase
 //        'numeric',
 //    ];
 
-    /**
+    /*
      * @dataProvider requestDataProvider
      */
 //    public function test_rule_compare_missing_type(
@@ -120,6 +119,4 @@ class RequestTest extends TestCase
 //            $this->echo($requestReflectionClass->getName(), "input missing type", $inputsMissingType)
 //        );
 //    }
-
-
 }

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Helper;
 use SocolaDaiCa\LaravelAudit\ValidatorX;
 use function Sodium\compare;
@@ -16,7 +15,6 @@ class DocController extends Controller
     public function index()
     {
         $ignorePaths = [
-
         ];
 
         $ignoreClass = [
@@ -25,7 +23,6 @@ class DocController extends Controller
             'SocolaDaiCa\\LaravelAudit',
             'Illuminate\\Broadcasting',
             '\\Illuminate\\Broadcasting',
-
         ];
 
         $routes = Route::getRoutes()->getRoutes();
@@ -34,8 +31,7 @@ class DocController extends Controller
             ->filter(function (\Illuminate\Routing\Route $item) use ($ignoreClass) {
                 return Str::startsWith($item->getActionName(), $ignoreClass) === false;
             })
-            ->values()
-        ;
+            ->values();
 
         $items = [];
 
@@ -49,11 +45,11 @@ class DocController extends Controller
             $item['controller'] = Str::before($route->getActionName(), '@');
             $item['method'] = $route->getActionMethod();
             $item['name'] = $route->getName();
-            $item['methods'] = array_values(array_filter($route->methods(), fn($e) => $e !== 'HEAD'));
+            $item['methods'] = array_values(array_filter($route->methods(), fn ($e) => $e !== 'HEAD'));
             $item['middlewares'] = $route->getAction('middleware');
             $item['url'] = '/'.trim($route->uri(), '/');
             if ($route->getDomain()) {
-                $item['url'] =  ($route->secure() ? 'https://' : 'http://').$route->getDomain().$item['url'];
+                $item['url'] = ($route->secure() ? 'https://' : 'http://').$route->getDomain().$item['url'];
             }
 
             $item['rules'] = [];
@@ -94,7 +90,7 @@ class DocController extends Controller
                     $item['rules'] = $validator->getRules();
 
                     foreach ($item['rules'] as &$rules) {
-                        $rules = array_values(array_map(fn($e) => is_object($e) ? get_class($e) : $e, $rules));
+                        $rules = array_values(array_map(fn ($e) => is_object($e) ? get_class($e) : $e, $rules));
                     }
 
                     $item['attributes'] = $validator->customAttributes;

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Helper;
-use Spatie\Once\Cache;
 use Symfony\Component\Finder\SplFileInfo;
 
 class TestCase extends \Tests\TestCase
@@ -23,7 +22,7 @@ class TestCase extends \Tests\TestCase
     public function getReflectionClass()
     {
         return once(function () {
-            $composer = json_decode(file_get_contents("composer.json"));
+            $composer = json_decode(file_get_contents('composer.json'));
 
             $this->assertTrue(
                 data_get($composer, 'config.optimize-autoloader'),
@@ -45,6 +44,7 @@ and run "composer dumpautoload" again'
 
     /**
      * @param $parentClass
+     *
      * @return Collection|\ReflectionClass[]
      */
     public function getReflectionClassByParent($parentClass)
@@ -80,6 +80,7 @@ and run "composer dumpautoload" again'
 
     /**
      * @param $parentClass
+     *
      * @return Collection|\ReflectionClass[]
      */
     public function getModelReflectionClass()
@@ -91,6 +92,7 @@ and run "composer dumpautoload" again'
 
     /**
      * @param $parentClass
+     *
      * @return Collection|\ReflectionClass[]
      */
     public function getControllerReflectionClass()
@@ -114,6 +116,7 @@ and run "composer dumpautoload" again'
 
     /**
      * @param $parentClass
+     *
      * @return Collection|\ReflectionClassConstant[]
      */
     public function getReflectionConstants()
@@ -151,7 +154,7 @@ and run "composer dumpautoload" again'
 
     public function getResourceContent(SplFileInfo $splFileInfo)
     {
-        return once(function () use ($splFileInfo){
+        return once(function () use ($splFileInfo) {
             return $splFileInfo->getContents();
         });
     }
@@ -161,7 +164,7 @@ and run "composer dumpautoload" again'
      */
     public function echo(...$args): string
     {
-        $str = "";
+        $str = '';
         foreach ($args as $arg) {
             if (is_string($arg)) {
                 $str .= "{$arg} ";
@@ -169,14 +172,14 @@ and run "composer dumpautoload" again'
             }
 
             if (is_array($arg)) {
-                $str .= json_encode($arg, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR)." ";
+                $str .= json_encode($arg, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR).' ';
             }
         }
 
         if ($str) {
             $str = "\e[41;97m{$str}\e[0m";
-//            $str = "<!--\n\n{$str}\n\n-->";
         }
+
         return $str;
     }
 
@@ -192,8 +195,7 @@ and run "composer dumpautoload" again'
                     return $item->isSubclassOf(FormRequest::class);
                 })
                 ->map(function (\ReflectionClass $requestReflectionClass) {
-
-                    $requestClassName = trim($requestReflectionClass->getName(), "\\");
+                    $requestClassName = trim($requestReflectionClass->getName(), '\\');
                     $className = str_replace('\\', '__', $requestClassName);
 
                     $class = sprintf('class %s extends %s {
@@ -217,14 +219,14 @@ and run "composer dumpautoload" again'
                         eval($class);
                     }
 
-                    /**
+                    /*
                      * @type \Illuminate\Foundation\Http\FormRequest $request
                      */
 //                    $request = new $className();
                     try {
                         $request = app($className);
                         /**
-                         * @type Validator $validator
+                         * @var Validator $validator
                          */
                         $validator = $request->getValidator();
                     } catch (\Exception $exception) {
@@ -242,12 +244,11 @@ and run "composer dumpautoload" again'
                 ->filter(function ($item) {
                     return $item[1] !== null;
                 })
-                ->toArray()
-            ;
+                ->toArray();
         });
     }
 
-    static function getDatabaseTables()
+    public static function getDatabaseTables()
     {
         return once(function () {
             return DB::connection()->getDoctrineSchemaManager()->listTableNames();

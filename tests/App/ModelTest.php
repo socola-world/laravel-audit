@@ -2,20 +2,22 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests\App;
 
+use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class ModelTest extends TestCase
 {
     /**
      * @dataProvider modelDataProvider
+     *
+     * @throws \JsonException
      */
-    public function test_model_table_not_exist_in_database(\ReflectionClass $modelReflection, Model $model, array $columns)
+    public function testModelTableNotExistInDatabase(\ReflectionClass $modelReflection, Model $model, array $columns)
     {
-        $this->assertTrue(
+        static::assertTrue(
             in_array(
                 $model->getTable(),
                 $this->getDatabaseTables(),
@@ -28,33 +30,50 @@ class ModelTest extends TestCase
                 'not exist in database'
             )
         );
-        $this->follow_test_column_of_fillable_not_exist_in_database($modelReflection, $model, $columns);
-        $this->follow_test_column_of_guared_not_exist_in_database($modelReflection, $model, $columns);
-        $this->follow_test_fillable_or_guarded_missing($modelReflection, $model, $columns);
-        $this->follow_test_hidden($modelReflection, $model, $columns);
-        $this->follow_test_soft_delete($modelReflection, $model, $columns);
+        $this->followTestColumnOfFillableNotExistInDatabase($modelReflection, $model, $columns);
+        $this->followTestColumnOfGuaredNotExistInDatabase($modelReflection, $model, $columns);
+        $this->followTestFillableOrGuardedMissing($modelReflection, $model, $columns);
+        $this->followTestPrimaryKey($modelReflection, $model, $columns);
+        $this->followTestRelations($modelReflection, $model, $columns);
     }
 
-    public function follow_test_column_of_fillable_not_exist_in_database(\ReflectionClass $modelReflection, Model $model, array $columns)
-    {
+    public function followTestColumnOfFillableNotExistInDatabase(
+        \ReflectionClass $modelReflection,
+        Model $model,
+        array $columns
+    ) {
         $columnsNotExist = array_diff($model->getFillable(), array_keys($columns));
         static::assertEmpty(
             $columnsNotExist,
-            $this->echo($modelReflection->getName(), "column of \$fillable not exist in database", $columnsNotExist)
+            $this->echo(
+                $modelReflection->getName(),
+                'column of $fillable not exist in database',
+                $columnsNotExist
+            )
         );
     }
 
-    public function follow_test_column_of_guared_not_exist_in_database(\ReflectionClass $modelReflection, Model $model, array $columns): void
-    {
+    public function followTestColumnOfGuaredNotExistInDatabase(
+        \ReflectionClass $modelReflection,
+        Model $model,
+        array $columns
+    ): void {
         $columnsNotExist = array_diff($model->getGuarded(), [...array_keys($columns), '*']);
         static::assertEmpty(
             $columnsNotExist,
-            $this->echo($modelReflection->getName(), "column of \$guarded not exist in database", $columnsNotExist)
+            $this->echo(
+                $modelReflection->getName(),
+                'column of $guarded not exist in database',
+                $columnsNotExist
+            )
         );
     }
 
-    public function follow_test_fillable_or_guarded_missing(\ReflectionClass $modelReflection, Model $model, array $columns)
-    {
+    public function followTestFillableOrGuardedMissing(
+        \ReflectionClass $modelReflection,
+        Model $model,
+        array $columns
+    ) {
         $columnsNeedFillable = [];
         $columnsNeedGuarded = [];
 
@@ -73,13 +92,51 @@ class ModelTest extends TestCase
 
         static::assertEmpty(
             $columnsNeedFillable,
-            $this->echo($modelReflection->getName(), "\$fillable missing", $columnsNeedFillable)
+            $this->echo(
+                $modelReflection->getName(),
+                '$fillable missing',
+                $columnsNeedFillable
+            )
         );
 
         static::assertEmpty(
             $columnsNeedGuarded,
-            "{$modelReflection->getName()} \$guarded missing ".
-            json_encode($columnsNeedGuarded, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
+            $this->echo(
+                $modelReflection->getName(),
+                '$guarded missing',
+                $columnsNeedGuarded
+            )
+        );
+    }
+
+    public function followTestPrimaryKey(
+        \ReflectionClass $modelReflection,
+        Model $model,
+        array $columns
+    ) {
+        static::assertArrayHasKey(
+            $model->getKeyName(),
+            $columns,
+            $this->echo(
+                $modelReflection->name,
+                'column',
+                $model->getKeyName(),
+                'not exist in database'
+            )
+        );
+
+        /**
+         * @var Column $column
+         */
+        $column = $columns[$model->getKeyName()];
+
+        static::assertTrue(
+            $column->getNotnull(),
+            $this->echo(
+                $modelReflection->name,
+                $column->getName(),
+                'must not null'
+            )
         );
     }
 
@@ -145,7 +202,53 @@ class ModelTest extends TestCase
         }
     }
 
-////    public function test_fillable()
+    protected $igoreClass = [
+        Pivot::class,
+        Model::class,
+        'Illuminate\Foundation\Auth\User',
+    ];
+
+    public function followTestRelations(
+        \ReflectionClass $modelReflection,
+        Model $model,
+        array $columns
+    ) {
+        $methodRelations = [];
+        $relations = collect($modelReflection->getMethods())
+            ->map(function (\ReflectionMethod $method) use ($model, $modelReflection) {
+                if ($method->getNumberOfParameters() > 0) {
+                    return null;
+                }
+
+                if ($method->isPublic() === false) {
+                    return null;
+                }
+                if (in_array($method->class, $this->igoreClass)) {
+                    return null;
+                }
+
+                try {
+                    $response = $model->{$method->getName()}();
+                } catch (\Throwable $exception) {
+                    return null;
+                }
+
+                if (!is_object($response) || ($response instanceof Relation) == false) {
+                    return null;
+                }
+
+                return [
+                    'name' => $method->getName(),
+                    'type' => get_class($response),
+                    'relation' => $response,
+                ];
+            })
+            ->filter(fn($e) => $e != null);
+//            ->map(fn (\ReflectionMethod $method) => [$method->getName(), get_class($model->{$method->getName()}())]);
+        $relations->groupBy('type');
+//        dd($relations);
+    }
+    ////    public function test_fillable()
 ////    {
 ////        $this->getModelReflectionClass()->each(/**
 ////         * @throws \Doctrine\DBAL\Exception
