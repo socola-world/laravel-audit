@@ -2,56 +2,53 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
 
+use Illuminate\Validation\ValidationRuleParser;
 use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class RequestTest extends TestCase
 {
-//    /**
-//     * @dataProvider requestDataProvider
-//     */
-//    public function test_all_request(
-//        \ReflectionClass $requestReflectionClass,
-//        $request,
-//        Validator $validator
-//    ) {
-//        dd($requestReflectionClass->getName());
-//    }
-//    protected $typeDontTogethers = [
-//        ['image', 'mimes'],
-//        ['required', 'nullable'],
-//        ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
-//    ];
-//
-//    /**
-//     * @dataProvider requestDataProvider
-//     */
-//    public function test_rules_dont_together(
-//        \ReflectionClass $requestReflectionClass,
-//                         $request,
-//        Validator $validator
-//    ) {
-//        foreach ($validator->getRules() as $inputName => $inputRules) {
-//            foreach ($this->typeDontTogethers as $typeDontTogether) {
-//                $intersect = array_intersect(
-//                    $typeDontTogether,
-//                    array_values(array_filter($inputRules, fn($item) => is_string($item)))
-//                );
-//
-//                $this->assertLessThanOrEqual(
-//                    1,
-//                    count($intersect),
-//                    $this->echo(
-//                        $requestReflectionClass->getName(),
-//                        $inputName,
-//                        'dont put rules',
-//                        $intersect,
-//                        'together',
-//                    )
-//                );
-//            }
-//        }
-//    }
+    protected $typeDontTogethers = [
+        ['image', 'mimes'],
+        ['required', 'nullable'],
+        ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
+    ];
+
+
+    /**
+     * @dataProvider requestDataProvider
+     */
+    public function test_rules_dont_together(
+        \ReflectionClass $requestReflectionClass,
+                         $request,
+        Validator $validator
+    ) {
+        foreach ($validator->getRules() as $inputName => $inputRules) {
+            foreach ($this->typeDontTogethers as $typeDontTogether) {
+//                $x = array_filter($inputRules, fn($item) => is_string($item) == false);
+//                $x = array_values($x);
+//                if ($x) {
+//                    dd($x, ValidationRuleParser::parse($x[0]));
+//                }
+                $intersect = array_intersect(
+                    $typeDontTogether,
+                    array_values(array_filter($inputRules, fn($item) => is_string($item)))
+                );
+
+                $this->assertLessThanOrEqual(
+                    1,
+                    count($intersect),
+                    $this->error(
+                        $requestReflectionClass->getName(),
+                        $inputName,
+                        'dont put rules',
+                        $intersect,
+                        'together',
+                    )
+                );
+            }
+        }
+    }
 //
 //    /**
 //     * @dataProvider requestDataProvider

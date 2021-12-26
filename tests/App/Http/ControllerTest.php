@@ -6,8 +6,9 @@ use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class ControllerTest extends TestCase
 {
-//    public function test_view_path()
-//    {
+    public function test_view_path()
+    {
+        $this->assertTrue(true);
 ////        dd($this->getControllerReflectionClass()->map(function (\ReflectionClass $reflectionClass) {
 ////            return $reflectionClass->name;
 ////        })->toArray());
@@ -32,5 +33,5 @@ class ControllerTest extends TestCase
 //                );
 //            }
 //        });
-//    }
+    }
 }
