@@ -7,21 +7,16 @@ use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class RequestTest extends TestCase
 {
-//    /**
-//     * @dataProvider requestDataProvider
-//     */
-//    public function test_all_request(
-//        \ReflectionClass $requestReflectionClass,
-//        $request,
-//        Validator $validator
-//    ) {
-//        dd($requestReflectionClass->getName());
-//    }
-//    protected $typeDontTogethers = [
-//        ['image', 'mimes'],
-//        ['required', 'nullable'],
-//        ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
-//    ];
+    protected $typeDontTogethers = [
+        ['image', 'mimes'],
+        ['required', 'nullable'],
+        ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
+    ];
+
+    public function test_xxx()
+    {
+        $this->assertTrue(true);
+    }
 //
 //    /**
 //     * @dataProvider requestDataProvider

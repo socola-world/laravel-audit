@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
+use PHPUnit\Framework\Constraint\Constraint;
+use PHPUnit\Framework\ExpectationFailedException;
+use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use SocolaDaiCa\LaravelAudit\Helper;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -38,7 +41,7 @@ class TestCase extends \Tests\TestCase
 and run "composer dumpautoload" again'
             );
 
-            return Helper::getReflectionClass();
+            return Helper::getReflectionClasses();
         });
     }
 
@@ -51,6 +54,9 @@ and run "composer dumpautoload" again'
     {
         return once(function () use ($parentClass) {
             return $this->getReflectionClass()->filter(function (\ReflectionClass $item) use ($parentClass) {
+                if (in_array($item->getName(), config('socoladaica.audit.ignore.class'))) {
+                    return false;
+                }
                 return $item->isSubclassOf($parentClass);
             })->values();
         });
@@ -67,13 +73,9 @@ and run "composer dumpautoload" again'
                  */
                 $model = $modelReflectionClass->getName();
                 $model = new $model();
-                $columns = Schema::getConnection()->getDoctrineSchemaManager()->listTableColumns($model->getTable());
 
-                return [
-                    $modelReflectionClass,
-                    $model,
-                    $columns,
-                ];
+
+                return [AuditModel::make($modelReflectionClass)];
             })->toArray();
         });
     }
@@ -159,10 +161,7 @@ and run "composer dumpautoload" again'
         });
     }
 
-    /**
-     * @throws \JsonException
-     */
-    public function echo(...$args): string
+    public function echo(string $color, array $args)
     {
         $str = '';
         foreach ($args as $arg) {
@@ -177,10 +176,26 @@ and run "composer dumpautoload" again'
         }
 
         if ($str) {
-            $str = "\e[41;97m{$str}\e[0m";
+            $str = "{$color}{$str}\e[0m";
         }
 
         return $str;
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function error(...$args): string
+    {
+        return $this->echo("\e[41;97m", $args);
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function warning(...$args): string
+    {
+        return $this->echo("\e[0;33m", $args);
     }
 
     /* dataProvider */
@@ -222,7 +237,6 @@ and run "composer dumpautoload" again'
                     /*
                      * @type \Illuminate\Foundation\Http\FormRequest $request
                      */
-//                    $request = new $className();
                     try {
                         $request = app($className);
                         /**
@@ -230,7 +244,7 @@ and run "composer dumpautoload" again'
                          */
                         $validator = $request->getValidator();
                     } catch (\Exception $exception) {
-                        $this->echo('Cant Create Request instance', $requestReflectionClass->getName());
+                        $this->error('Cant Create Request instance', $requestReflectionClass->getName());
                         $request = null;
                         $validator = null;
                     }
@@ -248,10 +262,12 @@ and run "composer dumpautoload" again'
         });
     }
 
-    public static function getDatabaseTables()
+    public function shouldWarning($fn)
     {
-        return once(function () {
-            return DB::connection()->getDoctrineSchemaManager()->listTableNames();
-        });
+        try {
+            $fn();
+        } catch (ExpectationFailedException $exception) {
+            $this->addWarning($exception->getMessage());
+        }
     }
 }

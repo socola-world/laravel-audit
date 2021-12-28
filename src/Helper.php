@@ -6,15 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
+use SocolaDaiCa\LaravelAudit\Audit\Audit1;
 
 class Helper
 {
-    public static function getReflectionClass()
+    public static function getReflectionClasses()
     {
         return once(function () {
             $composer = json_decode(file_get_contents('composer.json'));
 
-            $loader = require 'vendor/autoload.php';
+//            $loader = require 'vendor/autoload.php';
+            $loader = Audit1::getLoader();
 
             $classes = $loader->getClassMap();
 
@@ -29,8 +31,16 @@ class Helper
                 })
                 ->map(function ($item) {
                     return new \ReflectionClass($item);
+                })
+                ->mapWithKeys(function (\ReflectionClass $item) {
+                    return [$item->name => $item];
                 });
         });
+    }
+
+    public static function getReflectionClass($className)
+    {
+        return static::getReflectionClasses()[$className];
     }
 
     /**
@@ -39,7 +49,7 @@ class Helper
     public static function getReflectionClassMethods()
     {
         return once(function () {
-            return static::getReflectionClass()
+            return static::getReflectionClasses()
                 ->map(function (\ReflectionClass $reflectionClass) {
                     return collect($reflectionClass->getMethods())
                         ->filter(function (\ReflectionMethod $reflectionMethod) use (&$reflectionClass) {
@@ -81,7 +91,7 @@ class Helper
     public function getRequests()
     {
         return once(function () {
-            return $this->getReflectionClass()
+            return $this->getReflectionClasses()
                 ->filter(function (\ReflectionClass $item) {
                     return $item->isSubclassOf(FormRequest::class);
                 })
