@@ -9,60 +9,6 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class ViewsTest extends TestCase
 {
-    /**
-     * @dataProvider data
-     */
-    public function testOne($x, $y) {
-        return $x + $y;
-    }
-
-    public function data() {
-        return array(
-            'foo' => array(1, 2),
-        );
-    }
-
-    /**
-     * @depends testOne-0
-     */
-    public function testTwo($z) {
-        dd($z);
-        self::assertEquals(3, $z);
-    }
-
-
-//    public function xProvider()
-//    {
-//        return [
-//            [ 'x_a_1', ],
-//            [ 'x_a_2', ],
-//            [ 'x_a_3', ],
-//            [ 'x_b_1', ],
-//            [ 'x_b_2', ],
-//            [ 'x_b_3', ],
-//        ];
-//    }
-//
-//    /**
-//     * @dataProvider xProvider
-//     */
-//    public function test_x($item)
-//    {
-//        $this->assertTrue(Str::startsWith($item, 'x_b_'), "ahihi {$item}");
-//
-//        return [ $item ];
-//    }
-//
-//    /**
-//     * @dataProvider xProvider
-//     * @depends test_x
-//     *
-//     */
-//    public function test_x_depends()
-//    {
-//        dd(func_get_args());
-//    }
-
     public function test_views()
     {
         $dir = resource_path('views');

@@ -155,51 +155,11 @@ class ModelTest extends TestCase
             )
         );
     }
-    /* Add Warnings */
-//    public function addWarning($msg, \Exception $previous = null)
-//    {
-//        $add_warning = $this->getTestResultObject();
-//        $msg = new Warning($msg, 0, $previous);
-//        $add_warning->addWarning($this, $msg, time());
-//        $this->setTestResultObject($add_warning);
-//    }
-
-//    /* Add errors */
-//    protected function addError($msg, \Exception $previous = null)
-//    {
-//        $add_error = $this->getTestResultObject();
-//        $msg = new AssertionFailedError($msg, 0, $previous);
-//        $add_error->addError($this, $msg, time());
-//        $this->setTestResultObject($add_error);
-//    }
-//
-//    /* Add failures */
-//    protected function addFailure($msg, \Exception $previous = null)
-//    {
-//        $add_failure = $this->getTestResultObject();
-//        $msg = new AssertionFailedError($msg, 0, $previous);
-//        $add_failure->addFailure($this, $msg, time());
-//        $this->setTestResultObject($add_failure);
-//    }
-//
-    public function test_messages()
-    {
-        $this->addWarning("Your warning message!");
-//        $this->addError("Your error message!");
-//        $this->addFailure("Your Failure message");
-    }
-//
-//    /* Or just mark test states! */
-//    public function test_testMarking()
-//    {
-//        $this->markTestIncomplete();
-//        $this->markTestSkipped();
-//    }
 
     public function followTestSoftDelete(AuditModel $auditModel)
     {
         $hasSoftDeletesTrail = in_array(
-            'Illuminate\Database\Eloquent\SoftDeletes',
+            SoftDeletes::class,
             class_uses_recursive($auditModel->reflectionClass->getName())
         );
 
@@ -239,10 +199,9 @@ class ModelTest extends TestCase
     ];
 
     public function followTestRelations(AuditModel $auditModel) {
-        $softDeleteReflectionClass = new \ReflectionClass(SoftDeletes::class);
-        $methodRelations = [];
+
         $relations = collect($auditModel->reflectionClass->getMethods())
-            ->map(function (\ReflectionMethod $method) use ($auditModel, $softDeleteReflectionClass) {
+            ->map(function (\ReflectionMethod $method) use ($auditModel) {
                 if ($method->getNumberOfParameters() > 0) {
                     return null;
                 }
@@ -274,10 +233,7 @@ class ModelTest extends TestCase
                     return null;
                 }
 
-                if (!is_object($response) || ($response instanceof Relation) == false) {
-//                    file_put_contents('abc.txt',
-//                        "{$auditModel->reflectionClass->name}::{$method->getName()} notRelation\n"
-//                        , FILE_APPEND);
+                if (!is_object($response) || ($response instanceof Relation) != true) {
                     return null;
                 }
 
@@ -306,7 +262,7 @@ class ModelTest extends TestCase
 //                        dd($relation['method'], $relation['name']);
 //                        $this->followRelationBelongsToMany($relation['relation'], $relation['method']);
                         break;
-//                    case 'Awobaz\Compoships\Database\Eloquent\Relations\HasMany':
+                    case 'Awobaz\Compoships\Database\Eloquent\Relations\HasMany':
 //                        dd($relation['method'], $relation['name']);
 //                        break;
                     case 'Illuminate\Database\Eloquent\Relations\HasOneThrough':
@@ -316,10 +272,10 @@ class ModelTest extends TestCase
                     case 'Awobaz\Compoships\Database\Eloquent\Relations\HasOne':
                         break;
                     default:
-                        $this->assertTrue(false, $this->error(
-                            'relation not handle',
-                            $relation['type']
-                        ));
+//                        $this->assertTrue(false, $this->error(
+//                            'relation not handle',
+//                            $relation['type']
+//                        ));
                         break;
                 }
             }
