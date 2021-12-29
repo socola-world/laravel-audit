@@ -12,10 +12,12 @@ class ViewsTest extends TestCase
     public function test_views()
     {
         $dir = resource_path('views');
+
         if (File::ensureDirectoryExists($dir) === false) {
             $this->assertTrue(true);
             return;
         }
+
         /**
          * @var SplFileInfo[] $files
          */

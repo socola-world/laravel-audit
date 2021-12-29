@@ -14,7 +14,6 @@ class RequestTest extends TestCase
         ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
     ];
 
-
     /**
      * @dataProvider requestDataProvider
      */
