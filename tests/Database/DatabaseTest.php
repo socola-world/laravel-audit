@@ -8,6 +8,10 @@ use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class DatabaseTest extends TestCase
 {
+    public function testX()
+    {
+        static::assertTrue(true);
+    }
 //    public function test_database_missing_table()
 //    {
 //        $x = require(__DIR__.'/../../config/socoladaica/audit.php');

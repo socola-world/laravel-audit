@@ -47,4 +47,11 @@ class Audit1
     {
         return self::getFileMap()[realpath($path)] ?: null;
     }
+
+    public static function isClassExist($class): bool
+    {
+        return class_exists($class)
+            || interface_exists($class)
+            || array_key_exists($class, self::getClassMap());
+    }
 }

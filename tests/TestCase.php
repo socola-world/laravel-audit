@@ -6,19 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
-use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\ExpectationFailedException;
-use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use SocolaDaiCa\LaravelAudit\Helper;
 use Symfony\Component\Finder\SplFileInfo;
 
 class TestCase extends \Tests\TestCase
 {
+    use DataProvider;
+
+    public function createApplication()
+    {
+        $app = parent::createApplication();
+
+        Auth::shouldReceive('check')->andReturn(true);
+        Auth::shouldReceive('guard')->andReturnSelf();
+        Auth::shouldReceive('id')->andReturn(1);
+        Auth::shouldReceive('user')->andReturn(optional());
+
+        return $app;
+    }
+
     /**
      * @return Collection|\ReflectionClass[]
      */
@@ -57,26 +68,9 @@ and run "composer dumpautoload" again'
                 if (in_array($item->getName(), config('socoladaica.audit.ignore.class'))) {
                     return false;
                 }
+
                 return $item->isSubclassOf($parentClass);
             })->values();
-        });
-    }
-
-    public function modelDataProvider()
-    {
-        return once(function () {
-            $this->refreshApplication();
-
-            return $this->getModelReflectionClass()->map(function (\ReflectionClass $modelReflectionClass) {
-                /**
-                 * @var Model $model
-                 */
-                $model = $modelReflectionClass->getName();
-                $model = new $model();
-
-
-                return [AuditModel::make($modelReflectionClass)];
-            })->toArray();
         });
     }
 
@@ -137,20 +131,6 @@ and run "composer dumpautoload" again'
     {
         return once(function () {
             return collect(File::allFiles('resources'));
-        });
-    }
-
-    /**
-     * @return Collection|SplFileInfo[]
-     */
-    public function resourcesStyleDataProvider()
-    {
-        return once(function () {
-            return $this->getResources()->filter(function (SplFileInfo $splFileInfo) {
-                return $splFileInfo->getExtension() === 'scss';
-            })->map(function (SplFileInfo $splFileInfo) {
-                return [$splFileInfo, $splFileInfo->getContents()];
-            })->toArray();
         });
     }
 
@@ -231,7 +211,15 @@ and run "composer dumpautoload" again'
                          */
                         $validator = $request->getValidator();
                     } catch (\Exception $exception) {
-                        $this->error('Cant Create Request instance', $requestReflectionClass->getName());
+                        dd($exception);
+//                        $this->assertTrue(
+//                            false,
+//                            $this->error(
+//                                'Cant Create Request instance',
+//                                $requestReflectionClass->getName(),
+//                                $exception
+//                            )
+//                        );
                         $request = null;
                         $validator = null;
                     }

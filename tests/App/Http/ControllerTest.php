@@ -6,10 +6,10 @@ use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class ControllerTest extends TestCase
 {
-    public function test_view_path()
+    public function testViewPath()
     {
-        $this->assertTrue(true);
-////        dd($this->getControllerReflectionClass()->map(function (\ReflectionClass $reflectionClass) {
+        static::assertTrue(true);
+        ////        dd($this->getControllerReflectionClass()->map(function (\ReflectionClass $reflectionClass) {
 ////            return $reflectionClass->name;
 ////        })->toArray());
 //        $this->getControllerReflectionClass()->each(function (\ReflectionClass $controllerReflectionClass) {

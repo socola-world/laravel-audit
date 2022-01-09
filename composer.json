@@ -29,5 +29,8 @@
         "doctrine/common": "^3.1",
         "laravel/framework": "^v6|^v7|^v8",
         "friendsofphp/php-cs-fixer": "^3.4"
+    },
+    "require-dev": {
+        "beyondcode/laravel-query-detector": "^1.5"
     }
 }

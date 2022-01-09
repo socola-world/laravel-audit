@@ -2,7 +2,6 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
 
-use Illuminate\Validation\ValidationRuleParser;
 use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
@@ -16,25 +15,22 @@ class RequestTest extends TestCase
 
     /**
      * @dataProvider requestDataProvider
+     *
+     * @param mixed $request
      */
-    public function test_rules_dont_together(
+    public function testRulesDontTogether(
         \ReflectionClass $requestReflectionClass,
-                         $request,
+        $request,
         Validator $validator
     ) {
         foreach ($validator->getRules() as $inputName => $inputRules) {
             foreach ($this->typeDontTogethers as $typeDontTogether) {
-//                $x = array_filter($inputRules, fn($item) => is_string($item) == false);
-//                $x = array_values($x);
-//                if ($x) {
-//                    dd($x, ValidationRuleParser::parse($x[0]));
-//                }
                 $intersect = array_intersect(
                     $typeDontTogether,
-                    array_values(array_filter($inputRules, fn($item) => is_string($item)))
+                    array_values(array_filter($inputRules, fn ($item) => is_string($item)))
                 );
 
-                $this->assertLessThanOrEqual(
+                static::assertLessThanOrEqual(
                     1,
                     count($intersect),
                     $this->error(
@@ -48,25 +44,35 @@ class RequestTest extends TestCase
             }
         }
     }
-//
+
+    /**
+     * @dataProvider requestDataProvider
+     *
+     * @param mixed $request
+     */
+    public function testMisingAttributes(\ReflectionClass $requestReflectionClass, $request): void
+    {
+        $rules = $request->rules();
+        $attributes = $request->attributes();
+        $missingAttributes = array_diff(
+            array_keys($rules),
+            array_keys($attributes)
+        );
+        $missingAttributes = array_values($missingAttributes);
+
+        static::assertCount(
+            0,
+            $missingAttributes,
+            $this->error($requestReflectionClass->getName(), 'missing attributes', $missingAttributes)
+        );
+    }
+
 //    /**
 //     * @dataProvider requestDataProvider
 //     */
-//    public function test_mising_attributes(\ReflectionClass $requestReflectionClass, $request): void
+//    public function test_custom_values(\ReflectionClass $requestReflectionClass, $request): void
 //    {
-//        $rules = $request->rules();
-//        $attributes = $request->attributes();
-//        $missingAttributes = array_diff(
-//            array_keys($rules),
-//            array_keys($attributes)
-//        );
-//        $missingAttributes = array_values($missingAttributes);
 //
-//        $this->assertCount(
-//            0,
-//            $missingAttributes,
-//            $this->echo($requestReflectionClass->getName(), "missing attributes", $missingAttributes)
-//        );
 //    }
 
 //    protected $ruleCompares = [
@@ -88,9 +94,9 @@ class RequestTest extends TestCase
 //        'numeric',
 //    ];
 
-    /*
-     * @dataProvider requestDataProvider
-     */
+//    /*
+//     * @dataProvider requestDataProvider
+//     */
 //    public function test_rule_compare_missing_type(
 //        \ReflectionClass $requestReflectionClass,
 //        $request,

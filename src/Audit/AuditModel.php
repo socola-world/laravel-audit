@@ -10,21 +10,23 @@ use Illuminate\Support\Str;
 class AuditModel extends AuditClass
 {
     /**
-     * @var Model $model
+     * @var Model
      */
     public $model;
+
     /**
-     * @var array $columns
+     * @var array
      */
     public $columns;
+
     /**
-     * @var array $relations
+     * @var array
      */
     public $relations;
 
     /**
-     * @throws \ReflectionException
      * @throws \Doctrine\DBAL\Exception
+     * @throws \ReflectionException
      */
     public function __construct(\ReflectionClass $reflectionClass)
     {
@@ -44,6 +46,8 @@ class AuditModel extends AuditClass
     }
 
     /**
+     * @param mixed $relation
+     *
      * @throws \ReflectionException
      */
     public function isRelation($relation)
@@ -96,5 +100,51 @@ class AuditModel extends AuditClass
         $getArrayableAppends->setAccessible(true);
 
         return $getArrayableAppends->invokeArgs($this->model, []);
+    }
+
+    protected $columnsShouldNotNull = [
+        'fee',
+        'quantity',
+        'amount',
+        'amounts',
+    ];
+
+    public function isColumnShouldNotNull(string $column): bool
+    {
+        foreach ($this->columnsShouldNotNull as $columnShouldNotNull) {
+            if (
+                $this->columns[$column]->getName() == $columnShouldNotNull
+                || Str::startsWith($this->columns[$column]->getName(), "{$columnShouldNotNull}_")
+                || Str::endsWith($this->columns[$column]->getName(), "_{$columnShouldNotNull}")
+                || Str::contains($this->columns[$column]->getName(), "{$columnShouldNotNull}")
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected $columnsShouldUnsined = [
+        'fee',
+        'quantity',
+        'amount',
+        'amounts',
+    ];
+
+    public function isColumnShouldUnsigned(string $column): bool
+    {
+        foreach ($this->columnsShouldUnsined as $columnsShouldUnsined) {
+            if (
+                $this->columns[$column]->getName() == $columnsShouldUnsined
+                || Str::startsWith($this->columns[$column]->getName(), "{$columnsShouldUnsined}_")
+                || Str::endsWith($this->columns[$column]->getName(), "_{$columnsShouldUnsined}")
+                || Str::contains($this->columns[$column]->getName(), "{$columnsShouldUnsined}")
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

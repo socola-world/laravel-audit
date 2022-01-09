@@ -6,7 +6,7 @@ use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class Psr1Test extends TestCase
 {
-    public function test_constants_upper_snake_case()
+    public function testConstantsUpperSnakeCase()
     {
         $invalidConstants = $this->getReflectionConstants()
             ->filter(function (\ReflectionClassConstant $constant) {
@@ -15,8 +15,7 @@ class Psr1Test extends TestCase
             ->map(function (\ReflectionClassConstant $constant) {
                 return "{$constant->getDeclaringClass()->getName()}::{$constant->getName()}";
             })
-            ->toArray()
-        ;
+            ->toArray();
 
         static::assertEmpty(
             $invalidConstants,

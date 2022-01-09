@@ -61,10 +61,15 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
 
 ## TestCase
 
+Make sure you run `composer dumpautoload before run any testcase`
+
 ```shell
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Http\\RequestTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Common\\ClassTest"
 
- vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\RequestTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\RequestTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\ModelTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Routes\\RouteTest"
 
 ```
 
@@ -98,3 +103,19 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Http\\Request
 vendor\bin\php-cs-fixer.bat --config=.php_cs.php fix
 vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.php fix
 ```
+
+## Comming Soon
+
+- test model
+  - using pivot insted table string
+- test Cast
+- test request
+  - mising custom attribute
+- test routes
+  - duplicate middleware
+- test resources
+  - test lang
+- test database
+  - column should not null
+  - column sould min zero
+  - column should not negative

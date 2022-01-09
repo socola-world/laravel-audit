@@ -7,6 +7,10 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class SCSSTest extends TestCase
 {
+    public function testX()
+    {
+        static::assertTrue(true);
+    }
 //    public function test_shorthand_properties()
 //    {
 //        $shorthanProperties = [

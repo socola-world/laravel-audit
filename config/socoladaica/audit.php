@@ -12,7 +12,6 @@ return [
             'App\Models\TimerComponent',
         ],
         'model' => [
-
         ],
-    ]
+    ],
 ];
