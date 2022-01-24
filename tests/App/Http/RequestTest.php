@@ -54,6 +54,9 @@ class RequestTest extends TestCase
     {
         $rules = $request->rules();
         $attributes = $request->attributes();
+        $attributes = array_filter($attributes, function ($item) {
+            return is_string($item) && !empty($item);
+        });
         $missingAttributes = array_diff(
             array_keys($rules),
             array_keys($attributes)

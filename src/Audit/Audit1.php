@@ -3,6 +3,8 @@
 namespace SocolaDaiCa\LaravelAudit\Audit;
 
 use Composer\Autoload\ClassLoader;
+use Composer\Autoload\ClassMapGenerator;
+use Composer\Composer;
 
 class Audit1
 {
@@ -21,11 +23,22 @@ class Audit1
 
     public static function getClassMap(): array
     {
-        if (empty(self::$classMap)) {
-            self::$classMap = static::getLoader()->getClassMap();
+        if (!empty(self::$classMap)) {
+            return self::$classMap;
         }
 
-        return self::$classMap;
+        $composerJson = json_decode(file_get_contents(base_path('composer.json')));
+
+        $paths = array_merge(
+            (array) data_get($composerJson, 'autoload.psr-4', []),
+            (array) data_get($composerJson, 'autoload-dev.psr-4', []),
+        );
+
+        foreach ($paths as $path) {
+            static::getLoader()->addClassMap((array) ClassMapGenerator::createMap($path));
+        }
+
+        return self::$classMap = static::getLoader()->getClassMap();
     }
 
     private static $fileMap;

@@ -2,7 +2,7 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests\Database;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Builder;
 use Illuminate\Support\Facades\Schema;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
@@ -54,5 +54,22 @@ class DatabaseTest extends TestCase
 //                $this->echo("\$databaseMissingColumns[{$table}]", $databaseMissingColumns)
 //            );
 //        }
+//    }
+
+//    public function testCanRollBack()
+//    {
+//        $this->assertTrue(true);
+//    }
+//
+//    public function testDatabaseDesign()
+//    {
+//        Schema::shouldReceive('create')->andReturn(null);
+////        \Schema::shouldReceive('create')->andReturn('sss');
+////        $y = $this->createMock(Builder::class)->getMock();
+////        $y->method('create')->willReturn(function ($table, Closure $callback) {
+////            dd('xxx');
+////        });
+////
+////        Artisan::call('migrate');
 //    }
 }

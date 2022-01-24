@@ -18,7 +18,8 @@ class Helper
 //            $loader = require 'vendor/autoload.php';
             $loader = Audit1::getLoader();
 
-            $classes = $loader->getClassMap();
+//            $classes = $loader->getClassMap();
+            $classes = Audit1::getClassMap();
 
             $autoloadPsr4 = array_keys(
                 (array) data_get($composer, 'autoload.psr-4', [])

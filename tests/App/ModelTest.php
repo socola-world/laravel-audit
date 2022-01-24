@@ -395,53 +395,53 @@ class ModelTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider modelDataProvider
-     *
-     * @param AuditModel $auditModel
-     *
-     * @throws \JsonException
-     */
-    public function testColumnShouldNotNull(AuditModel $auditModel)
-    {
-        $columnsShouldNotNull = array_filter($auditModel->columns, function (Column $column) use ($auditModel) {
-            return $auditModel->isColumnShouldNotNull($column->getName()) && $column->getNotnull() === false;
-        });
-
-        $columnsShouldNotNull = array_keys($columnsShouldNotNull);
-
-        static::assertEmpty(
-            $columnsShouldNotNull,
-            $this->error(
-                $auditModel->reflectionClass->getName(),
-                '$columnsShouldNotNull = ',
-                $columnsShouldNotNull
-            )
-        );
-    }
-
-    /**
-     * @dataProvider modelDataProvider
-     *
-     * @param AuditModel $auditModel
-     *
-     * @throws \JsonException
-     */
-    public function testColumnShouldUnsigned(AuditModel $auditModel)
-    {
-        $columnsShouldUnsigned = array_filter($auditModel->columns, function (Column $column) use ($auditModel) {
-            return $auditModel->isColumnShouldUnsigned($column->getName()) && $column->getNotnull() == false;
-        });
-
-        $columnsShouldUnsigned = array_keys($columnsShouldUnsigned);
-
-        static::assertEmpty(
-            $columnsShouldUnsigned,
-            $this->error(
-                $auditModel->reflectionClass->getName(),
-                '$columnsShouldUnsined = ',
-                $columnsShouldUnsigned
-            )
-        );
-    }
+//    /**
+//     * @dataProvider modelDataProvider
+//     *
+//     * @param AuditModel $auditModel
+//     *
+//     * @throws \JsonException
+//     */
+//    public function testColumnShouldNotNull(AuditModel $auditModel)
+//    {
+//        $columnsShouldNotNull = array_filter($auditModel->columns, function (Column $column) use ($auditModel) {
+//            return $auditModel->isColumnShouldNotNull($column->getName()) && $column->getNotnull() === false;
+//        });
+//
+//        $columnsShouldNotNull = array_keys($columnsShouldNotNull);
+//
+//        static::assertEmpty(
+//            $columnsShouldNotNull,
+//            $this->error(
+//                $auditModel->reflectionClass->getName(),
+//                '$columnsShouldNotNull = ',
+//                $columnsShouldNotNull
+//            )
+//        );
+//    }
+//
+//    /**
+//     * @dataProvider modelDataProvider
+//     *
+//     * @param AuditModel $auditModel
+//     *
+//     * @throws \JsonException
+//     */
+//    public function testColumnShouldUnsigned(AuditModel $auditModel)
+//    {
+//        $columnsShouldUnsigned = array_filter($auditModel->columns, function (Column $column) use ($auditModel) {
+//            return $auditModel->isColumnShouldUnsigned($column->getName()) && $column->getNotnull() == false;
+//        });
+//
+//        $columnsShouldUnsigned = array_keys($columnsShouldUnsigned);
+//
+//        static::assertEmpty(
+//            $columnsShouldUnsigned,
+//            $this->error(
+//                $auditModel->reflectionClass->getName(),
+//                '$columnsShouldUnsined = ',
+//                $columnsShouldUnsigned
+//            )
+//        );
+//    }
 }

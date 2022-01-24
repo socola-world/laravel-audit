@@ -106,13 +106,18 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
 
 ## Comming Soon
 
-- test model
-  - using pivot insted table string
+- **Request**
+  - test missing addCustomValues
+  - rule missing type
+- **Ccntroller**
+  - use FormRequest instead Request
+- **Model**
+  - using pivot instead table string
+- **Migrattion**
+  - test can rollback
+  - test migrate match db design
 - test Cast
-- test request
-  - mising custom attribute
 - test routes
-  - duplicate middleware
 - test resources
   - test lang
 - test database
