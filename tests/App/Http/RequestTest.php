@@ -2,14 +2,17 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
 
+use Exception;
 use Illuminate\Validation\Validator;
+use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class RequestTest extends TestCase
 {
-    protected $typeDontTogethers = [
+    protected array $typeDontTogethers = [
         ['image', 'mimes'],
         ['required', 'nullable'],
+        ['required', 'sometimes'],
         ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
     ];
 
@@ -18,12 +21,8 @@ class RequestTest extends TestCase
      *
      * @param mixed $request
      */
-    public function testRulesDontTogether(
-        \ReflectionClass $requestReflectionClass,
-        $request,
-        Validator $validator
-    ) {
-        foreach ($validator->getRules() as $inputName => $inputRules) {
+    public function testRulesDontTogether(AuditRequest $auditRequest) {
+        foreach ($auditRequest->getRules() as $inputName => $inputRules) {
             foreach ($this->typeDontTogethers as $typeDontTogether) {
                 $intersect = array_intersect(
                     $typeDontTogether,
@@ -34,7 +33,7 @@ class RequestTest extends TestCase
                     1,
                     count($intersect),
                     $this->error(
-                        $requestReflectionClass->getName(),
+                        $auditRequest->reflectionClass->getName(),
                         $inputName,
                         'dont put rules',
                         $intersect,
@@ -47,13 +46,11 @@ class RequestTest extends TestCase
 
     /**
      * @dataProvider requestDataProvider
-     *
-     * @param mixed $request
      */
-    public function testMisingAttributes(\ReflectionClass $requestReflectionClass, $request): void
+    public function testMissingAttributes(AuditRequest $auditRequest): void
     {
-        $rules = $request->rules();
-        $attributes = $request->attributes();
+        $rules = $auditRequest->getRules();
+        $attributes = $auditRequest->attributes();
         $attributes = array_filter($attributes, function ($item) {
             return is_string($item) && !empty($item);
         });
@@ -66,7 +63,32 @@ class RequestTest extends TestCase
         static::assertCount(
             0,
             $missingAttributes,
-            $this->error($requestReflectionClass->getName(), 'missing attributes', $missingAttributes)
+            $this->error($auditRequest->reflectionClass->getName(), 'missing attributes', $missingAttributes)
+        );
+    }
+
+    protected $ruleKeysShouldNotExists = [
+        'id', // đang suy nghĩ
+        'updated_at',
+        'created_at',
+    ];
+    /**
+     * @dataProvider requestDataProvider
+     */
+    public function testRulesKeyShouldNotExists(AuditRequest $auditRequest)
+    {
+        $ruleKeysShouldNotExists = array_intersect(
+            $this->ruleKeysShouldNotExists,
+            array_keys($auditRequest->getRules())
+        );
+
+        $this->assertEmpty(
+            $ruleKeysShouldNotExists,
+            $this->error(
+                $auditRequest->reflectionClass->getName().'::rules()',
+                'remove key',
+                $ruleKeysShouldNotExists
+            )
         );
     }
 
@@ -124,4 +146,45 @@ class RequestTest extends TestCase
 //            $this->echo($requestReflectionClass->getName(), "input missing type", $inputsMissingType)
 //        );
 //    }
+
+//'String', 'Boolean', 'Date'
+    protected $ruleTypes = [
+        'Array',
+        'Date',
+        'Email',
+        'Integer',
+        'Numeric',
+        'String',
+    ];
+    /**
+     * @dataProvider requestDataProvider
+     */
+    public function testRuleMissingType(AuditRequest $auditRequest)
+    {
+        $rulesMissingType = [];
+        foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
+            $isMissing = true;
+            foreach ($ruleParses as $ruleParse) {
+                [$ruleName, $parameters] = $ruleParse;
+
+                if (in_array($ruleName, $this->ruleTypes)) {
+                    $isMissing = false;
+                    break;
+                }
+            }
+
+            if ($isMissing) {
+                $rulesMissingType[] = $attribute;
+            }
+        }
+
+        $this->assertEmpty(
+            $rulesMissingType,
+            $this->error(
+                $auditRequest->reflectionClass->getName().'::rules()',
+                'key missing type',
+                $rulesMissingType,
+            )
+        );
+    }
 }

@@ -109,6 +109,12 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
 - **Request**
   - test missing addCustomValues
   - rule missing type
+  - attributeShoundNotExists
+  - instead rule (bettwen instead min max)
+  - follow tyle digits_between
+  - exists 
+    - missing soft delete
+    - model not Exists
 - **Ccntroller**
   - use FormRequest instead Request
 - **Model**

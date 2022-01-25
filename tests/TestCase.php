@@ -178,65 +178,6 @@ and run "composer dumpautoload" again'
         return $this->echo("\e[0;33m", $args);
     }
 
-    /* dataProvider */
-
-    public function requestDataProvider()
-    {
-        return once(function () {
-            $this->refreshApplication();
-
-            return $this->getReflectionClass()
-                ->filter(function (\ReflectionClass $item) {
-                    return $item->isSubclassOf(FormRequest::class);
-                })
-                ->map(function (\ReflectionClass $requestReflectionClass) {
-                    $requestClassName = trim($requestReflectionClass->getName(), '\\');
-                    $className = str_replace('\\', '__', $requestClassName);
-
-                    $class = sprintf('class %s extends %s {
-                        use SocolaDaiCa\LaravelAudit\FormRequestTrait;
-                    }', $className, $requestClassName);
-
-                    if (class_exists($className) === false) {
-                        eval($class);
-                    }
-
-                    /*
-                     * @type \Illuminate\Foundation\Http\FormRequest $request
-                     */
-                    try {
-                        $request = app($className);
-                        /**
-                         * @var Validator $validator
-                         */
-                        $validator = $request->getValidator();
-                    } catch (\Exception $exception) {
-                        dd($exception);
-//                        $this->assertTrue(
-//                            false,
-//                            $this->error(
-//                                'Cant Create Request instance',
-//                                $requestReflectionClass->getName(),
-//                                $exception
-//                            )
-//                        );
-                        $request = null;
-                        $validator = null;
-                    }
-
-                    return [
-                        $requestReflectionClass,
-                        $request,
-                        $validator,
-                    ];
-                })
-                ->filter(function ($item) {
-                    return $item[1] !== null;
-                })
-                ->toArray();
-        });
-    }
-
     public function shouldWarning($fn)
     {
         try {
