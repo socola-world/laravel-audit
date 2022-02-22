@@ -70,6 +70,7 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Common\\Class
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\RequestTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\ModelTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Routes\\RouteTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Database\\MigrationsTest"
 
 ```
 
@@ -119,14 +120,27 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
   - use FormRequest instead Request
 - **Model**
   - using pivot instead table string
+  - split big model
 - **Migrattion**
   - test can rollback
   - test migrate match db design
 - test Cast
-- test routes
-- test resources
+- **Routes**
+- **Resources**
   - test lang
+- **Resources/assets**
+  - dùng `mix.scripts` thay cho `mix.copy`
 - test database
   - column should not null
   - column sould min zero
   - column should not negative
+- **Other**
+  - remove all todo
+  - thêm log xóa transaction
+  - document.on insteam element.{event}
+  - custom 404
+    - https://codepen.io/knolcoder/pen/ZEewZaY
+    - https://stackoverflow.com/questions/35774500/how-to-remove-focus-from-a-button-after-botstrap-modal-closed
+    - https://stackoverflow.com/questions/30322918/bootstrap-modal-restores-button-focus-on-close
+    - check css support
+    - tìm hiểu về zerowith character

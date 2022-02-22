@@ -7,7 +7,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -20,12 +22,41 @@ class TestCase extends \Tests\TestCase
 
     public function createApplication()
     {
+        /**
+         * @var \Illuminate\Foundation\Application $app
+         */
         $app = parent::createApplication();
 
         Auth::shouldReceive('check')->andReturn(true);
         Auth::shouldReceive('guard')->andReturnSelf();
         Auth::shouldReceive('id')->andReturn(1);
         Auth::shouldReceive('user')->andReturn(optional());
+
+//        $app['config']->set('database.connections.laravel_audit_sqlite', [
+//            'driver' => 'sqlite',
+//            'url' => null,
+//            'database' => Storage::drive('local')->path('laravel-audit-database.sqlite'),
+//            'prefix' => '',
+//            'foreign_key_constraints' => true,
+//        ]);
+
+        $app['config']->set('database.connections.laravel_audit_sqlite', [
+            'driver' => 'mysql',
+            'url' => null,
+            'host' => '127.0.0.1',
+            'port' => '3306',
+            'database' => 'pokerclub_test_audit',
+            'username' => 'root',
+            'password' => '',
+            'unix_socket' => '',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => [],
+        ]);
 
         return $app;
     }
@@ -65,7 +96,7 @@ and run "composer dumpautoload" again'
     {
         return once(function () use ($parentClass) {
             return $this->getReflectionClass()->filter(function (\ReflectionClass $item) use ($parentClass) {
-                if (in_array($item->getName(), config('socoladaica.audit.ignore.class'))) {
+                if (in_array($item->getName(), config('socoladaica__laravel_audit.ignore.class'))) {
                     return false;
                 }
 

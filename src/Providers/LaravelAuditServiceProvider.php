@@ -22,9 +22,9 @@ class LaravelAuditServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../../config/socoladaica/audit.php' => config_path('socoladaica/audit.php'),
+            __DIR__.'/../../config/socoladaica__laravel_audit.php' => config_path('socoladaica__laravel_audit.php'),
         ], 'config');
-        $this->mergeConfigFrom(__DIR__.'/'.'../../config/socoladaica/audit.php', 'socoladaica.audit');
+        $this->mergeConfigFrom(__DIR__.'/'.'../../config/socoladaica__laravel_audit.php', 'socoladaica__laravel_audit');
 
 //        $this->publishes([
 //            module_path($this->moduleName, 'config/config.php') => config_path($this->moduleNameLower . '.php'),

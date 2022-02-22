@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\Builder;
+
 return [
     'database' => [
         'tables' => [
@@ -7,11 +10,10 @@ return [
     ],
     'ignore' => [
         'class' => [
-            'App\Models\BaseModel',
-            'App\Models\Role',
-            'App\Models\TimerComponent',
         ],
         'model' => [
         ],
     ],
+    'database_design' => function() {
+    }
 ];

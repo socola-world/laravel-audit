@@ -63,12 +63,15 @@ class RequestTest extends TestCase
         static::assertCount(
             0,
             $missingAttributes,
-            $this->error($auditRequest->reflectionClass->getName(), 'missing attributes', $missingAttributes)
+            $this->error(
+                $auditRequest->reflectionClass->getName().'::attributes() missing',
+                $missingAttributes
+            )
         );
     }
 
     protected $ruleKeysShouldNotExists = [
-        'id', // đang suy nghĩ
+//        'id', // đang suy nghĩ
         'updated_at',
         'created_at',
     ];
@@ -159,32 +162,32 @@ class RequestTest extends TestCase
     /**
      * @dataProvider requestDataProvider
      */
-    public function testRuleMissingType(AuditRequest $auditRequest)
-    {
-        $rulesMissingType = [];
-        foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
-            $isMissing = true;
-            foreach ($ruleParses as $ruleParse) {
-                [$ruleName, $parameters] = $ruleParse;
-
-                if (in_array($ruleName, $this->ruleTypes)) {
-                    $isMissing = false;
-                    break;
-                }
-            }
-
-            if ($isMissing) {
-                $rulesMissingType[] = $attribute;
-            }
-        }
-
-        $this->assertEmpty(
-            $rulesMissingType,
-            $this->error(
-                $auditRequest->reflectionClass->getName().'::rules()',
-                'key missing type',
-                $rulesMissingType,
-            )
-        );
-    }
+//    public function testRuleMissingType(AuditRequest $auditRequest)
+//    {
+//        $rulesMissingType = [];
+//        foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
+//            $isMissing = true;
+//            foreach ($ruleParses as $ruleParse) {
+//                [$ruleName, $parameters] = $ruleParse;
+//
+//                if (in_array($ruleName, $this->ruleTypes)) {
+//                    $isMissing = false;
+//                    break;
+//                }
+//            }
+//
+//            if ($isMissing) {
+//                $rulesMissingType[] = $attribute;
+//            }
+//        }
+//
+//        $this->assertEmpty(
+//            $rulesMissingType,
+//            $this->error(
+//                $auditRequest->reflectionClass->getName().'::rules()',
+//                'key missing type',
+//                $rulesMissingType,
+//            )
+//        );
+//    }
 }
