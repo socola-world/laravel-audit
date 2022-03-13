@@ -93,6 +93,42 @@ class RequestTest extends TestCase
             )
         );
     }
+    /**
+     * @dataProvider requestDataProvider
+     */
+    public function testDuplicateRule(AuditRequest $auditRequest)
+    {
+        $duplicateRuleNamesByAttribute = [];
+        foreach ($auditRequest->getRulesParse() as $attribute => $rulesParse) {
+            $rulenames = $rulesParse;
+            $rulenames = array_map(fn(array $item) => $item[0], $rulenames);
+            $rulenames = array_map(fn($item) => is_object($item) ? get_class($item) : $item, $rulenames);
+            $rulenames = array_values($rulenames);
+            $duplicateRuleNames = array_unique(
+                array_diff_assoc(
+                    $rulenames,
+                    array_unique($rulenames)
+                )
+            );
+            $duplicateRuleNames = array_values($duplicateRuleNames);
+            $duplicateRuleNames = array_diff($duplicateRuleNames, ['Exists']);
+
+            if (!$duplicateRuleNames) {
+                continue;
+            }
+
+            $duplicateRuleNamesByAttribute[$attribute] = $duplicateRuleNames;
+        }
+
+        $this->assertEmpty(
+            $duplicateRuleNamesByAttribute,
+            $this->error(
+                $auditRequest->reflectionClass->getName().'::rules()',
+                'duplicate rule',
+                $duplicateRuleNamesByAttribute
+            )
+        );
+    }
 
     protected $ruleKeysNeedCustomValue = [
         'ProhibitedIf',

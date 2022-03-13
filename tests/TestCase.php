@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\ExpectationFailedException;
 use SocolaDaiCa\LaravelAudit\Helper;
+use SocolaDaiCa\LaravelAudit\Migrator;
 use Symfony\Component\Finder\SplFileInfo;
 
 class TestCase extends \Tests\TestCase
@@ -49,6 +50,12 @@ class TestCase extends \Tests\TestCase
 //            'prefix' => '',
 //            'foreign_key_constraints' => true,
 //        ]);
+
+        $app->singleton('migrator', function ($app) {
+            $repository = $app['migration.repository'];
+
+            return new Migrator($repository, $app['db'], $app['files'], $app['events']);
+        });
 
         $app['config']->set('database.connections.laravel_audit_sqlite', [
             'driver' => 'mysql',

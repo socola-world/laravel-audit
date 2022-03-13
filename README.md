@@ -71,7 +71,7 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\Re
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\ModelTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Routes\\RouteTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Database\\MigrationsTest"
-
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\EnvTest"
 ```
 
 ```php
@@ -109,6 +109,7 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
 
 - **Request**
   - test missing addCustomValues -> **done**
+    - date_from addCustomValues today, yesterday
   - rule missing type -> **done**
   - attributeShouldNotExists
   - instead, rule (between instead min max)
@@ -116,15 +117,22 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
   - exists 
     - missing soft delete
     - model not Exists
+  - duplicate rule
 - **Ccntroller**
   - use FormRequest instead Request
 - **Model**
   - relation using pivot class instead table string -> **done**
   - column name snake_case -> **done**
   - split big model
+  - pivot name
+  - test relation foregin key
+  - relation should be index
+  - using pivot instead table string
+  - mising cast
 - **Migrattion**
   - test can roll back -> **done**
   - test migrate match db design -> **done**
+  - test foregin key
 - **Cast**
 - **Routes**
   - route kebab-case -> **done**
@@ -133,13 +141,15 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
   - **lang**
 - **resources/assets**
   - dùng `mix.scripts` thay cho `mix.copy`
+- **resources/views**
+  - use `{{ URL::asset() }}` instead `{!! URL::asset() !!}`
 - **database**
   - column should not null -> **done**
   - column should be unsigned -> **done**
   - column should not negative
 - **Other**
   - remove all todo
-  - thêm log xóa transaction
+  - add log delete transaction
   - document.on insteam element.{event}
   - custom 404
     - https://codepen.io/knolcoder/pen/ZEewZaY

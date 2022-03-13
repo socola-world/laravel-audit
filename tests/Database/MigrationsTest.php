@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use SocolaDaiCa\LaravelAudit\Migrator;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class MigrationsTest extends TestCase
@@ -143,6 +144,7 @@ class MigrationsTest extends TestCase
     public function testRollback()
     {
         $migrator = app('migrator');
+//        $migrator = app(Migrator::class);
 
         $migrationPaths = array_merge(
             $migrator->paths(),
@@ -167,79 +169,74 @@ class MigrationsTest extends TestCase
         }
         \DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
 
-        Artisan::call('migrate');
+//        Artisan::call('migrate');
 
-        $migrationPaths = DB::table('migrations')->get()->pluck('migration');
+//        $migrationPaths = DB::table('migrations')->get()->pluck('migration');
+//
+//        \DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
+//        $tables = \DB::select('SHOW TABLES');
+//
+//        foreach ($tables as $table) {
+//            $table = implode(json_decode(json_encode($table), true));
+//            \Schema::drop($table);
+//        }
+//        \DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+//
+//        $databaseDescribes = [];
+//
+//        if (!empty($this->getDatabaseDescribes())) {
+//            dd('loi roi');
+//        }
 
-        \DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
-        $tables = \DB::select('SHOW TABLES');
-
-        foreach ($tables as $table) {
-            $table = implode(json_decode(json_encode($table), true));
-            \Schema::drop($table);
-        }
-        \DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
-
-        $databaseDescribes = [];
-
-        if (!empty($this->getDatabaseDescribes())) {
-            dd('loi roi');
-        }
-
+        $migrationPaths = array_keys($migrationFiles);
+        DB::beginTransaction();
         foreach ($migrationPaths as $migrationName) {
             $migrationPath = $migrationFiles[$migrationName];
             $migrationPath = Str::replaceFirst(base_path(), '', $migrationPath);
 
             Artisan::call('migrate', ['--path' => $migrationPath]);
             $databaseDescribesUp = $this->getDatabaseDescribes();
-
-            Artisan::call('migrate:rollback', ['--step' => 1]);
-            $databaseDescribesDown = $this->getDatabaseDescribes();
-
-            if (json_encode($databaseDescribes) != json_encode($databaseDescribesDown)) {
-                file_put_contents('abc.json', json_encode([
-                    $databaseDescribes,
-                    $databaseDescribesDown,
-                ], JSON_PRETTY_PRINT));
-            }
-//            if ($migrationPath == '2021_12_09_033328_add_column_last_login_at_in_accounts') {
+//
+//            Artisan::call('migrate:rollback', ['--step' => 1]);
+//            $databaseDescribesDown = $this->getDatabaseDescribes();
+//
+//            if (json_encode($databaseDescribes) != json_encode($databaseDescribesDown)) {
 //                file_put_contents('abc.json', json_encode([
 //                    $databaseDescribes,
-//                    $databaseDescribesUp,
 //                    $databaseDescribesDown,
 //                ], JSON_PRETTY_PRINT));
-//                dd('ahoho');
 //            }
-            $databaseDescribesDot = Arr::dot($databaseDescribes);
-            $databaseDescribesUpDot = Arr::dot($databaseDescribesUp);
-            $databaseDescribesDownDot = Arr::dot($databaseDescribesDown);
-
-            static::assertTrue(
-                json_encode($databaseDescribes) == json_encode($databaseDescribesDown),
-                $this->error(
-                    $migrationPath,
-                    'up and down not match',
-                    [
-                        'up' => [
-                            'from' => array_diff_assoc($databaseDescribesDot, $databaseDescribesUpDot),
-                            'to' => array_diff_assoc($databaseDescribesUpDot, $databaseDescribesDot),
-                        ],
-                        'down' => [
-                            'from' => array_diff_assoc($databaseDescribesUpDot, $databaseDescribesDownDot),
-                            'to' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesUpDot),
-                        ],
-                        'down_missing' => array_diff_assoc(
-                            $databaseDescribesDot,
-                            $databaseDescribesDownDot
-                        ),
-                        'down_need_remove' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesDot),
-                    ],
-                )
-            );
-
-            $databaseDescribes = $databaseDescribesUp;
-
-            Artisan::call('migrate', ['--path' => $migrationPath]);
+//
+//            $databaseDescribesDot = Arr::dot($databaseDescribes);
+//            $databaseDescribesUpDot = Arr::dot($databaseDescribesUp);
+//            $databaseDescribesDownDot = Arr::dot($databaseDescribesDown);
+//
+//            static::assertTrue(
+//                json_encode($databaseDescribes) == json_encode($databaseDescribesDown),
+//                $this->error(
+//                    $migrationPath,
+//                    'up and down not match',
+//                    [
+//                        'up' => [
+//                            'from' => array_diff_assoc($databaseDescribesDot, $databaseDescribesUpDot),
+//                            'to' => array_diff_assoc($databaseDescribesUpDot, $databaseDescribesDot),
+//                        ],
+//                        'down' => [
+//                            'from' => array_diff_assoc($databaseDescribesUpDot, $databaseDescribesDownDot),
+//                            'to' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesUpDot),
+//                        ],
+//                        'down_missing' => array_diff_assoc(
+//                            $databaseDescribesDot,
+//                            $databaseDescribesDownDot
+//                        ),
+//                        'down_need_remove' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesDot),
+//                    ],
+//                )
+//            );
+//
+//            $databaseDescribes = $databaseDescribesUp;
+//
+//            Artisan::call('migrate', ['--path' => $migrationPath]);
         }
     }
 
