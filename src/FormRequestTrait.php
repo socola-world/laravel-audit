@@ -6,7 +6,7 @@ use Illuminate\Container\Container;
 
 trait FormRequestTrait
 {
-    protected function failedValidation($validator)
+    public function failedValidation($validator)
     {
     }
 
@@ -20,11 +20,13 @@ trait FormRequestTrait
         return $this->getValidatorInstance();
     }
 
-    /**
-     * @return Container
-     */
     public function getContainer(): Container
     {
         return $this->container;
+    }
+
+    public function __get($key)
+    {
+        return new Optional(parent::__get($key));
     }
 }

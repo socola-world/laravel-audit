@@ -15,6 +15,6 @@ class AuditDatabase extends Audit1
 
     public static function isTableExist($table): bool
     {
-        return in_array($table, static::tables());
+        return in_array($table, self::tables());
     }
 }

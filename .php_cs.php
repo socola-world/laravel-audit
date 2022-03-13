@@ -9,10 +9,16 @@ use PhpCsFixer\Finder;
 $rules = [
     '@PSR12' => true,
     '@PSR2' => true,
-    'align_multiline_comment' => true,
+    'align_multiline_comment' => [
+        'comment_type' => 'phpdocs_only',
+    ],
     'array_indentation' => true,
-    'array_push' => true,
-    'array_syntax' => ['syntax' => 'short'],
+    'array_push' => false,
+    'array_syntax' => [
+        'syntax' => 'short',
+    ],
+    'assign_null_coalescing_to_coalesce_equal' => false, // version_compare(phpversion(), '7.4', '>='),
+//    'backtick_to_shell_exec'
     'binary_operator_spaces' => [
         'default' => 'single_space',
 //        'operators' => ['=>' => null],
@@ -20,17 +26,51 @@ $rules = [
     'blank_line_after_namespace' => true,
     'blank_line_after_opening_tag' => true,
     'blank_line_before_statement' => [
-        'statements' => ['return'],
+        'statements' => [
+            'break',
+//            'case',
+            'continue',
+            'declare',
+//            'default',
+//            'phpdoc',
+            'do',
+            'exit',
+            'for',
+            'foreach',
+            'goto',
+            'if',
+//            'include',
+//            'include_once',
+//            'require',
+//            'require_once',
+            'return',
+            'switch',
+            'throw',
+            'try',
+            'while',
+            'yield',
+            'yield_from',
+        ],
     ],
-    'braces' => true,
-    'cast_spaces' => true,
+    'braces' => [
+        'allow_single_line_anonymous_class_with_empty_body' => false,
+        'allow_single_line_closure' => false,
+        'position_after_anonymous_constructs' => 'same',
+        'position_after_control_structures' => 'same',
+        'position_after_functions_and_oop_constructs' => 'next',
+    ],
+    'cast_spaces' => [
+        'space' => 'single',
+    ],
     'class_attributes_separation' => [
         'elements' => [
             'const' => 'one',
             'method' => 'one',
             'property' => 'one',
+            'trait_import' => 'one',
         ],
     ],
+    /* đến đây rồi*/
     'class_definition' => [
         'multi_line_extends_each_single_line' => true,
         'single_item_single_line' => true,
@@ -129,6 +169,11 @@ $rules = [
     'no_spaces_inside_parenthesis' => true,
     'no_superfluous_elseif' => true,
 //    no_superfluous_phpdoc_tags
+//    'no_superfluous_phpdoc_tags' => false,
+    'no_superfluous_phpdoc_tags' => [
+        'allow_mixed' => true,
+        'allow_unused_params' => false,
+    ],
 //    'no_trailing_comma_in_list_call' => true,
     'no_trailing_comma_in_singleline_array' => true,
     'no_trailing_whitespace' => true,

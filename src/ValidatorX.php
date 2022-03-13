@@ -33,6 +33,7 @@ class ValidatorX extends Validator
 
         foreach ($this->rules as $attribute => $rules) {
             $attribute = str_replace('\.', '->', $attribute);
+
             foreach ($rules as $rule) {
                 $realRule = $rule;
                 [$rule, $parameters] = ValidationRuleParser::parse($rule);
@@ -40,6 +41,7 @@ class ValidatorX extends Validator
                 if ($rule == '') {
                     continue;
                 }
+
                 if (($keys = $this->getExplicitKeys($attribute))
                     && $this->dependsOnOtherFields($rule)) {
                     $parameters = $this->replaceAsterisksInParameters($parameters, $keys);
@@ -52,6 +54,7 @@ class ValidatorX extends Validator
 
                 if ($rule instanceof RuleContract) {
                     $messages = $rule->message() ? (array) $rule->message() : [get_class($rule)];
+
                     foreach ($messages as $message) {
                         $this->addFailureMessage($realRule, $attribute, get_class($rule), [], $message);
                     }
@@ -126,7 +129,6 @@ class ValidatorX extends Validator
     }
 
     /**
-     * @param Validator $v
      * @param FormRequest|\Illuminate\Foundation\Http\FormRequest $request
      *
      * @return ValidatorX

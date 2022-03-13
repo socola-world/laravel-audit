@@ -5,7 +5,7 @@
 ```shell
 composer require socoladaica/laravel-audit
 
-composer require socoladaica/laravel-audit:dev-main
+composer require socoladaica/laravel-audit:dev-develop --dev
 ```
 
 ## Update phpunit.xml
@@ -28,6 +28,7 @@ add `testsuite` into `testsuites`
         <testsuite name="Audit">
             <directory suffix="Test.php">./vendor/socoladaica/laravel-audit/tests</directory>
         </testsuite>
+
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
@@ -64,9 +65,8 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
 Make sure you run `composer dumpautoload before run any testcase`
 
 ```shell
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Http\\RequestTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Common\\ClassTest"
-
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\RequestTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\ModelTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Routes\\RouteTest"
@@ -95,7 +95,7 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Database\\Mig
 ```
 
 ```scss
- $app->loadEnvironmentFrom('.env');
+$app->loadEnvironmentFrom('.env');
 ```
 
 ## Shell
@@ -108,10 +108,10 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
 ## Comming Soon
 
 - **Request**
-  - test missing addCustomValues
-  - rule missing type
-  - attributeShoundNotExists
-  - instead rule (bettwen instead min max)
+  - test missing addCustomValues -> **done**
+  - rule missing type -> **done**
+  - attributeShouldNotExists
+  - instead, rule (between instead min max)
   - follow tyle digits_between
   - exists 
     - missing soft delete
@@ -119,20 +119,23 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
 - **Ccntroller**
   - use FormRequest instead Request
 - **Model**
-  - using pivot instead table string
+  - relation using pivot class instead table string -> **done**
+  - column name snake_case -> **done**
   - split big model
 - **Migrattion**
-  - test can rollback
-  - test migrate match db design
-- test Cast
+  - test can roll back -> **done**
+  - test migrate match db design -> **done**
+- **Cast**
 - **Routes**
-- **Resources**
-  - test lang
-- **Resources/assets**
+  - route kebab-case -> **done**
+  - dont use closure callback
+- **resources**
+  - **lang**
+- **resources/assets**
   - dùng `mix.scripts` thay cho `mix.copy`
-- test database
-  - column should not null
-  - column sould min zero
+- **database**
+  - column should not null -> **done**
+  - column should be unsigned -> **done**
   - column should not negative
 - **Other**
   - remove all todo

@@ -3,7 +3,6 @@
 namespace SocolaDaiCa\LaravelAudit\Tests;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +10,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Validator;
 use PHPUnit\Framework\ExpectationFailedException;
 use SocolaDaiCa\LaravelAudit\Helper;
 use Symfony\Component\Finder\SplFileInfo;
@@ -19,6 +17,18 @@ use Symfony\Component\Finder\SplFileInfo;
 class TestCase extends \Tests\TestCase
 {
     use DataProvider;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (
+            array_key_exists(static::class, \config('socoladaica__laravel_audit.skip_testcase'))
+            && in_array($this->getName(), \config('socoladaica__laravel_audit.skip_testcase')[static::class])
+        ) {
+            static::markTestSkipped(resource_path('views'));
+        }
+    }
 
     public function createApplication()
     {
@@ -106,8 +116,6 @@ and run "composer dumpautoload" again'
     }
 
     /**
-     * @param $parentClass
-     *
      * @return Collection|\ReflectionClass[]
      */
     public function getModelReflectionClass()
@@ -118,8 +126,6 @@ and run "composer dumpautoload" again'
     }
 
     /**
-     * @param $parentClass
-     *
      * @return Collection|\ReflectionClass[]
      */
     public function getControllerReflectionClass()
@@ -142,8 +148,6 @@ and run "composer dumpautoload" again'
     }
 
     /**
-     * @param $parentClass
-     *
      * @return Collection|\ReflectionClassConstant[]
      */
     public function getReflectionConstants()
@@ -172,17 +176,47 @@ and run "composer dumpautoload" again'
         });
     }
 
+    public function jsonEncode($arg)
+    {
+        return json_encode($arg, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
+    }
+
+    public function varExport($expression, $tabSize = 0)
+    {
+        $tab = '';
+
+        for ($i = 0; $i < $tabSize; $i++) {
+            $tab .= '    ';
+        }
+        $export = var_export($expression, true);
+        $patterns = [
+            "/array \(/" => '[',
+            "/^([ ]*)\)(,?)$/m" => '$1]$2',
+            "/=>[ ]?\n[ ]+\[/" => '=> [',
+            "/([ ]*)(\'[^\']+\') => ([\[\'])/" => '$1$2 => $3',
+        ];
+        $export = preg_replace(array_keys($patterns), array_values($patterns), $export);
+        $export = preg_replace("/\n(\s*)/", "\n$1$1{$tab}", $export);
+
+        return $export;
+    }
+
+    /**
+     * @throws \JsonException
+     */
     public function echo(string $color, array $args)
     {
         $str = '';
+
         foreach ($args as $arg) {
             if (is_string($arg)) {
                 $str .= "{$arg} ";
+
                 continue;
             }
 
             if (is_array($arg)) {
-                $str .= json_encode($arg, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR).' ';
+                $str .= $this->varExport($arg).' ';
             }
         }
 
@@ -193,12 +227,14 @@ and run "composer dumpautoload" again'
         return $str;
     }
 
+    protected static $color = '';
+
     /**
      * @throws \JsonException
      */
     public function error(...$args): string
     {
-        return $this->echo("\e[41;97m", $args);
+        return $this->echo(static::$color ?: "\e[41;97m", $args);
     }
 
     /**
@@ -206,15 +242,19 @@ and run "composer dumpautoload" again'
      */
     public function warning(...$args): string
     {
-        return $this->echo("\e[0;33m", $args);
+        return $this->echo(static::$color ?: "\e[0;33m", $args);
     }
 
     public function shouldWarning($fn)
     {
+        $color = static::$color;
+        static::$color = "\e[0;33m";
+
         try {
             $fn();
         } catch (ExpectationFailedException $exception) {
             $this->addWarning($exception->getMessage());
         }
+        static::$color = $color;
     }
 }

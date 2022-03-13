@@ -5,14 +5,14 @@ namespace SocolaDaiCa\LaravelAudit\Audit;
 use Composer\Autoload\ClassLoader;
 use Composer\Autoload\ClassMapGenerator;
 
-class Audit1
+class LocalAudit
 {
     protected static ClassLoader $loader;
 
     public static function getLoader(): ClassLoader
     {
         if (empty(self::$loader)) {
-            self::$loader = require base_path('vendor\autoload.php');
+            self::$loader = new ClassLoader();
         }
 
         return self::$loader;
@@ -62,8 +62,6 @@ class Audit1
 
     public static function isClassExist($class): bool
     {
-        return class_exists($class)
-            || interface_exists($class)
-            || array_key_exists($class, self::getClassMap());
+        return array_key_exists($class, self::getClassMap());
     }
 }

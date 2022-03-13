@@ -2,7 +2,6 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
 
-use Exception;
 use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
@@ -18,10 +17,9 @@ class RequestTest extends TestCase
 
     /**
      * @dataProvider requestDataProvider
-     *
-     * @param mixed $request
      */
-    public function testRulesDontTogether(AuditRequest $auditRequest) {
+    public function testRulesDontTogether(AuditRequest $auditRequest)
+    {
         foreach ($auditRequest->getRules() as $inputName => $inputRules) {
             foreach ($this->typeDontTogethers as $typeDontTogether) {
                 $intersect = array_intersect(
@@ -71,10 +69,11 @@ class RequestTest extends TestCase
     }
 
     protected $ruleKeysShouldNotExists = [
-//        'id', // đang suy nghĩ
+        //        'id', // đang suy nghĩ
         'updated_at',
         'created_at',
     ];
+
     /**
      * @dataProvider requestDataProvider
      */
@@ -85,7 +84,7 @@ class RequestTest extends TestCase
             array_keys($auditRequest->getRules())
         );
 
-        $this->assertEmpty(
+        static::assertEmpty(
             $ruleKeysShouldNotExists,
             $this->error(
                 $auditRequest->reflectionClass->getName().'::rules()',
@@ -95,13 +94,50 @@ class RequestTest extends TestCase
         );
     }
 
-//    /**
-//     * @dataProvider requestDataProvider
-//     */
-//    public function test_custom_values(\ReflectionClass $requestReflectionClass, $request): void
-//    {
-//
-//    }
+    protected $ruleKeysNeedCustomValue = [
+        'ProhibitedIf',
+        'ProhibitedUnless',
+        'RequiredIf',
+        'RequiredUnless',
+    ];
+
+    /**
+     * @dataProvider requestDataProvider
+     */
+    public function testCustomValues(AuditRequest $auditRequest): void
+    {
+        $rulesMissingCustomValue = [];
+
+        foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
+            foreach ($ruleParses as $ruleParse) {
+                [$ruleName, $parameters] = $ruleParse;
+
+                if (in_array($ruleName, $this->ruleKeysNeedCustomValue)) {
+                    $rulesMissingCustomValue[$parameters[0]][$parameters[1]] = '?_?';
+
+                    break;
+                }
+            }
+        }
+
+        static::assertEmpty(
+            $rulesMissingCustomValue,
+            $this->error(
+                $auditRequest->reflectionClass->getName(),
+                'missing custom value',
+                '
+{
+    //...
+    public function withValidator($validator)
+    {
+        return $validator->addCustomValues('
+            .$this->varExport($rulesMissingCustomValue, 2)
+        .');
+    }
+}',
+            )
+        );
+    }
 
 //    protected $ruleCompares = [
 //        'between',
@@ -150,7 +186,7 @@ class RequestTest extends TestCase
 //        );
 //    }
 
-//'String', 'Boolean', 'Date'
+    //'String', 'Boolean', 'Date'
     protected $ruleTypes = [
         'Array',
         'Date',
@@ -159,35 +195,39 @@ class RequestTest extends TestCase
         'Numeric',
         'String',
     ];
+
     /**
      * @dataProvider requestDataProvider
      */
-//    public function testRuleMissingType(AuditRequest $auditRequest)
-//    {
-//        $rulesMissingType = [];
-//        foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
-//            $isMissing = true;
-//            foreach ($ruleParses as $ruleParse) {
-//                [$ruleName, $parameters] = $ruleParse;
-//
-//                if (in_array($ruleName, $this->ruleTypes)) {
-//                    $isMissing = false;
-//                    break;
-//                }
-//            }
-//
-//            if ($isMissing) {
-//                $rulesMissingType[] = $attribute;
-//            }
-//        }
-//
-//        $this->assertEmpty(
-//            $rulesMissingType,
-//            $this->error(
-//                $auditRequest->reflectionClass->getName().'::rules()',
-//                'key missing type',
-//                $rulesMissingType,
-//            )
-//        );
-//    }
+    public function testRuleMissingType(AuditRequest $auditRequest)
+    {
+        $rulesMissingType = [];
+
+        foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
+            $isMissing = true;
+
+            foreach ($ruleParses as $ruleParse) {
+                [$ruleName, $parameters] = $ruleParse;
+
+                if (in_array($ruleName, $this->ruleTypes)) {
+                    $isMissing = false;
+
+                    break;
+                }
+            }
+
+            if ($isMissing) {
+                $rulesMissingType[] = $attribute;
+            }
+        }
+
+        static::assertEmpty(
+            $rulesMissingType,
+            $this->error(
+                $auditRequest->reflectionClass->getName().'::rules()',
+                'key missing type',
+                $rulesMissingType,
+            )
+        );
+    }
 }

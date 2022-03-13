@@ -8,21 +8,39 @@ use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
 class ClassTest extends TestCase
 {
-//    public function testMethodLines()
-//    {
-//        $this->assertTrue(true);
-    ////        $maxLines = 100;
-    ////        $this->shouldWarning(function () {
-    ////            $this->getReflectionClassMethods()->each(function (\ReflectionMethod $reflectionMethod) use ($maxLines) {
-    ////                $linesCount = $reflectionMethod->getEndLine() - $reflectionMethod->getStartLine();
-    ////                static::assertLessThanOrEqual(
-    ////                    $maxLines,
-    ////                    $linesCount,
-    ////                    "{$reflectionMethod->class} function {$reflectionMethod->getName()} too long, should <= {$maxLines} lines"
-    ////                );
-    ////            });
-    ////        });
-//    }
+    /**
+     * @dataProvider classDataProvider
+     */
+    public function testMethodLines(AuditClass $auditClass)
+    {
+        $maxLines = 50;
+        $methodsTooLong = [];
+        collect($auditClass->reflectionClass->getMethods())
+            ->each(function (\ReflectionMethod $reflectionMethod) use ($maxLines, &$methodsTooLong, $auditClass) {
+                if ($auditClass->reflectionClass->getFileName() != $reflectionMethod->getFileName()) {
+                    return;
+                }
+
+                $linesCount = $reflectionMethod->getEndLine() - $reflectionMethod->getStartLine();
+
+                if ($linesCount <= $maxLines) {
+                    return;
+                }
+
+                $methodsTooLong["{$reflectionMethod->getName()}()"] = $linesCount;
+            });
+
+        $this->shouldWarning(function () use ($auditClass, $maxLines, $methodsTooLong) {
+            static::assertEmpty(
+                $methodsTooLong,
+                $this->error(
+                    "Method too long, should <= {$maxLines} lines",
+                    "\n{$auditClass->reflectionClass->getName()}",
+                    $methodsTooLong,
+                )
+            );
+        });
+    }
 
     public function testImports()
     {

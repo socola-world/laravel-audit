@@ -48,6 +48,7 @@ class DocController extends Controller
             $item['methods'] = array_values(array_filter($route->methods(), fn ($e) => $e !== 'HEAD'));
             $item['middlewares'] = $route->getAction('middleware');
             $item['url'] = '/'.trim($route->uri(), '/');
+
             if ($route->getDomain()) {
                 $item['url'] = ($route->secure() ? 'https://' : 'http://').$route->getDomain().$item['url'];
             }
@@ -82,6 +83,7 @@ class DocController extends Controller
 
                     $request = Helper::getRequest($x->getName());
                     $item['request'] = $x->getName();
+
                     break;
                 }
 

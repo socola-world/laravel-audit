@@ -41,7 +41,7 @@ class Helper
 
     public static function getReflectionClass($className)
     {
-        return static::getReflectionClasses()[$className];
+        return self::getReflectionClasses()[$className];
     }
 
     /**
@@ -50,7 +50,7 @@ class Helper
     public static function getReflectionClassMethods()
     {
         return once(function () {
-            return static::getReflectionClasses()
+            return self::getReflectionClasses()
                 ->map(function (\ReflectionClass $reflectionClass) {
                     return collect($reflectionClass->getMethods())
                         ->filter(function (\ReflectionMethod $reflectionMethod) use (&$reflectionClass) {

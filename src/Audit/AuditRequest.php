@@ -4,7 +4,6 @@ namespace SocolaDaiCa\LaravelAudit\Audit;
 
 use Illuminate\Validation\ValidationRuleParser;
 use Illuminate\Validation\Validator;
-use ReflectionClass;
 use SocolaDaiCa\LaravelAudit\FormRequest;
 use SocolaDaiCa\LaravelAudit\ValidatorX;
 
@@ -64,6 +63,7 @@ class AuditRequest extends AuditClass
     }
 
     protected $rulesParse;
+
     public function getRulesParse()
     {
         if ($this->rulesParse) {
@@ -74,6 +74,7 @@ class AuditRequest extends AuditClass
 
         foreach ($this->getValidator()->getRules() as $ruleName => $rules) {
             $this->rulesParse[$ruleName] = [];
+
             foreach ($rules as $rule) {
                 $this->rulesParse[$ruleName][] = ValidationRuleParser::parse($rule);
             }

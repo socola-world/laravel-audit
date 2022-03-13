@@ -3,6 +3,7 @@
 namespace SocolaDaiCa\LaravelAudit\Tests\Database;
 
 use Illuminate\Database\Schema\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
@@ -71,5 +72,34 @@ class DatabaseTest extends TestCase
 ////        });
 ////
 ////        Artisan::call('migrate');
+//    }
+
+//    public function testColumnName()
+//    {
+//        $schema = DB::getDoctrineSchemaManager();
+//        $tables = \DB::select('SHOW TABLES');
+//
+//        $columnsWrongFormat = [];
+//        foreach ($tables as $table) {
+//            $table = implode(json_decode(json_encode($table), true));
+//
+//            $columns = $schema->listTableColumns($table);
+//
+//            foreach ($columns as $column) {
+//                if (preg_match('/[a-z_]*/', $column->getName()) == false) {
+//                    continue;
+//                }
+//
+//                $columnsWrongFormat[$table][] = $column->getName();
+//            }
+//        }
+//
+//        $this->assertEmpty(
+//            $columnsWrongFormat,
+//            $this->error(
+//                'column should be snake_case',
+//                $columnsWrongFormat,
+//            )
+//        );
 //    }
 }

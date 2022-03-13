@@ -56,7 +56,7 @@ trait DataProvider
         });
     }
 
-    public function routeDataProvider()
+    public function routeDataProvider(): array
     {
         return once(function () {
             return collect(Route::getRoutes()->getRoutes())
@@ -87,7 +87,7 @@ trait DataProvider
                     }
 
                     return [
-                        $auditRequest
+                        $auditRequest,
                     ];
                 })
                 ->filter(function ($item) {

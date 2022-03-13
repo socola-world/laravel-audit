@@ -22,20 +22,20 @@ class AuditClass extends Audit1
 
     public static function make(ReflectionClass $reflectionClass)
     {
-        if (array_key_exists($reflectionClass->getName(), static::$cache)) {
-            return static::$cache[$reflectionClass->getName()];
+        if (array_key_exists($reflectionClass->getName(), self::$cache)) {
+            return self::$cache[$reflectionClass->getName()];
         }
 
-        return static::$cache[$reflectionClass->getName()] = new static($reflectionClass);
+        return self::$cache[$reflectionClass->getName()] = new self($reflectionClass);
     }
 
     public static function makeByClass($class)
     {
-        if (array_key_exists($class, static::$cache)) {
-            return static::$cache[$class];
+        if (array_key_exists($class, self::$cache)) {
+            return self::$cache[$class];
         }
 
-        return static::$cache[$class] = new static(new ReflectionClass($class));
+        return self::$cache[$class] = new self(new ReflectionClass($class));
     }
 
     public function __construct(ReflectionClass $reflectionClass)
@@ -48,21 +48,15 @@ class AuditClass extends Audit1
         return in_array($trait, $this->reflectionClass->getTraitNames());
     }
 
-    /**
-     * @return PhpParser
-     */
     public static function getPhpParser(): PhpParser
     {
-        if (!static::$phpParser) {
+        if (!self::$phpParser) {
             self::$phpParser = new PhpParser();
         }
 
         return self::$phpParser;
     }
 
-    /**
-     * @return array
-     */
     public function getUseStatements(): array
     {
         return once(function () {
@@ -87,6 +81,7 @@ class AuditClass extends Audit1
         $content = '';
         $lineCnt = 0;
         $file = new SplFileObject($filename);
+
         while (!$file->eof()) {
             if ($lineCnt++ === $lineNumber) {
                 break;

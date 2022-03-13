@@ -65,6 +65,7 @@ class AuditModel extends AuditClass
         if ($method->isPublic() === false) {
             return false;
         }
+
         if (in_array($method->class, $this->igoreClass)) {
             return false;
         }
@@ -107,6 +108,7 @@ class AuditModel extends AuditClass
         'quantity',
         'amount',
         'amounts',
+        'number',
     ];
 
     public function isColumnShouldNotNull(string $column): bool
@@ -130,6 +132,7 @@ class AuditModel extends AuditClass
         'quantity',
         'amount',
         'amounts',
+        'number',
     ];
 
     public function isColumnShouldUnsigned(string $column): bool

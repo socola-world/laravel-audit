@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Schema\Builder;
-
 return [
     'database' => [
         'tables' => [
@@ -14,6 +11,13 @@ return [
         'model' => [
         ],
     ],
-    'database_design' => function() {
-    }
+    'skip_testcase' => [
+        \SocolaDaiCa\LaravelAudit\Tests\App\ModelTest::class => [
+            /* method name */
+        ],
+        //        SocolaDaiCa\LaravelAudit\Tests\Resources\ViewsTest::class => [
+        //            'testRelativePathname',
+        //        ],
+    ],
+    'database_design' => null,
 ];

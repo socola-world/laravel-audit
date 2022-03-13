@@ -28,9 +28,11 @@
         "spatie/once": "^2.2",
         "doctrine/common": "^3.1",
         "laravel/framework": "^v6|^v7|^v8",
-        "friendsofphp/php-cs-fixer": "^3.4"
+        "friendsofphp/php-cs-fixer": "^3.4",
+        "composer/composer": "^1.6 || ^2.2"
     },
     "require-dev": {
-        "beyondcode/laravel-query-detector": "^1.5"
+        "beyondcode/laravel-query-detector": "^1.5",
+        "nunomaduro/larastan": "^1.0|^2.0"
     }
 }

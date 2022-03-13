@@ -5,8 +5,10 @@ namespace SocolaDaiCa\LaravelAudit\Tests\App;
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,17 +36,24 @@ class ModelTest extends TestCase
                 'not exist in database'
             )
         );
-        $this->followTestColumnOfFillableNotExistInDatabase($auditModel);
-        $this->followTestColumnOfGuaredNotExistInDatabase($auditModel);
-        $this->followTestFillableOrGuardedMissing($auditModel);
-        $this->followTestPrimaryKey($auditModel);
-        $this->followTestRelations($auditModel);
-        $this->followTestHidden($auditModel);
-        $this->followTestSoftDelete($auditModel);
-        $this->followTestAppends($auditModel);
     }
 
-    public function followTestColumnOfFillableNotExistInDatabase(AuditModel $auditModel)
+    public function modelExistsDataProvider()
+    {
+        $models = array_filter(
+            $this->modelDataProvider(),
+            fn ($provider) => AuditDatabase::isTableExist($provider[0]->model->getTable())
+        );
+
+        $models = array_values($models);
+
+        return $models;
+    }
+
+    /**
+     * @dataProvider modelExistsDataProvider
+     */
+    public function testColumnOfFillableNotExistInDatabase(AuditModel $auditModel)
     {
         $columnsNotExist = array_diff($auditModel->model->getFillable(), array_keys($auditModel->columns));
         static::assertEmpty(
@@ -57,7 +66,10 @@ class ModelTest extends TestCase
         );
     }
 
-    public function followTestColumnOfGuaredNotExistInDatabase(AuditModel $auditModel)
+    /**
+     * @dataProvider modelExistsDataProvider
+     */
+    public function testColumnOfGuaredNotExistInDatabase(AuditModel $auditModel)
     {
         $columnsNotExist = array_diff($auditModel->model->getGuarded(), [...array_keys($auditModel->columns), '*']);
         static::assertEmpty(
@@ -70,7 +82,10 @@ class ModelTest extends TestCase
         );
     }
 
-    public function followTestFillableOrGuardedMissing(AuditModel $auditModel)
+    /**
+     * @dataProvider modelExistsDataProvider
+     */
+    public function testFillableOrGuardedMissing(AuditModel $auditModel)
     {
         $columnsNeedFillable = [];
         $columnsNeedGuarded = [];
@@ -82,6 +97,7 @@ class ModelTest extends TestCase
 
             if ($column->getAutoincrement()) {
                 $columnsNeedGuarded[] = $column->getName();
+
                 continue;
             }
 
@@ -107,14 +123,15 @@ class ModelTest extends TestCase
         );
     }
 
-    public function followTestPrimaryKey(AuditModel $auditModel)
+    /**
+     * @dataProvider modelExistsDataProvider
+     */
+    public function testPrimaryKey(AuditModel $auditModel)
     {
         static::assertTrue(
             $auditModel->isColumnExist($auditModel->model->getKeyName()),
             $this->error(
-                $auditModel->reflectionClass->name,
-                'column',
-                $auditModel->model->getKeyName(),
+                "{$auditModel->reflectionClass->name}::\$primaryKey = '{$auditModel->model->getKeyName()}'",
                 'not exist in database'
             )
         );
@@ -144,7 +161,10 @@ class ModelTest extends TestCase
         'verification_token',
     ];
 
-    public function followTestHidden(AuditModel $auditModel)
+    /**
+     * @dataProvider modelExistsDataProvider
+     */
+    public function testHidden(AuditModel $auditModel)
     {
         $hiddenMissingColumns = array_keys($auditModel->columns);
 
@@ -164,7 +184,10 @@ class ModelTest extends TestCase
         );
     }
 
-    public function followTestSoftDelete(AuditModel $auditModel)
+    /**
+     * @dataProvider modelExistsDataProvider
+     */
+    public function testSoftDelete(AuditModel $auditModel)
     {
         $hasSoftDeletesTrail = in_array(
             SoftDeletes::class,
@@ -206,7 +229,10 @@ class ModelTest extends TestCase
         User::class,
     ];
 
-    public function followTestRelations(AuditModel $auditModel)
+    /**
+     * @dataProvider modelExistsDataProvider
+     */
+    public function testRelations(AuditModel $auditModel)
     {
         $relations = collect($auditModel->reflectionClass->getMethods())
             ->map(function (\ReflectionMethod $method) use ($auditModel) {
@@ -232,10 +258,35 @@ class ModelTest extends TestCase
                     return null;
                 }
 
+                if ($method->getReturnType() != null) {
+                    if ($method->getReturnType()->isBuiltin()) {
+                        return null;
+                    }
+
+                    if ((
+                        class_exists($method->getReturnType()->getName())
+                            || interface_exists($method->getReturnType()->getName())
+                    )
+                        && is_subclass_of($method->getReturnType()->getName(), Relation::class) === false
+                    ) {
+                        return null;
+                    }
+                }
+
                 try {
                     $response = $auditModel->model->{$method->getName()}();
                 } catch (\Throwable $exception) {
-                    dd($auditModel->reflectionClass->getName(), $method->getName(), $exception);
+                    dd(
+                        [
+                            '$auditModel->reflectionClass->getName()' => $auditModel->reflectionClass->getName(),
+                            '$method->getName()' => $method->getName(),
+                            '$method->getReturnType()' => $method->getReturnType(),
+                            'class_exists($method->getReturnType()->getName())' => class_exists(
+                                $method->getReturnType()->getName()
+                            ),
+                        ],
+                        $exception
+                    );
 
                     return null;
                 }
@@ -253,35 +304,52 @@ class ModelTest extends TestCase
             })
             ->filter(fn ($e) => $e != null);
         $relationByTypes = $relations->groupBy('type');
+
         foreach ($relationByTypes as $relations) {
             foreach ($relations as $relation) {
                 switch ($relation['type']) {
                     case BelongsTo::class:
                         $this->followRelationBelongTo($relation['relation']);
+
                         break;
                     case 'Illuminate\Database\Eloquent\Relations\HasOne':
                         $this->followRelationHasOne($relation['relation'], $relation['method']);
+
                         break;
                     case 'Illuminate\Database\Eloquent\Relations\HasMany':
                         $this->followRelationHasMany($relation['relation'], $relation['method']);
+
+                        break;
+                    case 'Illuminate\Database\Eloquent\Relations\MorphMany':
+                        $this->followRelationMorphMany($relation['relation'], $relation['method']);
+
                         break;
                     case 'Illuminate\Database\Eloquent\Relations\BelongsToMany':
 //                        dd($relation['method'], $relation['name']);
-//                        $this->followRelationBelongsToMany($relation['relation'], $relation['method']);
+                        $this->followRelationBelongsToMany($relation['relation'], $relation['method']);
+
                         break;
+//                        break;
+//                        $this->followRelationHasOneThrough($relation['relation'], $relation['method']);
+//                    case 'Illuminate\Database\Eloquent\Relations\HasOneThrough':
                     case 'Awobaz\Compoships\Database\Eloquent\Relations\HasMany':
 //                        dd($relation['method'], $relation['name']);
 //                        break;
-                    case 'Illuminate\Database\Eloquent\Relations\HasOneThrough':
-                    case 'Illuminate\Database\Eloquent\Relations\MorphMany':
                     case 'Awobaz\Compoships\Database\Eloquent\Relations\BelongsTo':
                     case 'Awobaz\Compoships\Database\Eloquent\Relations\HasOne':
-                        break;
+//                        break;
                     default:
-//                        $this->assertTrue(false, $this->error(
-//                            'relation not handle',
-//                            $relation['type']
-//                        ));
+                        self::shouldWarning(function () use (&$hasSoftDeletesTrail, &$auditModel, $relation) {
+                            static::assertTrue(
+                                false,
+                                $this->warning(
+                                    "{$auditModel->reflectionClass->getName()}::{$relation['method']->getName()}",
+                                    'Comming Soon: relation not handle',
+                                    $relation['type'],
+                                )
+                            );
+                        });
+
                         break;
                 }
             }
@@ -342,6 +410,60 @@ class ModelTest extends TestCase
         );
     }
 
+    public function followRelationMorphMany(MorphMany $relation, \ReflectionMethod $method)
+    {
+        $className = get_class($relation->getParent());
+        $methodName = $method->getName();
+
+        $owner = AuditModel::makeByClass(get_class($relation->getParent()));
+        $foreign = AuditModel::makeByClass(get_class($relation->getRelated()));
+
+        $this->followTestRelationKeys(
+            $owner,
+            $relation->getLocalKeyName(),
+            $foreign,
+            Str::after($relation->getQualifiedForeignKeyName(), '.'),
+            $className,
+            $methodName
+        );
+    }
+
+    public function followRelationBelongsToMany(BelongsToMany $relation, \ReflectionMethod $method)
+    {
+        $className = get_class($relation->getParent());
+        $methodName = $method->getName();
+
+        static::assertNotEquals(
+            'Illuminate\Database\Eloquent\Relations\Pivot',
+            $relation->getPivotClass(),
+            $this->error(
+                "{$method->getDeclaringClass()->getName()}::{$method->getName()}()",
+                "argument \$this->belongsToMany::\$table should is class extend Illuminate\Database\Eloquent\Relations\Pivot",
+            )
+        );
+        $owner = AuditModel::makeByClass(get_class($relation->getParent()));
+        $using = AuditModel::makeByClass($relation->getPivotClass());
+        $foreign = AuditModel::makeByClass(get_class($relation->getRelated()));
+
+        $this->followTestRelationKeys(
+            $owner,
+            $relation->getParentKeyName(),
+            $using,
+            $relation->getForeignPivotKeyName(),
+            $className,
+            $methodName
+        );
+
+        $this->followTestRelationKeys(
+            $using,
+            $relation->getRelatedPivotKeyName(),
+            $foreign,
+            $relation->getRelatedKeyName(),
+            $className,
+            $methodName
+        );
+    }
+
     public function followTestRelationKeys(
         AuditModel $owner,
         string $ownerKeyName,
@@ -373,7 +495,12 @@ class ModelTest extends TestCase
         );
     }
 
-    public function followTestAppends(AuditModel $auditModel)
+    /**
+     * @dataProvider modelExistsDataProvider
+     *
+     * @throws \JsonException
+     */
+    public function testAppends(AuditModel $auditModel)
     {
         $wrongAppends = collect($auditModel->getAppends())
             ->filter(function ($e) use ($auditModel) {
@@ -395,53 +522,67 @@ class ModelTest extends TestCase
         );
     }
 
-//    /**
-//     * @dataProvider modelDataProvider
-//     *
-//     * @param AuditModel $auditModel
-//     *
-//     * @throws \JsonException
-//     */
-//    public function testColumnShouldNotNull(AuditModel $auditModel)
-//    {
-//        $columnsShouldNotNull = array_filter($auditModel->columns, function (Column $column) use ($auditModel) {
-//            return $auditModel->isColumnShouldNotNull($column->getName()) && $column->getNotnull() === false;
-//        });
-//
-//        $columnsShouldNotNull = array_keys($columnsShouldNotNull);
-//
-//        static::assertEmpty(
-//            $columnsShouldNotNull,
-//            $this->error(
-//                $auditModel->reflectionClass->getName(),
-//                '$columnsShouldNotNull = ',
-//                $columnsShouldNotNull
-//            )
-//        );
-//    }
-//
-//    /**
-//     * @dataProvider modelDataProvider
-//     *
-//     * @param AuditModel $auditModel
-//     *
-//     * @throws \JsonException
-//     */
-//    public function testColumnShouldUnsigned(AuditModel $auditModel)
-//    {
-//        $columnsShouldUnsigned = array_filter($auditModel->columns, function (Column $column) use ($auditModel) {
-//            return $auditModel->isColumnShouldUnsigned($column->getName()) && $column->getNotnull() == false;
-//        });
-//
-//        $columnsShouldUnsigned = array_keys($columnsShouldUnsigned);
-//
-//        static::assertEmpty(
-//            $columnsShouldUnsigned,
-//            $this->error(
-//                $auditModel->reflectionClass->getName(),
-//                '$columnsShouldUnsined = ',
-//                $columnsShouldUnsigned
-//            )
-//        );
-//    }
+    /**
+     * @dataProvider modelDataProvider
+     *
+     * @throws \JsonException
+     */
+    public function testColumnShouldNotNull(AuditModel $auditModel)
+    {
+        $columnsShouldNotNull = array_filter($auditModel->columns, function (Column $column) use ($auditModel) {
+            return $auditModel->isColumnShouldNotNull($column->getName()) && $column->getNotnull() === false;
+        });
+
+        $columnsShouldNotNull = array_keys($columnsShouldNotNull);
+
+        static::assertEmpty(
+            $columnsShouldNotNull,
+            $this->error(
+                $auditModel->reflectionClass->getName(),
+                '$columnsShouldNotNull = ',
+                $columnsShouldNotNull
+            )
+        );
+    }
+
+    /**
+     * @dataProvider modelDataProvider
+     *
+     * @throws \JsonException
+     */
+    public function testColumnShouldUnsigned(AuditModel $auditModel)
+    {
+        $columnsShouldUnsigned = array_filter($auditModel->columns, function (Column $column) use ($auditModel) {
+            return $auditModel->isColumnShouldUnsigned($column->getName()) && $column->getUnsigned() == false;
+        });
+
+        $columnsShouldUnsigned = array_keys($columnsShouldUnsigned);
+
+        $this->shouldWarning(function () use ($columnsShouldUnsigned, $auditModel) {
+            static::assertEmpty(
+                $columnsShouldUnsigned,
+                $this->error(
+                    $auditModel->reflectionClass->getName(),
+                    '$columnsShouldUnsigned = ',
+                    $columnsShouldUnsigned
+                )
+            );
+        });
+    }
+
+    public function testColumnName(AuditModel $auditModel)
+    {
+        $columnsWrongFormat = collect(array_keys($auditModel->columns))
+            ->map(fn ($columnName) => preg_match('/^[a-z0-9_]+$/', $columnName) == false)
+            ->values()
+            ->toArray();
+
+        static::assertEmpty(
+            $columnsWrongFormat,
+            $this->error(
+                '$auditModel->reflectionClass->getName()::$columns should be snake_case',
+                $columnsWrongFormat
+            )
+        );
+    }
 }

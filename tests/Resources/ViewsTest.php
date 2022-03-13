@@ -2,7 +2,9 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests\Resources;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -11,39 +13,51 @@ class ViewsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        self::markTestSkipped(resource_path('views').' not found');
-    }
-
-    public function testViews()
-    {
-//        $dir = resource_path('views');
-//
-//        /**
-//         * @var SplFileInfo[] $files
-//         */
-//        $files = File::allFiles($dir);
-//
-//        $this->follow_test_relative_pathname($files);
-//        $this->follow_test_bracket($files);
     }
 
     /**
-     * @param SplFileInfo[] $files
+     * @return Collection|SplFileInfo[]
      */
-    public function follow_test_relative_pathname($files)
+    public function views(): Collection
     {
-        $bladeWrongPaths = collect($files)
+        return once(function () {
+            $dir = resource_path('views');
+
+            if (is_dir($dir) == false) {
+                return [];
+            }
+
+            /**
+             * @var SplFileInfo[] $files
+             */
+            $files = File::allFiles($dir);
+
+            return collect($files);
+        });
+    }
+
+    public function testRelativePathname()
+    {
+        $bladeWrongPaths = $this->views()
             ->map(fn (SplFileInfo $file) => $file->getRelativePathname())
             ->filter(fn (string $path) => preg_match('/^[a-z0-9\-\/\\\.]+$/', $path) == false)
+            ->map(fn (string $path) => Str::replace('\\', '/', $path))
             ->values()
             ->toArray();
+
+        static::assertEmpty(
+            $bladeWrongPaths,
+            $this->error(
+                'View path should is kebab case',
+                $bladeWrongPaths
+            )
+        );
     }
 
-    /**
-     * @param SplFileInfo[] $files
-     */
-    public function follow_test_bracket($files)
+    public function testBracket()
     {
+        $files = $this->views();
+
         foreach ($files as $file) {
             $content = file_get_contents($file->getPathname());
             $this->shouldWarning(function () use (&$file, &$content) {
@@ -59,7 +73,7 @@ class ViewsTest extends TestCase
                         $file->getPathname(),
                         'missing space between {{ $variable }}',
                         $maches[0],
-                        'use "\{\{\s*(.*)\s*!!}" => "{{ $1 }}" for fast replace'
+                        'use "\{\{(?!--)(?:\s*)([^\s].*[^\s])(?:\s*)(?<!--)}}" => "{{ $1 }}" for fast replace'
                     )
                 );
             });
@@ -76,7 +90,7 @@ class ViewsTest extends TestCase
                         $file->getPathname(),
                         'too many space between {{ $variable }}',
                         $maches[0],
-                        'use "\{\{\s*(.*)\s*!!}" => "{{ $1 }}" for fast replace'
+                        'use "\{\{(?!--)(?:\s*)([^\s].*[^\s])(?:\s*)(?<!--)}}" => "{{ $1 }}" for fast replace'
                     )
                 );
             });
@@ -98,6 +112,7 @@ class ViewsTest extends TestCase
                     )
                 );
             });
+
             $this->shouldWarning(function () use (&$file, &$content) {
                 $this->assertEquals(
                     0,
@@ -114,6 +129,7 @@ class ViewsTest extends TestCase
                     )
                 );
             });
+
             $this->shouldWarning(function () use (&$file, &$content) {
                 $this->assertEquals(
                     0,
@@ -130,6 +146,7 @@ class ViewsTest extends TestCase
                     )
                 );
             });
+
             static::assertEquals(
                 0,
                 preg_match_all(

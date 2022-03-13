@@ -48,6 +48,7 @@ class TokenParser extends \Doctrine\Common\Annotations\TokenParser
                 $explicitAlias = false;
             } elseif ($token === ';') {
                 $statements[mb_strtolower($alias)] = $groupRoot.$class;
+
                 break;
             } elseif ($token === '{') {
                 $groupRoot = $class;
@@ -72,9 +73,11 @@ class TokenParser extends \Doctrine\Common\Annotations\TokenParser
     public function parseUseFuntions($namespaceName)
     {
         $statements = [];
+
         while (($token = $this->next())) {
             if ($token[0] === T_USE) {
                 $statements = array_merge($statements, $this->parseUseFuntion());
+
                 continue;
             }
 
