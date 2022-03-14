@@ -1,15 +1,16 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\Routes;
+namespace SocolaDaiCa\LaravelAudit\Tests;
 
 use Illuminate\Http\Request;
 use ReflectionParameter;
 use SocolaDaiCa\LaravelAudit\Audit\AuditClass;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRoute;
 use SocolaDaiCa\LaravelAudit\Audit\LocalAudit;
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use function collect;
+use function once;
 
-class RouteTest extends TestCase
+class RoutesTest extends TestCase
 {
     public function testDuplicateMiddleware()
     {

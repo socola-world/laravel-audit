@@ -2,6 +2,7 @@
 
 namespace SocolaDaiCa\LaravelAudit\Tests;
 
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
@@ -15,7 +16,7 @@ use SocolaDaiCa\LaravelAudit\Helper;
 use SocolaDaiCa\LaravelAudit\Migrator;
 use Symfony\Component\Finder\SplFileInfo;
 
-class TestCase extends \Tests\TestCase
+class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
     use DataProvider;
 
@@ -36,7 +37,13 @@ class TestCase extends \Tests\TestCase
         /**
          * @var \Illuminate\Foundation\Application $app
          */
-        $app = parent::createApplication();
+//        $app = require __DIR__.'/../bootstrap/app.php';
+//        $app = require base_path('bootstrap/app.php');
+        $app = require 'bootstrap/app.php';
+
+        $app->make(Kernel::class)->bootstrap();
+
+        $app->loadEnvironmentFrom('.env');
 
         Auth::shouldReceive('check')->andReturn(true);
         Auth::shouldReceive('guard')->andReturnSelf();

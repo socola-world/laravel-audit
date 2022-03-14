@@ -4,8 +4,6 @@
 
 ```shell
 composer require socoladaica/laravel-audit
-
-composer require socoladaica/laravel-audit:dev-develop --dev
 ```
 
 ## Update phpunit.xml
@@ -66,46 +64,27 @@ Make sure you run `composer dumpautoload before run any testcase`
 
 ```shell
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\ControllersTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\RequestsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\ModelsTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Common\\ClassTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\RequestTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\ModelTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Routes\\RouteTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Database\\DatabaseTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Database\\MigrationsTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\EnvTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Psr\\Psr1Test"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Resources\\SCSSTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Resources\\ViewsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\RouteTest"
 ```
 
-```php
-"repositories": [
-    {
-        "type": "path",
-        "url": "../socola-cms-demo-v2/cms-dev/laravel-audit"
-    }
-]
-
-"repositories": [
-    {
-        "type": "path",
-        "url": "../labs/laravel-audit"
-    }
-]
-```
-
-```
-"socoladaica/laravel-audit": "dev-develop"
-```
-
-```scss
-$app->loadEnvironmentFrom('.env');
-```
-
-## Shell
+## Php-cs-fixer
 
 ```shell
 vendor\bin\php-cs-fixer.bat --config=.php_cs.php fix
 vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.php fix
 ```
 
-## Comming Soon
+## Coming Soon
 
 - **Request**
   - test missing addCustomValues -> **done**
@@ -118,8 +97,6 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
     - missing soft delete
     - model not Exists
   - duplicate rule
-- **Ccntroller**
-  - use FormRequest instead Request
 - **Model**
   - relation using pivot class instead table string -> **done**
   - column name snake_case -> **done**
@@ -137,8 +114,10 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
 - **Routes**
   - route kebab-case -> **done**
   - dont use closure callback
+  - use FormRequest instead Request
 - **resources**
-  - **lang**
+- **resources/lang**
+  - key snake_case
 - **resources/assets**
   - dùng `mix.scripts` thay cho `mix.copy`
 - **resources/views**
@@ -157,3 +136,33 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
     - https://stackoverflow.com/questions/30322918/bootstrap-modal-restores-button-focus-on-close
     - check css support
     - tìm hiểu về zerowith character
+
+## Develop
+
+**composer.json**
+```json
+{
+    "requred-dev": {
+      "socoladaica/laravel-audit": "dev-develop"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../socola-cms-demo-v2/cms-dev/laravel-audit"
+        }
+    ]
+}
+```
+
+```php
+"repositories": [
+    {
+        "type": "path",
+        "url": "../labs/laravel-audit"
+    }
+]
+```
+
+```shell
+composer require socoladaica/laravel-audit:dev-develop --dev
+```

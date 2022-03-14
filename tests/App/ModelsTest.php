@@ -18,7 +18,7 @@ use SocolaDaiCa\LaravelAudit\Audit\AuditDatabase;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
-class ModelTest extends TestCase
+class ModelsTest extends TestCase
 {
     /**
      * @dataProvider modelDataProvider

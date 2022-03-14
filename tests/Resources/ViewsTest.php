@@ -54,7 +54,7 @@ class ViewsTest extends TestCase
         );
     }
 
-    public function testBracket()
+    public function testBracketSpace()
     {
         $files = $this->views();
 
@@ -134,7 +134,7 @@ class ViewsTest extends TestCase
                 $this->assertEquals(
                     0,
                     preg_match_all(
-                        '/\{!!\s(?:action|asset|route|secure_asset|url)\((?:.*)\)\s!!}/',
+                        '/\{!!\s*(?:action|asset|route|secure_asset|url|mix)\((?:.*)\)\s*!!}/',
                         $content,
                         $maches
                     ),

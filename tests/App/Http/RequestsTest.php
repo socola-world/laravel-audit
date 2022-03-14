@@ -6,7 +6,7 @@ use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
-class RequestTest extends TestCase
+class RequestsTest extends TestCase
 {
     protected array $typeDontTogethers = [
         ['image', 'mimes'],
@@ -93,16 +93,18 @@ class RequestTest extends TestCase
             )
         );
     }
+
     /**
      * @dataProvider requestDataProvider
      */
     public function testDuplicateRule(AuditRequest $auditRequest)
     {
         $duplicateRuleNamesByAttribute = [];
+
         foreach ($auditRequest->getRulesParse() as $attribute => $rulesParse) {
             $rulenames = $rulesParse;
-            $rulenames = array_map(fn(array $item) => $item[0], $rulenames);
-            $rulenames = array_map(fn($item) => is_object($item) ? get_class($item) : $item, $rulenames);
+            $rulenames = array_map(fn (array $item) => $item[0], $rulenames);
+            $rulenames = array_map(fn ($item) => is_object($item) ? get_class($item) : $item, $rulenames);
             $rulenames = array_values($rulenames);
             $duplicateRuleNames = array_unique(
                 array_diff_assoc(
@@ -120,7 +122,7 @@ class RequestTest extends TestCase
             $duplicateRuleNamesByAttribute[$attribute] = $duplicateRuleNames;
         }
 
-        $this->assertEmpty(
+        static::assertEmpty(
             $duplicateRuleNamesByAttribute,
             $this->error(
                 $auditRequest->reflectionClass->getName().'::rules()',

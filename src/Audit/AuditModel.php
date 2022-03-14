@@ -103,12 +103,13 @@ class AuditModel extends AuditClass
         return $getArrayableAppends->invokeArgs($this->model, []);
     }
 
-    protected $columnsShouldNotNull = [
+    protected array $columnsShouldNotNull = [
         'fee',
         'quantity',
         'amount',
         'amounts',
         'number',
+        'total',
     ];
 
     public function isColumnShouldNotNull(string $column): bool
@@ -127,17 +128,18 @@ class AuditModel extends AuditClass
         return false;
     }
 
-    protected $columnsShouldUnsined = [
+    protected array $columnsShouldUnsigned = [
         'fee',
         'quantity',
         'amount',
         'amounts',
         'number',
+        'total',
     ];
 
     public function isColumnShouldUnsigned(string $column): bool
     {
-        foreach ($this->columnsShouldUnsined as $columnsShouldUnsined) {
+        foreach ($this->columnsShouldUnsigned as $columnsShouldUnsined) {
             if (
                 $this->columns[$column]->getName() == $columnsShouldUnsined
                 || Str::startsWith($this->columns[$column]->getName(), "{$columnsShouldUnsined}_")

@@ -12,7 +12,7 @@ return [
         ],
     ],
     'skip_testcase' => [
-        \SocolaDaiCa\LaravelAudit\Tests\App\ModelTest::class => [
+        \SocolaDaiCa\LaravelAudit\Tests\App\ModelsTest::class => [
             /* method name */
         ],
         //        SocolaDaiCa\LaravelAudit\Tests\Resources\ViewsTest::class => [

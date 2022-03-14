@@ -4,7 +4,7 @@ namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
 
 use SocolaDaiCa\LaravelAudit\Tests\TestCase;
 
-class ControllerTest extends TestCase
+class ControllersTest extends TestCase
 {
     public function testViewPath()
     {

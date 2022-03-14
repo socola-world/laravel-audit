@@ -158,17 +158,17 @@ class MigrationsTest extends TestCase
         Storage::drive('local')->put('laravel-audit-database.sqlite', '');
         $defaultConnection = DB::getDefaultConnection();
         DB::setDefaultConnection('laravel_audit_sqlite');
-//        Artisan::call('migrate:reset', ['--force' => true]);
 
-        \DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
-        $tables = \DB::select('SHOW TABLES');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
+        $tables = DB::select('SHOW TABLES');
 
         foreach ($tables as $table) {
             $table = implode(json_decode(json_encode($table), true));
-            \Schema::drop($table);
+            Schema::drop($table);
         }
-        \DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
 
+//        Artisan::call('migrate:reset', ['--force' => true]);
 //        Artisan::call('migrate');
 
 //        $migrationPaths = DB::table('migrations')->get()->pluck('migration');
@@ -182,61 +182,57 @@ class MigrationsTest extends TestCase
 //        }
 //        \DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
 //
-//        $databaseDescribes = [];
-//
-//        if (!empty($this->getDatabaseDescribes())) {
-//            dd('loi roi');
-//        }
+        $databaseDescribes = [];
 
         $migrationPaths = array_keys($migrationFiles);
-        DB::beginTransaction();
+
         foreach ($migrationPaths as $migrationName) {
             $migrationPath = $migrationFiles[$migrationName];
             $migrationPath = Str::replaceFirst(base_path(), '', $migrationPath);
 
             Artisan::call('migrate', ['--path' => $migrationPath]);
             $databaseDescribesUp = $this->getDatabaseDescribes();
-//
-//            Artisan::call('migrate:rollback', ['--step' => 1]);
-//            $databaseDescribesDown = $this->getDatabaseDescribes();
-//
-//            if (json_encode($databaseDescribes) != json_encode($databaseDescribesDown)) {
-//                file_put_contents('abc.json', json_encode([
-//                    $databaseDescribes,
-//                    $databaseDescribesDown,
-//                ], JSON_PRETTY_PRINT));
-//            }
-//
-//            $databaseDescribesDot = Arr::dot($databaseDescribes);
-//            $databaseDescribesUpDot = Arr::dot($databaseDescribesUp);
-//            $databaseDescribesDownDot = Arr::dot($databaseDescribesDown);
-//
-//            static::assertTrue(
-//                json_encode($databaseDescribes) == json_encode($databaseDescribesDown),
-//                $this->error(
-//                    $migrationPath,
-//                    'up and down not match',
-//                    [
-//                        'up' => [
-//                            'from' => array_diff_assoc($databaseDescribesDot, $databaseDescribesUpDot),
-//                            'to' => array_diff_assoc($databaseDescribesUpDot, $databaseDescribesDot),
-//                        ],
-//                        'down' => [
-//                            'from' => array_diff_assoc($databaseDescribesUpDot, $databaseDescribesDownDot),
-//                            'to' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesUpDot),
-//                        ],
-//                        'down_missing' => array_diff_assoc(
-//                            $databaseDescribesDot,
-//                            $databaseDescribesDownDot
-//                        ),
-//                        'down_need_remove' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesDot),
-//                    ],
-//                )
-//            );
-//
-//            $databaseDescribes = $databaseDescribesUp;
-//
-//            Artisan::call('migrate', ['--path' => $migrationPath]);
+
+            Artisan::call('migrate:rollback', ['--step' => 1]);
+            $databaseDescribesDown = $this->getDatabaseDescribes();
+
+            if (json_encode($databaseDescribes) != json_encode($databaseDescribesDown)) {
+                file_put_contents('abc.json', json_encode([
+                    $databaseDescribes,
+                    $databaseDescribesDown,
+                ], JSON_PRETTY_PRINT));
+            }
+
+            $databaseDescribesDot = Arr::dot($databaseDescribes);
+            $databaseDescribesUpDot = Arr::dot($databaseDescribesUp);
+            $databaseDescribesDownDot = Arr::dot($databaseDescribesDown);
+
+            static::assertTrue(
+                json_encode($databaseDescribes) == json_encode($databaseDescribesDown),
+                $this->error(
+                    $migrationPath,
+                    'up and down not match',
+                    [
+                        'up' => [
+                            'from' => array_diff_assoc($databaseDescribesDot, $databaseDescribesUpDot),
+                            'to' => array_diff_assoc($databaseDescribesUpDot, $databaseDescribesDot),
+                        ],
+                        'down' => [
+                            'from' => array_diff_assoc($databaseDescribesUpDot, $databaseDescribesDownDot),
+                            'to' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesUpDot),
+                        ],
+                        'down_missing' => array_diff_assoc(
+                            $databaseDescribesDot,
+                            $databaseDescribesDownDot
+                        ),
+                        'down_need_remove' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesDot),
+                    ],
+                )
+            );
+
+            $databaseDescribes = $databaseDescribesUp;
+
+            Artisan::call('migrate', ['--path' => $migrationPath]);
         }
     }
 
@@ -246,7 +242,7 @@ class MigrationsTest extends TestCase
     public function getDatabaseDescribes(): array
     {
         $databaseDescribes = [];
-        $tables = \DB::select('SHOW TABLES');
+        $tables = DB::select('SHOW TABLES');
         $schema = DB::getDoctrineSchemaManager();
 
         foreach ($tables as $table) {
@@ -263,25 +259,20 @@ class MigrationsTest extends TestCase
                 ksort($databaseDescribes[$table]);
             }
 
-            $indexs = $schema->listTableIndexes($table);
-            $databaseDescribes[$table]['__index'] = collect($indexs)
+            $indexes = collect($schema->listTableIndexes($table))
                 ->map(function (Index $index) {
-                    try {
-                        return [
-                            'columns' => $index->getColumns(),
-                            'name' => $index->getName(),
-                            'is_unique' => $index->isUnique(),
-                            'is_primary' => $index->isPrimary(),
-                        ];
-                    } catch (\Throwable $exception) {
-                        dd($index, $index->getColumns(), $exception);
-                    }
+                    return [
+                        'columns' => $index->getColumns(),
+                        'name' => $index->getName(),
+                        'is_unique' => $index->isUnique(),
+                        'is_primary' => $index->isPrimary(),
+                    ];
                 })
                 ->toArray();
-            ksort($databaseDescribes[$table]['__index']);
+            ksort($indexes);
 
-            if (empty($databaseDescribes[$table]['__index'])) {
-                unset($databaseDescribes[$table]['__index']);
+            if (!empty($databaseDescribes[$table]['__index'])) {
+                $databaseDescribes[$table]['__index'] = $indexes;
             }
         }
 
