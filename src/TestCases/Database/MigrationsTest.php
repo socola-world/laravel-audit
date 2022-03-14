@@ -1,18 +1,19 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\Database;
+namespace SocolaDaiCa\LaravelAudit\TestCases\Database;
 
-use Closure;
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use SocolaDaiCa\LaravelAudit\Audit\AuditTable;
 use SocolaDaiCa\LaravelAudit\Migrator;
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
+use function app;
+use function base_path;
+use function dd;
 
 class MigrationsTest extends TestCase
 {
@@ -144,7 +145,10 @@ class MigrationsTest extends TestCase
     public function testRollback()
     {
         $migrator = app('migrator');
-//        $migrator = app(Migrator::class);
+        /**
+         * @var Migrator $myMigrator
+         */
+        $myMigrator = app(Migrator::class);
 
         $migrationPaths = array_merge(
             $migrator->paths(),
@@ -187,21 +191,38 @@ class MigrationsTest extends TestCase
         $migrationPaths = array_keys($migrationFiles);
 
         foreach ($migrationPaths as $migrationName) {
+            $migrationFullPath = $migrationFiles[$migrationName];
             $migrationPath = $migrationFiles[$migrationName];
             $migrationPath = Str::replaceFirst(base_path(), '', $migrationPath);
 
-            Artisan::call('migrate', ['--path' => $migrationPath]);
+//            DB::connection()->enableQueryLog();
+//            $migrator->run([
+//                $migrationPath
+//            ]);
+//            Artisan::call('migrate', ['--path' => $migrationPath]);
+            $myMigrator->resolvePath($migrationFullPath)->up();
+//            $myMigrator->runUp($migrationFullPath, 1, false);
+//            $myMigrator->runMigration($myMigrator->resolvePath($migrationFullPath), 'up');
+
+//            $query = DB::select('alter table `users` add unique `users_email_unique`(`email`)');
+//            dd($query);
+//            $queries = DB::getQueryLog();
+//            DB::flushQueryLog();
+////            $migrator->run()
+//            dump($queries);
             $databaseDescribesUp = $this->getDatabaseDescribes();
 
-            Artisan::call('migrate:rollback', ['--step' => 1]);
+//            Artisan::call('migrate:rollback', ['--step' => 1]);
+            $myMigrator->resolvePath($migrationFullPath)->down();
+//            $myMigrator->runDown($migrationFullPath, null, false);
             $databaseDescribesDown = $this->getDatabaseDescribes();
 
-            if (json_encode($databaseDescribes) != json_encode($databaseDescribesDown)) {
-                file_put_contents('abc.json', json_encode([
-                    $databaseDescribes,
-                    $databaseDescribesDown,
-                ], JSON_PRETTY_PRINT));
-            }
+//            if (json_encode($databaseDescribes) != json_encode($databaseDescribesDown)) {
+//                file_put_contents('abc.json', json_encode([
+//                    $databaseDescribes,
+//                    $databaseDescribesDown,
+//                ], JSON_PRETTY_PRINT));
+//            }
 
             $databaseDescribesDot = Arr::dot($databaseDescribes);
             $databaseDescribesUpDot = Arr::dot($databaseDescribesUp);
@@ -232,7 +253,8 @@ class MigrationsTest extends TestCase
 
             $databaseDescribes = $databaseDescribesUp;
 
-            Artisan::call('migrate', ['--path' => $migrationPath]);
+//            Artisan::call('migrate', ['--path' => $migrationPath]);
+            $myMigrator->resolvePath($migrationFullPath)->up();
         }
     }
 
@@ -247,7 +269,7 @@ class MigrationsTest extends TestCase
 
         foreach ($tables as $table) {
             $table = implode(json_decode(json_encode($table), true));
-
+            $auditTable = AuditTable::make($table);
             $columns = $schema->listTableColumns($table);
 
             $databaseDescribes[$table] = [];
@@ -259,20 +281,10 @@ class MigrationsTest extends TestCase
                 ksort($databaseDescribes[$table]);
             }
 
-            $indexes = collect($schema->listTableIndexes($table))
-                ->map(function (Index $index) {
-                    return [
-                        'columns' => $index->getColumns(),
-                        'name' => $index->getName(),
-                        'is_unique' => $index->isUnique(),
-                        'is_primary' => $index->isPrimary(),
-                    ];
-                })
-                ->toArray();
-            ksort($indexes);
+            $databaseDescribes[$table]['__index'] = $auditTable->indexes();
 
-            if (!empty($databaseDescribes[$table]['__index'])) {
-                $databaseDescribes[$table]['__index'] = $indexes;
+            if (empty($databaseDescribes[$table]['__index'])) {
+                unset($databaseDescribes[$table]['__index']);
             }
         }
 

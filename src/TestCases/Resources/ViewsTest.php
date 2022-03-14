@@ -1,12 +1,13 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\Resources;
+namespace SocolaDaiCa\LaravelAudit\TestCases\Resources;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 use Symfony\Component\Finder\SplFileInfo;
+use function once;
 
 class ViewsTest extends TestCase
 {
@@ -73,7 +74,7 @@ class ViewsTest extends TestCase
                         $file->getPathname(),
                         'missing space between {{ $variable }}',
                         $maches[0],
-                        'use "\{\{(?!--)(?:\s*)([^\s].*[^\s])(?:\s*)(?<!--)}}" => "{{ $1 }}" for fast replace'
+                        'use "(\{\{(?!--)([^\s].*[^\s])(?<!--)}}|\{\{(?!--)([^\s].*[^\s])\s(?<!--)}}|\{\{(?!--)\s([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)}})" => "{{ $2$3$3$4$5$6 }}" for fast replace'
                     )
                 );
             });
@@ -90,7 +91,7 @@ class ViewsTest extends TestCase
                         $file->getPathname(),
                         'too many space between {{ $variable }}',
                         $maches[0],
-                        'use "\{\{(?!--)(?:\s*)([^\s].*[^\s])(?:\s*)(?<!--)}}" => "{{ $1 }}" for fast replace'
+                        'use "(\{\{(?!--)([^\s].*[^\s])(?<!--)}}|\{\{(?!--)([^\s].*[^\s])\s(?<!--)}}|\{\{(?!--)\s([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)}})" => "{{ $2$3$3$4$5$6 }}" for fast replace'
                     )
                 );
             });
@@ -108,7 +109,7 @@ class ViewsTest extends TestCase
                         $file->getPathname(),
                         'missing space between {!! $variable !!}',
                         $maches[0],
-                        'use "\{!!\s*(.*)\s*!!}" => "{!! $1 !!}" for fast replace'
+                        'use "(\{!!(?!--)([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)([^\s].*[^\s])\s(?<!--)!!}|\{!!(?!--)\s([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)!!})" => "{!! $2$3$3$4$5$6 !!}" for fast replace'
                     )
                 );
             });
@@ -125,7 +126,7 @@ class ViewsTest extends TestCase
                         $file->getPathname(),
                         'too many space between {!! $variable !!}',
                         $maches[0],
-                        'use "\{!!\s*(.*)\s*!!}" => "{!! $1 !!}" for fast replace'
+                        'use "(\{!!(?!--)([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)([^\s].*[^\s])\s(?<!--)!!}|\{!!(?!--)\s([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)!!})" => "{!! $2$3$3$4$5$6 !!}" for fast replace'
                     )
                 );
             });

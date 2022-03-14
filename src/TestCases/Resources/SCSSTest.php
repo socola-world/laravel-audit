@@ -1,9 +1,8 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\Resources;
+namespace SocolaDaiCa\LaravelAudit\TestCases\Resources;
 
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
-use Symfony\Component\Finder\SplFileInfo;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 
 class SCSSTest extends TestCase
 {

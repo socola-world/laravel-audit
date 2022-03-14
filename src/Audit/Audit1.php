@@ -11,19 +11,19 @@ class Audit1
 
     public static function getLoader(): ClassLoader
     {
-        if (empty(self::$loader)) {
-            self::$loader = require base_path('vendor\autoload.php');
+        if (empty(static::$loader)) {
+            static::$loader = require base_path('vendor\autoload.php');
         }
 
-        return self::$loader;
+        return static::$loader;
     }
 
     protected static $classMap;
 
     public static function getClassMap(): array
     {
-        if (!empty(self::$classMap)) {
-            return self::$classMap;
+        if (!empty(static::$classMap)) {
+            return static::$classMap;
         }
 
         $composerJson = json_decode(file_get_contents(base_path('composer.json')));
@@ -34,36 +34,36 @@ class Audit1
         );
 
         foreach ($paths as $path) {
-            self::getLoader()->addClassMap((array) ClassMapGenerator::createMap($path));
+            static::getLoader()->addClassMap((array) ClassMapGenerator::createMap($path));
         }
 
-        return self::$classMap = self::getLoader()->getClassMap();
+        return static::$classMap = static::getLoader()->getClassMap();
     }
 
     private static array $fileMap;
 
     public static function getFileMap(): array
     {
-        if (empty(self::$fileMap)) {
-            self::$fileMap = [];
+        if (empty(static::$fileMap)) {
+            static::$fileMap = [];
 
-            foreach (self::getClassMap() as $class => $path) {
-                self::$fileMap[realpath($path)] = $class;
+            foreach (static::getClassMap() as $class => $path) {
+                static::$fileMap[realpath($path)] = $class;
             }
         }
 
-        return self::$fileMap;
+        return static::$fileMap;
     }
 
     public static function getClassByFile($path)
     {
-        return self::getFileMap()[realpath($path)] ?: null;
+        return static::getFileMap()[realpath($path)] ?: null;
     }
 
     public static function isClassExist($class): bool
     {
         return class_exists($class)
             || interface_exists($class)
-            || array_key_exists($class, self::getClassMap());
+            || array_key_exists($class, static::getClassMap());
     }
 }

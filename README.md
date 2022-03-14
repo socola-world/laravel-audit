@@ -11,7 +11,7 @@ composer require socoladaica/laravel-audit
 add `testsuite` into `testsuites`
 ```xml
 <testsuite name="Audit">
-    <directory suffix="Test.php">./vendor/socoladaica/laravel-audit/tests</directory>
+    <directory suffix="Test.php">./vendor/socoladaica/laravel-audit/src/TestCases</directory>
 </testsuite>
 ```
 
@@ -24,7 +24,7 @@ add `testsuite` into `testsuites`
          colors="true">
     <testsuites>
         <testsuite name="Audit">
-            <directory suffix="Test.php">./vendor/socoladaica/laravel-audit/tests</directory>
+            <directory suffix="Test.php">./vendor/socoladaica/laravel-audit/src/TestCases</directory>
         </testsuite>
 
         <testsuite name="Unit">
@@ -55,7 +55,7 @@ add `testsuite` into `testsuites`
 ```
 
 ```shell
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases"
 ```
 
 ## TestCase
@@ -63,18 +63,19 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
 Make sure you run `composer dumpautoload before run any testcase`
 
 ```shell
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\ControllersTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\Http\\RequestsTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\App\\ModelsTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Common\\ClassTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Database\\DatabaseTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Database\\MigrationsTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\EnvTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Psr\\Psr1Test"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Resources\\SCSSTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\Resources\\ViewsTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\Tests\\RouteTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Http\\ControllersTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Http\\RequestsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\ModelsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Common\\ClassTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\ConfigsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Database\\DatabaseTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Database\\MigrationsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\EnvTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Psr\\Psr1Test"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Resources\\SCSSTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Resources\\ViewsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\RoutesTest"
 ```
 
 ## Php-cs-fixer

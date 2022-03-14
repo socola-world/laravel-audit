@@ -1,20 +1,21 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests;
+namespace SocolaDaiCa\LaravelAudit\TestCases;
 
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\ExpectationFailedException;
 use SocolaDaiCa\LaravelAudit\Helper;
 use SocolaDaiCa\LaravelAudit\Migrator;
 use Symfony\Component\Finder\SplFileInfo;
+use function once;
+use function optional;
+use function resource_path;
 
 class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
@@ -26,9 +27,9 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
 
         if (
             array_key_exists(static::class, \config('socoladaica__laravel_audit.skip_testcase'))
-            && in_array($this->getName(), \config('socoladaica__laravel_audit.skip_testcase')[static::class])
+            && in_array($this->getName(false), \config('socoladaica__laravel_audit.skip_testcase')[static::class])
         ) {
-            static::markTestSkipped(resource_path('views'));
+            static::markTestSkipped('socoladaica__laravel_audit.skip_testcase');
         }
     }
 
@@ -37,8 +38,6 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
         /**
          * @var \Illuminate\Foundation\Application $app
          */
-//        $app = require __DIR__.'/../bootstrap/app.php';
-//        $app = require base_path('bootstrap/app.php');
         $app = require 'bootstrap/app.php';
 
         $app->make(Kernel::class)->bootstrap();
@@ -57,13 +56,6 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
 //            'prefix' => '',
 //            'foreign_key_constraints' => true,
 //        ]);
-
-        $app->singleton('migrator', function ($app) {
-            $repository = $app['migration.repository'];
-
-            return new Migrator($repository, $app['db'], $app['files'], $app['events']);
-        });
-
         $app['config']->set('database.connections.laravel_audit_sqlite', [
             'driver' => 'mysql',
             'url' => null,
@@ -81,6 +73,18 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
             'engine' => null,
             'options' => [],
         ]);
+
+//        $app->singleton('migrator', function ($app) {
+//            $repository = $app['migration.repository'];
+//
+//            return new Migrator($repository, $app['db'], $app['files'], $app['events']);
+//        });
+
+        $app->singleton(Migrator::class, function ($app) {
+            $repository = $app['migration.repository'];
+
+            return new Migrator($repository, $app['db'], $app['files'], $app['events']);
+        });
 
         return $app;
     }
@@ -211,6 +215,14 @@ and run "composer dumpautoload" again'
         ];
         $export = preg_replace(array_keys($patterns), array_values($patterns), $export);
         $export = preg_replace("/\n(\s*)/", "\n$1$1{$tab}", $export);
+
+//        if (Arr::isAssoc($expression)) {
+//            (\n\t+)
+//            $export = preg_replace('/\d+ => /', '$1', $export);
+//        }
+
+//        (\n\t+)
+        $export = preg_replace('/(\n\s*)\d+ => /', '$1', $export);
 
         return $export;
     }

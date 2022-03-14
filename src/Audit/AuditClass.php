@@ -22,20 +22,24 @@ class AuditClass extends Audit1
 
     public static function make(ReflectionClass $reflectionClass)
     {
-        if (array_key_exists($reflectionClass->getName(), self::$cache)) {
-            return self::$cache[$reflectionClass->getName()];
+        if (array_key_exists($reflectionClass->getName(), static::$cache)) {
+            return static::$cache[$reflectionClass->getName()];
         }
 
-        return self::$cache[$reflectionClass->getName()] = new self($reflectionClass);
+        return static::$cache[$reflectionClass->getName()] = new static($reflectionClass);
     }
 
+    /**
+     * @param $class
+     * @return static
+     */
     public static function makeByClass($class)
     {
-        if (array_key_exists($class, self::$cache)) {
-            return self::$cache[$class];
+        if (array_key_exists($class, static::$cache)) {
+            return static::$cache[$class];
         }
 
-        return self::$cache[$class] = new self(new ReflectionClass($class));
+        return static::$cache[$class] = new static(new ReflectionClass($class));
     }
 
     public function __construct(ReflectionClass $reflectionClass)
@@ -50,17 +54,17 @@ class AuditClass extends Audit1
 
     public static function getPhpParser(): PhpParser
     {
-        if (!self::$phpParser) {
-            self::$phpParser = new PhpParser();
+        if (!static::$phpParser) {
+            static::$phpParser = new PhpParser();
         }
 
-        return self::$phpParser;
+        return static::$phpParser;
     }
 
     public function getUseStatements(): array
     {
         return once(function () {
-            return self::getPhpParser()->parseUseStatements($this->reflectionClass);
+            return static::getPhpParser()->parseUseStatements($this->reflectionClass);
         });
     }
 

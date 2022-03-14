@@ -1,10 +1,11 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http;
 
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Str;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
+use function collect;
 
 class RequestsTest extends TestCase
 {
@@ -57,6 +58,7 @@ class RequestsTest extends TestCase
             array_keys($attributes)
         );
         $missingAttributes = array_values($missingAttributes);
+        $missingAttributes = array_fill_keys($missingAttributes, '?_?');
 
         static::assertCount(
             0,
@@ -72,6 +74,8 @@ class RequestsTest extends TestCase
         //        'id', // đang suy nghĩ
         'updated_at',
         'created_at',
+        'created_by',
+        'updated_by',
     ];
 
     /**
@@ -132,7 +136,7 @@ class RequestsTest extends TestCase
         );
     }
 
-    protected $ruleKeysNeedCustomValue = [
+    protected array $ruleKeysNeedCustomValue = [
         'ProhibitedIf',
         'ProhibitedUnless',
         'RequiredIf',
@@ -150,11 +154,17 @@ class RequestsTest extends TestCase
             foreach ($ruleParses as $ruleParse) {
                 [$ruleName, $parameters] = $ruleParse;
 
-                if (in_array($ruleName, $this->ruleKeysNeedCustomValue)) {
-                    $rulesMissingCustomValue[$parameters[0]][$parameters[1]] = '?_?';
-
-                    break;
+                if (in_array($ruleName, $this->ruleKeysNeedCustomValue) == false) {
+                    continue;
                 }
+
+                if (!empty($auditRequest->getValidator()->customValues[$parameters[0]][''.$parameters[1]])) {
+                    continue;
+                }
+
+                $rulesMissingCustomValue[$parameters[0]][''.$parameters[1]] = '?_?';
+
+                break;
             }
         }
 
@@ -225,13 +235,16 @@ class RequestsTest extends TestCase
 //    }
 
     //'String', 'Boolean', 'Date'
-    protected $ruleTypes = [
+    protected array $ruleTypes = [
         'Array',
         'Date',
         'Email',
         'Integer',
         'Numeric',
         'String',
+        'File',
+        'Json',
+        'Password',
     ];
 
     /**
@@ -242,17 +255,10 @@ class RequestsTest extends TestCase
         $rulesMissingType = [];
 
         foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
-            $isMissing = true;
-
-            foreach ($ruleParses as $ruleParse) {
-                [$ruleName, $parameters] = $ruleParse;
-
-                if (in_array($ruleName, $this->ruleTypes)) {
-                    $isMissing = false;
-
-                    break;
-                }
-            }
+//            [$ruleName, $parameters] = $ruleParse;
+            $isMissing = collect($ruleParses)
+                ->filter(fn ($ruleParse) => in_array($ruleParse[0], $this->ruleTypes))
+                ->count() == 0;
 
             if ($isMissing) {
                 $rulesMissingType[] = $attribute;
@@ -263,7 +269,48 @@ class RequestsTest extends TestCase
             $rulesMissingType,
             $this->error(
                 $auditRequest->reflectionClass->getName().'::rules()',
-                'key missing type',
+                'attribute missing type',
+                $rulesMissingType,
+            )
+        );
+    }
+
+    protected array $ruleFollowTypes = [
+        'After' => 'Date',
+        'AfterOrEqual' => 'Date',
+        'Before' => 'Date',
+        'BeforeOrEqual' => 'Date',
+        'DateEquals' => 'Date',
+        //        'Dimensions' => 'image',
+        //        'Dimensions' => 'mine',
+    ];
+
+    /**
+     * @dataProvider requestDataProvider
+     */
+    public function testRuleFollowType(AuditRequest $auditRequest)
+    {
+        $rulesMissingType = [];
+
+        foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
+//            [$ruleName, $parameters] = $ruleParse;
+            collect($ruleParses)
+                ->each(function ($ruleParse) use (&$rulesMissingType, $attribute) {
+                    [$ruleName, $parameters] = $ruleParse;
+
+                    if (array_key_exists($ruleName, $this->ruleFollowTypes) == false) {
+                        return;
+                    }
+
+                    $rulesMissingType[$attribute] = Str::snake($this->ruleFollowTypes[$ruleName]);
+                });
+        }
+
+        static::assertEmpty(
+            $rulesMissingType,
+            $this->error(
+                $auditRequest->reflectionClass->getName().'::rules()',
+                'type of attribute should be',
                 $rulesMissingType,
             )
         );

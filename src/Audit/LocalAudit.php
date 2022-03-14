@@ -11,19 +11,19 @@ class LocalAudit
 
     public static function getLoader(): ClassLoader
     {
-        if (empty(self::$loader)) {
-            self::$loader = new ClassLoader();
+        if (empty(static::$loader)) {
+            static::$loader = new ClassLoader();
         }
 
-        return self::$loader;
+        return static::$loader;
     }
 
     protected static $classMap;
 
     public static function getClassMap(): array
     {
-        if (!empty(self::$classMap)) {
-            return self::$classMap;
+        if (!empty(static::$classMap)) {
+            return static::$classMap;
         }
 
         $composerJson = json_decode(file_get_contents(base_path('composer.json')));
@@ -34,34 +34,34 @@ class LocalAudit
         );
 
         foreach ($paths as $path) {
-            self::getLoader()->addClassMap((array) ClassMapGenerator::createMap($path));
+            static::getLoader()->addClassMap((array) ClassMapGenerator::createMap(base_path($path)));
         }
 
-        return self::$classMap = self::getLoader()->getClassMap();
+        return static::$classMap = static::getLoader()->getClassMap();
     }
 
     private static array $fileMap;
 
     public static function getFileMap(): array
     {
-        if (empty(self::$fileMap)) {
-            self::$fileMap = [];
+        if (empty(static::$fileMap)) {
+            static::$fileMap = [];
 
-            foreach (self::getClassMap() as $class => $path) {
-                self::$fileMap[realpath($path)] = $class;
+            foreach (static::getClassMap() as $class => $path) {
+                static::$fileMap[realpath($path)] = $class;
             }
         }
 
-        return self::$fileMap;
+        return static::$fileMap;
     }
 
     public static function getClassByFile($path)
     {
-        return self::getFileMap()[realpath($path)] ?: null;
+        return static::getFileMap()[realpath($path)] ?: null;
     }
 
     public static function isClassExist($class): bool
     {
-        return array_key_exists($class, self::getClassMap());
+        return array_key_exists($class, static::getClassMap());
     }
 }

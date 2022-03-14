@@ -254,6 +254,16 @@ $rules = [
             'uses',
         ],
     ],
+    'phpdoc_return_self_reference' => [
+        'replacements' => [
+            'this' => '$this',
+            '@this' => '$this',
+            '$self' => 'self',
+            '@self' => 'self',
+            '$static' => 'static',
+            '@static' => 'static',
+        ]
+    ],
     'phpdoc_scalar' => true,
     'phpdoc_separation' => true,
     'phpdoc_single_line_var_spacing' => true,

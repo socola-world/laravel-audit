@@ -142,7 +142,7 @@ class ValidatorX extends Validator
          */
         $requestValidator = $request->getValidator();
 
-        $validator = new self(
+        $validator = new static(
             $translator,
             [],
             $request->getContainer()->call([$request, 'rules']),
