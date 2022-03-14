@@ -5,6 +5,7 @@ namespace SocolaDaiCa\LaravelAudit\Tests;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -37,8 +38,6 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
         /**
          * @var \Illuminate\Foundation\Application $app
          */
-//        $app = require __DIR__.'/../bootstrap/app.php';
-//        $app = require base_path('bootstrap/app.php');
         $app = require 'bootstrap/app.php';
 
         $app->make(Kernel::class)->bootstrap();
@@ -50,6 +49,12 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
         Auth::shouldReceive('id')->andReturn(1);
         Auth::shouldReceive('user')->andReturn(optional());
 
+//        $app->singleton('migrator', function ($app) {
+//            $repository = $app['migration.repository'];
+//
+//            return new Migrator($repository, $app['db'], $app['files'], $app['events']);
+//        });
+
 //        $app['config']->set('database.connections.laravel_audit_sqlite', [
 //            'driver' => 'sqlite',
 //            'url' => null,
@@ -57,13 +62,6 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
 //            'prefix' => '',
 //            'foreign_key_constraints' => true,
 //        ]);
-
-        $app->singleton('migrator', function ($app) {
-            $repository = $app['migration.repository'];
-
-            return new Migrator($repository, $app['db'], $app['files'], $app['events']);
-        });
-
         $app['config']->set('database.connections.laravel_audit_sqlite', [
             'driver' => 'mysql',
             'url' => null,
@@ -211,6 +209,14 @@ and run "composer dumpautoload" again'
         ];
         $export = preg_replace(array_keys($patterns), array_values($patterns), $export);
         $export = preg_replace("/\n(\s*)/", "\n$1$1{$tab}", $export);
+
+//        if (Arr::isAssoc($expression)) {
+//            (\n\t+)
+//            $export = preg_replace('/\d+ => /', '$1', $export);
+//        }
+
+//        (\n\t+)
+        $export = preg_replace('/(\n\s*)\d+ => /', '$1', $export);
 
         return $export;
     }

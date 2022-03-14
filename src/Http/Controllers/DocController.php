@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use SocolaDaiCa\LaravelAudit\Helper;
+use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
+use SocolaDaiCa\LaravelAudit\Audit\LocalAudit;
 use SocolaDaiCa\LaravelAudit\ValidatorX;
-use function Sodium\compare;
 
 class DocController extends Controller
 {
@@ -81,7 +81,12 @@ class DocController extends Controller
                         continue;
                     }
 
-                    $request = Helper::getRequest($x->getName());
+                    if (LocalAudit::isClassExist($x->getName()) == false) {
+                        continue;
+                    }
+
+                    $auditRequest = AuditRequest::makeByClass($x->getName());
+                    $request = $auditRequest->getRequest();
                     $item['request'] = $x->getName();
 
                     break;
@@ -103,7 +108,7 @@ class DocController extends Controller
         }
 
         $items = collect($items)->sort(function ($a, $b) {
-            return compare($a['controller'], $b['controller']) ?: compare($a['method'], $b['method']);
+            return strcmp($a['controller'], $b['controller']) ?: strcmp($a['method'], $b['method']);
         })->values()->toArray();
 
         $groupItems = collect($items)->groupBy('controller');

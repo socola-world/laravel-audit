@@ -72,13 +72,12 @@ class AuditRequest extends AuditClass
 
         $this->rulesParse = [];
 
-        foreach ($this->getValidator()->getRules() as $ruleName => $rules) {
-            $this->rulesParse[$ruleName] = [];
+        foreach ($this->getValidator()->getRules() as $attribute => $rules) {
+            $this->rulesParse[$attribute] = [];
 
             foreach ($rules as $rule) {
-//                $this->rulesParse[$ruleName] = [];
 //                $this->rulesParse[$ruleName]['parse'] = ValidationRuleParser::parse($rule);
-                $this->rulesParse[$ruleName] = ValidationRuleParser::parse($rule);
+                $this->rulesParse[$attribute][] = ValidationRuleParser::parse($rule);
 //                $this->rulesParse[$ruleName]['rule'] = $rule;
             }
         }

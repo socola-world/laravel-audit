@@ -196,12 +196,12 @@ class MigrationsTest extends TestCase
             Artisan::call('migrate:rollback', ['--step' => 1]);
             $databaseDescribesDown = $this->getDatabaseDescribes();
 
-            if (json_encode($databaseDescribes) != json_encode($databaseDescribesDown)) {
-                file_put_contents('abc.json', json_encode([
-                    $databaseDescribes,
-                    $databaseDescribesDown,
-                ], JSON_PRETTY_PRINT));
-            }
+//            if (json_encode($databaseDescribes) != json_encode($databaseDescribesDown)) {
+//                file_put_contents('abc.json', json_encode([
+//                    $databaseDescribes,
+//                    $databaseDescribesDown,
+//                ], JSON_PRETTY_PRINT));
+//            }
 
             $databaseDescribesDot = Arr::dot($databaseDescribes);
             $databaseDescribesUpDot = Arr::dot($databaseDescribesUp);
@@ -271,9 +271,9 @@ class MigrationsTest extends TestCase
                 ->toArray();
             ksort($indexes);
 
-            if (!empty($databaseDescribes[$table]['__index'])) {
+//            if (!empty($databaseDescribes[$table]['__index'])) {
                 $databaseDescribes[$table]['__index'] = $indexes;
-            }
+//            }
         }
 
         unset($databaseDescribes['migrations']);

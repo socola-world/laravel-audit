@@ -210,7 +210,7 @@ class ModelsTest extends TestCase
         $hasDeletedAtColumn = $auditModel->isColumnExist('deleted_at');
 
         if ($hasDeletedAtColumn) {
-            self::shouldWarning(function () use (&$hasSoftDeletesTrail, &$auditModel) {
+            static::shouldWarning(function () use (&$hasSoftDeletesTrail, &$auditModel) {
                 static::assertTrue(
                     $hasSoftDeletesTrail,
                     $this->warning(
@@ -339,7 +339,7 @@ class ModelsTest extends TestCase
                     case 'Awobaz\Compoships\Database\Eloquent\Relations\HasOne':
 //                        break;
                     default:
-                        self::shouldWarning(function () use (&$hasSoftDeletesTrail, &$auditModel, $relation) {
+                        static::shouldWarning(function () use (&$hasSoftDeletesTrail, &$auditModel, $relation) {
                             static::assertTrue(
                                 false,
                                 $this->warning(
