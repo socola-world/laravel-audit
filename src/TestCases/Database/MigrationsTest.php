@@ -252,7 +252,6 @@ class MigrationsTest extends TestCase
             );
 
             $databaseDescribes = $databaseDescribesUp;
-
 //            Artisan::call('migrate', ['--path' => $migrationPath]);
             $myMigrator->resolvePath($migrationFullPath)->up();
         }

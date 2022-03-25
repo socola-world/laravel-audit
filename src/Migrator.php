@@ -143,9 +143,9 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         // aren't, we will just make a note of it to the developer so they're aware
         // that all of the migrations have been run against this database system.
         if (count($migrations) === 0) {
-            $this->fireMigrationEvent(new NoPendingMigrations('up'));
+//            $this->fireMigrationEvent(new NoPendingMigrations('up'));
 
-            $this->note('<info>Nothing to migrate.</info>');
+//            $this->note('<info>Nothing to migrate.</info>');
 
             return;
         }
@@ -159,7 +159,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
 
         $step = $options['step'] ?? false;
 
-        $this->fireMigrationEvent(new MigrationsStarted);
+//        $this->fireMigrationEvent(new MigrationsStarted('up'));
 
         // Once we have the array of migrations, we will spin through them and run the
         // migrations "up" so the changes are made to the databases. We'll then log
@@ -172,7 +172,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
             }
         }
 
-        $this->fireMigrationEvent(new MigrationsEnded);
+//        $this->fireMigrationEvent(new MigrationsEnded('up'));
     }
 
     /**
@@ -227,9 +227,9 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         $migrations = $this->getMigrationsForRollback($options);
 
         if (count($migrations) === 0) {
-            $this->fireMigrationEvent(new NoPendingMigrations('down'));
+//            $this->fireMigrationEvent(new NoPendingMigrations('down'));
 
-            $this->note('<info>Nothing to rollback.</info>');
+//            $this->note('<info>Nothing to rollback.</info>');
 
             return [];
         }
@@ -266,7 +266,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
 
         $this->requireFiles($files = $this->getMigrationFiles($paths));
 
-        $this->fireMigrationEvent(new MigrationsStarted);
+//        $this->fireMigrationEvent(new MigrationsStarted('down'));
 
         // Next we will run through all of the migrations and call the "down" method
         // which will reverse each migration in order. This getLast method on the
@@ -275,7 +275,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
             $migration = (object) $migration;
 
             if (! $file = Arr::get($files, $migration->migration)) {
-                $this->note("<fg=red>Migration not found:</> {$migration->migration}");
+//                $this->note("<fg=red>Migration not found:</> {$migration->migration}");
 
                 continue;
             }
@@ -288,7 +288,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
             );
         }
 
-        $this->fireMigrationEvent(new MigrationsEnded);
+//        $this->fireMigrationEvent(new MigrationsEnded('down'));
 
         return $rolledBack;
     }
@@ -388,13 +388,13 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
 //            $migration->getConnection()
 //        );
 
-        $callback = function () use ($migration, $method) {
+        $callback = function () use ($connection, $migration, $method) {
             if (method_exists($migration, $method)) {
-                $this->fireMigrationEvent(new MigrationStarted($migration, $method));
+//                $this->fireMigrationEvent(new MigrationStarted($migration, $method));
 
-                $migration->{$method}();
+                $this->runMethod($connection, $migration, $method);
 
-                $this->fireMigrationEvent(new MigrationEnded($migration, $method));
+//                $this->fireMigrationEvent(new MigrationEnded($migration, $method));
             }
         };
 
@@ -425,12 +425,12 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
                     $name = $this->getMigrationName($reflectionClass->getFileName());
                 }
 
-                $this->note("<info>{$name}:</info> {$query['query']}");
+//                $this->note("<info>{$name}:</info> {$query['query']}");
             }
         } catch (SchemaException $e) {
             $name = get_class($migration);
 
-            $this->note("<info>{$name}:</info> failed to dump queries. This may be due to changing database columns using Doctrine, which is not supported while pretending to run migrations.");
+//            $this->note("<info>{$name}:</info> failed to dump queries. This may be due to changing database columns using Doctrine, which is not supported while pretending to run migrations.");
         }
     }
 
@@ -450,11 +450,32 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
             $migration->getConnection()
         );
 
-        return $db->pretend(function () use ($migration, $method) {
+        return $db->pretend(function () use ($db, $migration, $method) {
             if (method_exists($migration, $method)) {
-                $migration->{$method}();
+                $this->runMethod($db, $migration, $method);
             }
         });
+    }
+
+    /**
+     * Run a migration method on the given connection.
+     *
+     * @param  \Illuminate\Database\Connection  $connection
+     * @param  object  $migration
+     * @param  string  $method
+     * @return void
+     */
+    protected function runMethod($connection, $migration, $method)
+    {
+        $previousConnection = $this->resolver->getDefaultConnection();
+
+        try {
+            $this->resolver->setDefaultConnection($connection->getName());
+
+            $migration->{$method}();
+        } finally {
+            $this->resolver->setDefaultConnection($previousConnection);
+        }
     }
 
     /**
@@ -636,6 +657,16 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
     }
 
     /**
+     * Get the migration repository instance.
+     *
+     * @return \Illuminate\Database\Migrations\MigrationRepositoryInterface
+     */
+    public function getRepository()
+    {
+        return $this->repository;
+    }
+
+    /**
      * Determine if the migration repository exists.
      *
      * @return bool
@@ -696,9 +727,9 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      */
     protected function note($message)
     {
-        if ($this->output) {
-            $this->output->writeln($message);
-        }
+//        if ($this->output) {
+//            $this->output->writeln($message);
+//        }
     }
 
     /**
@@ -709,8 +740,8 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      */
     public function fireMigrationEvent($event)
     {
-        if ($this->events) {
-            $this->events->dispatch($event);
-        }
+//        if ($this->events) {
+//            $this->events->dispatch($event);
+//        }
     }
 }

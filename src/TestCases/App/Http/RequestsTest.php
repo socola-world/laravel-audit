@@ -282,6 +282,8 @@ class RequestsTest extends TestCase
         'Before' => 'Date',
         'BeforeOrEqual' => 'Date',
         'DateEquals' => 'Date',
+        'Digits' => 'Numeric',
+        'DigitsBetween' => 'Numeric',
         //        'Dimensions' => 'image',
         //        'Dimensions' => 'mine',
     ];

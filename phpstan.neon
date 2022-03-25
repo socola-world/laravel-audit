@@ -1,0 +1,255 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/spaze/phpstan-disallowed-calls/extension.neon
+#    - ./../../../vendor/nunomaduro/larastan/extension.neon
+#    - ./../../../vendor/spaze/phpstan-disallowed-calls/extension.neon
+
+parameters:
+    disallowedMethodCalls:
+#        -
+#            method: 'Illuminate\Http\Request::get()'
+#            message: 'use Illuminate\Http\Request::input() instead'
+#        -
+#            method: 'Illuminate\Database\Connection::table()'
+#            message: 'use Model instead'
+#        -
+#            method: 'Illuminate\Database\Connection::insert()'
+#            message: 'use Model instead'
+#        -
+#            method: 'Illuminate\Database\Connection::statement()'
+#            message: 'use Model instead'
+#        -
+#            method: 'Illuminate\Database\Connection::update()'
+#            message: 'use Model instead'
+#        -
+#            method: 'Illuminate\Database\Connection::delete()'
+#            message: 'use Model instead'
+#        -
+#            method: 'Illuminate\Http\Request::all()'
+#            message: 'use validated() instead'
+#        # join Illuminate\Database\Query\Builder
+#        -
+#            method: 'Illuminate\Database\Query\Builder::crossJoin()'
+#            message: 'use crossJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::join()'
+#            message: 'use joinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::joinWhere()'
+#            message: 'use joinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::leftJoin()'
+#            message: 'use leftJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::leftJoinWhere()'
+#            message: 'use leftJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::rightJoin()'
+#            message: 'use rightJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::rightJoinWhere()'
+#            message: 'use rightJoinSub() instead'
+#        # join Illuminate\Database\Eloquent\Builder
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::crossJoin()'
+#            message: 'use crossJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::join()'
+#            message: 'use joinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::joinWhere()'
+#            message: 'use joinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::leftJoin()'
+#            message: 'use leftJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::leftJoinWhere()'
+#            message: 'use leftJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::rightJoin()'
+#            message: 'use rightJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::rightJoinWhere()'
+#            message: 'use rightJoinSub() instead'
+
+    disallowedStaticCalls:
+#        -
+#            method: 'Illuminate\Http\Request::get()'
+#            message: 'use Illuminate\Http\Request::input() instead'
+#        -
+#            method: 'Illuminate\Database\Connection::table()'
+#            message: 'use Model instead'
+#        -
+#            method: 'Illuminate\Database\Connection::delete()'
+#            message: 'use Model instead'
+#        -
+#            method: 'Illuminate\Http\Request::all()'
+#            message: 'use validated() instead'
+#        # join Illuminate\Database\Query\Builder
+#        -
+#            method: 'Illuminate\Database\Query\Builder::crossJoin()'
+#            message: 'use crossJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::join()'
+#            message: 'use joinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::joinWhere()'
+#            message: 'use joinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::leftJoin()'
+#            message: 'use leftJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::leftJoinWhere()'
+#            message: 'use leftJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::rightJoin()'
+#            message: 'use rightJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Query\Builder::rightJoinWhere()'
+#            message: 'use rightJoinSub() instead'
+#        # join Illuminate\Database\Eloquent\Builder
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::crossJoin()'
+#            message: 'use crossJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::join()'
+#            message: 'use joinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::joinWhere()'
+#            message: 'use joinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::leftJoin()'
+#            message: 'use leftJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::leftJoinWhere()'
+#            message: 'use leftJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::rightJoin()'
+#            message: 'use rightJoinSub() instead'
+#        -
+#            method: 'Illuminate\Database\Eloquent\Builder::rightJoinWhere()'
+#            message: 'use rightJoinSub() instead'
+    disallowedFunctionCalls:
+        -
+            function: 'dd()'
+            message: ''
+        -
+            function: 'dump()'
+            message: ''
+        -
+            function: 'var_dump()'
+            message: ''
+        -
+            function: 'die()'
+            message: ''
+        -
+            function: 'print_r()'
+            message: ''
+        -
+            function: 'env()'
+            message: ''
+        -
+            function: 'echo()'
+            message: ''
+        -
+            function: 'exit()'
+            message: ''
+        -
+            function: 'print()'
+            message: ''
+#        -
+#            function: '()'
+#            message: ''
+#        -
+#            function: '()'
+#            message: ''
+#        -
+#            function: '()'
+#            message: ''
+#        -
+#            function: '()'
+#            message: ''
+#        -
+#            function: '()'
+#            message: ''
+#        -
+#            function: '()'
+#            message: ''
+#        -
+#            function: '()'
+#            message: ''
+#        -
+#            function: '()'
+#            message: ''
+#        -
+#            function: '()'
+#            message: ''
+    stubFiles:
+#        - ./alias.stub
+#        - ../../../_ide_helper_models.php
+#         - ../../../.phpstorm.meta.php
+#         - ../../../_ide_helper.php
+    bootstrapFiles:
+#        - ../../../_ide_helper.php
+#        - ../../../_ide_helper_models.php
+#        - ../../../.phpstorm.meta.php
+    scanFiles:
+#        - ../../../_ide_helper.php
+#        - ../../../_ide_helper_models.php
+#        - ../../../.phpstorm.meta.php
+    paths:
+        - ./../../../app
+#        - ./../../../app/Services/Shopify/OtpService.php
+#        - ./../../../app/Services/CompanyService.php
+#        - ./../../../app/Repositories/CompanyRepository.php
+#        - ./../../../app/Helper/Helper.php
+#        - ./../../../app/Console
+#        - ./../../../app/Exceptions
+#        - ./../../../app/Http
+#        - ./../../../app/Http/Controllers
+#        - ./../../../app/Http/Middleware
+#        - ./../../../app/Http/Requests
+#        - ./../../../app/Jobs
+#        - ./../../../app/Log
+#        - ./../../../app/Mail
+#        - ./../../../app/Models
+#        - ./../../../app/Policies
+#        - ./../../../app/Providers
+#        - ./../../../app/Repositories
+#        - ./../../../app/Rules
+#        - ./../../../app/Services
+
+    # The level 9 is the highest level
+    level: 9
+
+    ignoreErrors:
+#        - '#PHPDoc tag @var#'
+        - "#Called 'pluck' on Laravel collection, but could have been retrieved as a query.#"
+        - '#Access to an undefined property App\\Models\\[a-zA-Z0-9]+::\$[a-zA-Z0-9_]+\.#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$[a-zA-Z0-9_]+\.#'
+        - '#Access to an undefined property object::\$[a-zA-Z0-9_]+\.#'
+#        - '#Call to an undefined method App\\Models\\[a-zA-Z0-9]+::withTrashed\(\)\.#'
+#        - '#Call to an undefined method App\\Repositories\\[a-zA-Z0-9]+::withTrashed\(\)\.#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::[a-zA-Z0-9]+\(\)\.#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model>::withTrashed\(\)\.#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model>::onlyTrashed\(\)\.#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::withTrashed\(\)\.#'
+        - '#Property App\\Models\\ProductStore::\$[a-zA-Z0-9_]+ \(string\) does not accept default value of type array<int\, string>\.#'
+        - '#Method App\\Console\\Commands\\[a-zA-Z0-9_]+::handle\(\) should return int but return statement is missing\.#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Collection<Illuminate\\Database\\Eloquent\\Model>|Illuminate\\Database\\Eloquent\\Model::[a-zA-Z0-9]+\(\)\.#'
+
+        - '#PHPDoc tag @param has invalid value.*#'
+#        bỏ qua những rule này
+        - '#Access to private property \$password of parent class Illuminate\\Foundation\\Auth\\User\.#'
+# những rule này không cần quan tâm
+        - '#Call to an undefined method App\\Repositories\\[a-zA-Z0-9]+::withTrashed\(\).#'
+        - '#Call to an undefined method App\\Helper\\QueryBuilderMixin::[a-zA-Z0-9]+\(\).#'
+        - '#Method App\\Helper\\QueryBuilderMixin::[a-zA-Z0-9]+\(\) invoked with .*#'
+
+    excludePaths:
+         - ../../../.phpstorm.meta.php
+         - ../../../_ide_helper.php
+         - ../../../_ide_helper_models.php
+#        - ./*/*/FileToBeExcluded.php
+
+    checkMissingIterableValueType: false

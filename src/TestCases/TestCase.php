@@ -68,7 +68,7 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
             'url' => null,
             'host' => '127.0.0.1',
             'port' => '3306',
-            'database' => 'pokerclub_test_audit',
+            'database' => 'socoladaica__larave_audit',
             'username' => 'root',
             'password' => '',
             'unix_socket' => '',

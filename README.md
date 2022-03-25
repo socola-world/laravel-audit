@@ -77,12 +77,43 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Resources
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Resources\\ViewsTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\RoutesTest"
 ```
+## Code Fixer
 
-## Php-cs-fixer
+### Php-cs-fixer
 
 ```shell
 vendor\bin\php-cs-fixer.bat --config=.php_cs.php fix
 vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.php fix
+```
+
+### Phpstan
+
+create `phpstan.neon` in root of project
+
+```neon
+includes:
+    - ./vendor/socoladaica/laravel-audit/phpstan.neon
+
+parameters:
+
+    paths:
+        - app
+
+    # The level 9 is the highest level
+    level: 5
+
+    ignoreErrors:
+        - '#PHPDoc tag @var#'
+
+    excludePaths:
+        - ./*/*/FileToBeExcluded.php
+
+    checkMissingIterableValueType: false
+
+```
+
+```shell
+vendor\bin\phpstan analyse 
 ```
 
 ## Coming Soon
@@ -93,7 +124,7 @@ vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.ph
   - rule missing type -> **done**
   - attributeShouldNotExists
   - instead, rule (between instead min max)
-  - follow tyle digits_between
+  - follow type digits_between
   - exists 
     - missing soft delete
     - model not Exists
