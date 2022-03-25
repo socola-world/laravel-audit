@@ -1,8 +1,9 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests;
+namespace SocolaDaiCa\LaravelAudit\TestCases;
 
 use Dotenv\Dotenv;
+use function base_path;
 
 class EnvTest extends TestCase
 {
@@ -27,14 +28,14 @@ class EnvTest extends TestCase
         /**
          * @var \Dotenv\Dotenv $dotenvExample
          */
-        $dotenvExample = Dotenv::create(base_path(''), '.env.example');
+        $dotenvExample = Dotenv::createImmutable(base_path(''), '.env.example');
 
         /**
          * @var \Dotenv\Dotenv $dotenv
          */
-        $dotenv = Dotenv::create(base_path(''), '.env');
+        $dotenv = Dotenv::createImmutable(base_path(''), '.env');
 
-        $keyNotDefineInEnvExample = array_diff_key($dotenv->overload(), $dotenvExample->overload());
+        $keyNotDefineInEnvExample = array_diff_key($dotenv->load(), $dotenvExample->load());
 
         static::assertEmpty(
             $keyNotDefineInEnvExample,

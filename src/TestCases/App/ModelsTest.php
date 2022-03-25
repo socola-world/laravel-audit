@@ -1,6 +1,6 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\App;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Model;
@@ -13,13 +13,17 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use SocolaDaiCa\LaravelAudit\Audit\AuditDatabase;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
+use SocolaDaiCa\LaravelAudit\Traits\Assert\AssertTable;
+use function collect;
 
 class ModelsTest extends TestCase
 {
+    use AssertTable;
     /**
      * @dataProvider modelDataProvider
      *
@@ -131,24 +135,27 @@ class ModelsTest extends TestCase
         static::assertTrue(
             $auditModel->isColumnExist($auditModel->model->getKeyName()),
             $this->error(
-                "{$auditModel->reflectionClass->name}::\$primaryKey = '{$auditModel->model->getKeyName()}'",
-                'not exist in database'
+                "{$auditModel->reflectionClass->name}::\$primaryKey = ",
+                $auditModel->model->getKeyName(),
+                'not exist in database',
             )
         );
 
-        /**
-         * @var Column $column
-         */
-        $column = $auditModel->columns[$auditModel->model->getKeyName()];
+        foreach (Arr::wrap($auditModel->model->getKeyName()) as $columnKey) {
+            /**
+             * @var Column $column
+             */
+            $column = $auditModel->columns[$columnKey];
 
-        static::assertTrue(
-            $column->getNotnull(),
-            $this->error(
-                $auditModel->reflectionClass->name,
-                $column->getName(),
-                'must not null'
-            )
-        );
+            static::assertTrue(
+                $column->getNotnull(),
+                $this->error(
+                    $auditModel->reflectionClass->name,
+                    $column->getName(),
+                    'must not null'
+                )
+            );
+        }
     }
 
     protected $columnsShouldHidden = [
@@ -276,17 +283,17 @@ class ModelsTest extends TestCase
                 try {
                     $response = $auditModel->model->{$method->getName()}();
                 } catch (\Throwable $exception) {
-                    dd(
-                        [
-                            '$auditModel->reflectionClass->getName()' => $auditModel->reflectionClass->getName(),
-                            '$method->getName()' => $method->getName(),
-                            '$method->getReturnType()' => $method->getReturnType(),
-                            'class_exists($method->getReturnType()->getName())' => class_exists(
-                                $method->getReturnType()->getName()
-                            ),
-                        ],
-                        $exception
-                    );
+//                    dd(
+//                        [
+//                            '$auditModel->reflectionClass->getName()' => $auditModel->reflectionClass->getName(),
+//                            '$method->getName()' => $method->getName(),
+//                            '$method->getReturnType()' => $method->getReturnType(),
+//                            'class_exists($method->getReturnType()->getName())' => class_exists(
+//                                $method->getReturnType()->getName()
+//                            ),
+//                        ],
+//                        $exception
+//                    );
 
                     return null;
                 }
@@ -313,7 +320,7 @@ class ModelsTest extends TestCase
 
                         break;
                     case 'Illuminate\Database\Eloquent\Relations\HasOne':
-                        $this->followRelationHasOne($relation['relation'], $relation['method']);
+                        $this->followRelationHasOne($auditModel, $relation['relation'], $relation['method']);
 
                         break;
                     case 'Illuminate\Database\Eloquent\Relations\HasMany':
@@ -374,7 +381,7 @@ class ModelsTest extends TestCase
         );
     }
 
-    public function followRelationHasOne(HasOne $relation, \ReflectionMethod $method)
+    public function followRelationHasOne(AuditModel $auditModel, HasOne $relation, \ReflectionMethod $method)
     {
         $className = get_class($relation->getParent());
         $methodName = $method->getName();
@@ -390,6 +397,17 @@ class ModelsTest extends TestCase
             $className,
             $methodName
         );
+
+        $this->shouldWarning(function () use ($auditModel, $relation, $method, $foreign) {
+            $this->assertTrue(
+                $auditModel->auditTable->isUnique($relation->getForeignKeyName()),
+                $this->error(
+                    "{$method->getDeclaringClass()->getName()}::{$method->getName()}()",
+                    $foreign->model->getTable(),
+                    "missing unique(".implode(', ', Arr::wrap($relation->getForeignKeyName())).")",
+                )
+            );
+        });
     }
 
     public function followRelationHasMany(HasMany $relation, \ReflectionMethod $method)
@@ -570,10 +588,16 @@ class ModelsTest extends TestCase
         });
     }
 
+    /**
+     * @dataProvider modelDataProvider
+     * @param AuditModel $auditModel
+     * @return void
+     * @throws \JsonException
+     */
     public function testColumnName(AuditModel $auditModel)
     {
         $columnsWrongFormat = collect(array_keys($auditModel->columns))
-            ->map(fn ($columnName) => preg_match('/^[a-z0-9_]+$/', $columnName) == false)
+            ->filter(fn ($columnName) => preg_match('/^[a-z0-9_]+$/', $columnName) == false)
             ->values()
             ->toArray();
 

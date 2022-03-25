@@ -1,6 +1,6 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests;
+namespace SocolaDaiCa\LaravelAudit\TestCases;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -11,6 +11,7 @@ use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRoute;
 use Symfony\Component\Finder\SplFileInfo;
+use function once;
 
 trait DataProvider
 {

@@ -1,11 +1,8 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\Database;
+namespace SocolaDaiCa\LaravelAudit\TestCases\Database;
 
-use Illuminate\Database\Schema\Builder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 
 class DatabaseTest extends TestCase
 {

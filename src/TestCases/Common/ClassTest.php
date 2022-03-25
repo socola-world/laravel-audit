@@ -1,10 +1,11 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\Common;
+namespace SocolaDaiCa\LaravelAudit\TestCases\Common;
 
 use SocolaDaiCa\LaravelAudit\Audit\Audit1;
 use SocolaDaiCa\LaravelAudit\Audit\AuditClass;
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
+use function collect;
 
 class ClassTest extends TestCase
 {

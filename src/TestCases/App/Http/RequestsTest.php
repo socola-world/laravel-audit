@@ -1,11 +1,12 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http;
 
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
+use function collect;
 
 class RequestsTest extends TestCase
 {

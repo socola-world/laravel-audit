@@ -1,8 +1,8 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\App\Http;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http;
 
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 
 class ControllersTest extends TestCase
 {

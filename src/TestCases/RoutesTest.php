@@ -1,8 +1,9 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests;
+namespace SocolaDaiCa\LaravelAudit\TestCases;
 
 use Illuminate\Http\Request;
+use ReflectionMethod;
 use ReflectionParameter;
 use SocolaDaiCa\LaravelAudit\Audit\AuditClass;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRoute;
@@ -108,6 +109,16 @@ class RoutesTest extends TestCase
 
                     return true;
                 })
+                ->map(function ($e) {
+                    /* @var AuditRoute $auditRoute */
+                    $auditRoute = $e[0];
+                    $auditClass = AuditClass::makeByClass($e[0]->getControllerClass());
+                    return [
+                        $e[0],
+                        $auditClass,
+                        $auditClass->reflectionClass->getMethod($auditRoute->getControllerMethod()),
+                    ];
+                })
                 ->values()
                 ->toArray();
         });
@@ -118,11 +129,8 @@ class RoutesTest extends TestCase
      *
      * @throws \ReflectionException
      */
-    public function testHandleControllerParamaters(AuditRoute $auditRoute)
+    public function testHandleControllerRequest(AuditRoute $auditRoute, AuditClass $auditClass, ReflectionMethod $method)
     {
-        $auditClass = AuditClass::makeByClass($auditRoute->getControllerClass());
-        $method = $auditClass->reflectionClass->getMethod($auditRoute->getControllerMethod());
-
         $parameterTypes = collect($method->getParameters())
             ->filter(function (ReflectionParameter $parameter) {
                 return $parameter->getType() != null && $parameter->getType()->isBuiltin() == false;
@@ -138,5 +146,46 @@ class RoutesTest extends TestCase
                 Request::class,
             )
         );
+    }
+
+    /**
+     * @dataProvider routeDataProvider
+     *
+     * @throws \ReflectionException
+     */
+    public function testParameters(AuditRoute $auditRoute)
+    {
+        $this->assertLessThanOrEqual(
+            1,
+            count($auditRoute->route->parameterNames()),
+            $this->error(
+                $auditRoute->route->methods(),
+                $auditRoute->route->uri(),
+                $auditRoute->route->getName(),
+                "\nToo many parameters",
+                $auditRoute->route->parameterNames(),
+                "\nparameters should less than or equal 1",
+            )
+        );
+//        dd();
+//        dd($auditRoute->route->parameters());
+//        $auditClass = AuditClass::makeByClass($auditRoute->getControllerClass());
+//        $method = $auditClass->reflectionClass->getMethod($auditRoute->getControllerMethod());
+//
+//        $parameterTypes = collect($method->getParameters())
+//            ->filter(function (ReflectionParameter $parameter) {
+//                return $parameter->getType() != null && $parameter->getType()->isBuiltin() == false;
+//            })
+//            ->map(fn (ReflectionParameter $parameter) => $parameter->getType()->getName())
+//            ->values();
+//
+//        static::assertEmpty(
+//            $parameterTypes->filter(fn ($type) => $type == Request::class)->count(),
+//            $this->error(
+//                "{$auditRoute->route->action['uses']}",
+//                "\nuse php artisan make:request instead",
+//                Request::class,
+//            )
+//        );
     }
 }

@@ -183,7 +183,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * @param  bool  $pretend
      * @return void
      */
-    protected function runUp($file, $batch, $pretend)
+    public function runUp($file, $batch, $pretend)
     {
         // First we will resolve a "real" instance of the migration class from this
         // migration file name. Once we have the instances we can run the actual
@@ -192,24 +192,24 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
 
         $name = $this->getMigrationName($file);
 
-        if ($pretend) {
-            return $this->pretendToRun($migration, 'up');
-        }
+//        if ($pretend) {
+//            return $this->pretendToRun($migration, 'up');
+//        }
 
-        $this->note("<comment>Migrating:</comment> {$name}");
-
-        $startTime = microtime(true);
+//        $this->note("<comment>Migrating:</comment> {$name}");
+//
+//        $startTime = microtime(true);
 
         $this->runMigration($migration, 'up');
-
-        $runTime = number_format((microtime(true) - $startTime) * 1000, 2);
-
-        // Once we have run a migrations class, we will log that it was run in this
-        // repository so that we don't try to run it next time we do a migration
-        // in the application. A migration repository keeps the migrate order.
-        $this->repository->log($name, $batch);
-
-        $this->note("<info>Migrated:</info>  {$name} ({$runTime}ms)");
+//
+//        $runTime = number_format((microtime(true) - $startTime) * 1000, 2);
+//
+//        // Once we have run a migrations class, we will log that it was run in this
+//        // repository so that we don't try to run it next time we do a migration
+//        // in the application. A migration repository keeps the migrate order.
+//        $this->repository->log($name, $batch);
+//
+//        $this->note("<info>Migrated:</info>  {$name} ({$runTime}ms)");
     }
 
     /**
@@ -346,7 +346,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * @param  bool  $pretend
      * @return void
      */
-    protected function runDown($file, $migration, $pretend)
+    public function runDown($file, $migration, $pretend)
     {
         // First we will get the file name of the migration so we can resolve out an
         // instance of the migration. Once we get an instance we can either run a
@@ -355,24 +355,24 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
 
         $name = $this->getMigrationName($file);
 
-        $this->note("<comment>Rolling back:</comment> {$name}");
+//        $this->note("<comment>Rolling back:</comment> {$name}");
 
         if ($pretend) {
             return $this->pretendToRun($instance, 'down');
         }
 
-        $startTime = microtime(true);
+//        $startTime = microtime(true);
 
         $this->runMigration($instance, 'down');
 
-        $runTime = number_format((microtime(true) - $startTime) * 1000, 2);
+//        $runTime = number_format((microtime(true) - $startTime) * 1000, 2);
 
         // Once we have successfully run the migration "down" we will remove it from
         // the migration repository so it will be considered to have not been run
         // by the application then will be able to fire by any later operation.
-        $this->repository->delete($migration);
-
-        $this->note("<info>Rolled back:</info>  {$name} ({$runTime}ms)");
+//        $this->repository->delete($migration);
+//
+//        $this->note("<info>Rolled back:</info>  {$name} ({$runTime}ms)");
     }
 
     /**
@@ -382,11 +382,11 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * @param  string  $method
      * @return void
      */
-    protected function runMigration($migration, $method)
+    public function runMigration($migration, $method)
     {
-        $connection = $this->resolveConnection(
-            $migration->getConnection()
-        );
+//        $connection = $this->resolveConnection(
+//            $migration->getConnection()
+//        );
 
         $callback = function () use ($migration, $method) {
             if (method_exists($migration, $method)) {
@@ -398,10 +398,12 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
             }
         };
 
-        $this->getSchemaGrammar($connection)->supportsSchemaTransactions()
-        && $migration->withinTransaction
-            ? $connection->transaction($callback)
-            : $callback();
+        $callback();
+
+//        $this->getSchemaGrammar($connection)->supportsSchemaTransactions()
+//        && $migration->withinTransaction
+//            ? $connection->transaction($callback)
+//            : $callback();
     }
 
     /**
@@ -474,7 +476,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * @param  string  $path
      * @return object
      */
-    protected function resolvePath(string $path)
+    public function resolvePath(string $path)
     {
         $class = $this->getMigrationClass($this->getMigrationName($path));
 

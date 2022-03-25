@@ -1,6 +1,6 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests;
+namespace SocolaDaiCa\LaravelAudit\TestCases;
 
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Eloquent\Model;
@@ -8,14 +8,15 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\ExpectationFailedException;
 use SocolaDaiCa\LaravelAudit\Helper;
 use SocolaDaiCa\LaravelAudit\Migrator;
 use Symfony\Component\Finder\SplFileInfo;
+use function once;
+use function optional;
+use function resource_path;
 
 class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
@@ -27,9 +28,9 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
 
         if (
             array_key_exists(static::class, \config('socoladaica__laravel_audit.skip_testcase'))
-            && in_array($this->getName(), \config('socoladaica__laravel_audit.skip_testcase')[static::class])
+            && in_array($this->getName(false), \config('socoladaica__laravel_audit.skip_testcase')[static::class])
         ) {
-            static::markTestSkipped(resource_path('views'));
+            static::markTestSkipped('socoladaica__laravel_audit.skip_testcase');
         }
     }
 
@@ -79,6 +80,18 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
             'engine' => null,
             'options' => [],
         ]);
+
+//        $app->singleton('migrator', function ($app) {
+//            $repository = $app['migration.repository'];
+//
+//            return new Migrator($repository, $app['db'], $app['files'], $app['events']);
+//        });
+
+        $app->singleton(Migrator::class, function ($app) {
+            $repository = $app['migration.repository'];
+
+            return new Migrator($repository, $app['db'], $app['files'], $app['events']);
+        });
 
         return $app;
     }

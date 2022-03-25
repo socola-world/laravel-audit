@@ -29,6 +29,10 @@ class AuditClass extends Audit1
         return static::$cache[$reflectionClass->getName()] = new static($reflectionClass);
     }
 
+    /**
+     * @param $class
+     * @return static
+     */
     public static function makeByClass($class)
     {
         if (array_key_exists($class, static::$cache)) {

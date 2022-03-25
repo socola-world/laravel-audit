@@ -1,8 +1,8 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\Tests\Psr;
+namespace SocolaDaiCa\LaravelAudit\TestCases\Psr;
 
-use SocolaDaiCa\LaravelAudit\Tests\TestCase;
+use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 
 class Psr1Test extends TestCase
 {

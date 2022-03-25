@@ -4,6 +4,7 @@ namespace SocolaDaiCa\LaravelAudit\Audit;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -24,6 +25,9 @@ class AuditModel extends AuditClass
      */
     public $relations;
 
+
+    public AuditTable $auditTable;
+
     /**
      * @throws \Doctrine\DBAL\Exception
      * @throws \ReflectionException
@@ -38,11 +42,19 @@ class AuditModel extends AuditClass
         $this->columns = Schema::getConnection()
             ->getDoctrineSchemaManager()
             ->listTableColumns($this->model->getTable());
+
+        $this->auditTable = AuditTable::make($this->model->getTable());
     }
 
-    public function isColumnExist($column): bool
+    /**
+     * @param array|string $columns
+     * @return bool
+     */
+    public function isColumnExist($columns): bool
     {
-        return array_key_exists($column, $this->columns);
+        $columns = Arr::wrap($columns);
+
+        return count(array_diff($columns, array_keys($this->columns))) == 0;
     }
 
     /**

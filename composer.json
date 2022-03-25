@@ -25,16 +25,17 @@
         }
     },
     "require": {
+        "php": "^7.4|^8.0",
         "ext-json": "*",
         "friendsofphp/php-cs-fixer": "^3.4",
         "laravel/framework": "^v6|^v7|^v8",
         "composer/composer": "^1.6 || ^2.2",
         "phpunit/phpunit": "*",
         "spatie/once": "^2.2",
-        "doctrine/dbal": "^3.3"
+        "doctrine/dbal": "^3.3",
+        "nunomaduro/larastan": "^1.0|^2.0"
     },
     "require-dev": {
-        "beyondcode/laravel-query-detector": "^1.5",
-        "nunomaduro/larastan": "^1.0|^2.0"
+        "beyondcode/laravel-query-detector": "^1.5"
     }
 }
