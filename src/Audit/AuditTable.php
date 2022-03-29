@@ -11,6 +11,7 @@ use SocolaDaiCa\LaravelAudit\Traits\Cacheable;
 class AuditTable
 {
     use Cacheable;
+
     protected string $table;
 
     public function __construct(string $table)
@@ -36,7 +37,8 @@ class AuditTable
                         'is_primary' => $index->isPrimary(),
                     ];
                 })
-                ->toArray();
+                ->toArray()
+            ;
             ksort($indexes);
 
             return collect($indexes);
@@ -45,7 +47,6 @@ class AuditTable
 
     /**
      * @param array|string $columns
-     * @return bool
      */
     public function isUnique($columns): bool
     {

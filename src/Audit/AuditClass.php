@@ -31,6 +31,7 @@ class AuditClass extends Audit1
 
     /**
      * @param $class
+     *
      * @return static
      */
     public static function makeByClass($class)
@@ -79,7 +80,7 @@ class AuditClass extends Audit1
     private function getFileContent($filename, $lineNumber)
     {
         if (!is_file($filename)) {
-            return null;
+            return;
         }
 
         $content = '';

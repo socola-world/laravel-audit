@@ -15,19 +15,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use JsonException;
+use ReflectionMethod;
 use SocolaDaiCa\LaravelAudit\Audit\AuditDatabase;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 use SocolaDaiCa\LaravelAudit\Traits\Assert\AssertTable;
+use Throwable;
 use function collect;
 
 class ModelsTest extends TestCase
 {
     use AssertTable;
+
     /**
      * @dataProvider modelDataProvider
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testModelTableNotExistInDatabase(AuditModel $auditModel)
     {
@@ -37,8 +41,8 @@ class ModelsTest extends TestCase
                 $auditModel->reflectionClass->name,
                 'table',
                 $auditModel->model->getTable(),
-                'not exist in database'
-            )
+                'not exist in database',
+            ),
         );
     }
 
@@ -46,12 +50,10 @@ class ModelsTest extends TestCase
     {
         $models = array_filter(
             $this->modelDataProvider(),
-            fn ($provider) => AuditDatabase::isTableExist($provider[0]->model->getTable())
+            fn ($provider) => AuditDatabase::isTableExist($provider[0]->model->getTable()),
         );
 
-        $models = array_values($models);
-
-        return $models;
+        return array_values($models);
     }
 
     /**
@@ -65,8 +67,8 @@ class ModelsTest extends TestCase
             $this->error(
                 $auditModel->reflectionClass->getName(),
                 'column of $fillable not exist in database',
-                $columnsNotExist
-            )
+                $columnsNotExist,
+            ),
         );
     }
 
@@ -81,8 +83,8 @@ class ModelsTest extends TestCase
             $this->error(
                 $auditModel->reflectionClass->getName(),
                 'column of $guarded not exist in database',
-                $columnsNotExist
-            )
+                $columnsNotExist,
+            ),
         );
     }
 
@@ -113,8 +115,8 @@ class ModelsTest extends TestCase
             $this->error(
                 $auditModel->reflectionClass->getName(),
                 '$fillable missing',
-                $columnsNeedFillable
-            )
+                $columnsNeedFillable,
+            ),
         );
 
         static::assertEmpty(
@@ -122,8 +124,8 @@ class ModelsTest extends TestCase
             $this->error(
                 $auditModel->reflectionClass->getName(),
                 '$guarded missing',
-                $columnsNeedGuarded
-            )
+                $columnsNeedGuarded,
+            ),
         );
     }
 
@@ -138,7 +140,7 @@ class ModelsTest extends TestCase
                 "{$auditModel->reflectionClass->name}::\$primaryKey = ",
                 $auditModel->model->getKeyName(),
                 'not exist in database',
-            )
+            ),
         );
 
         foreach (Arr::wrap($auditModel->model->getKeyName()) as $columnKey) {
@@ -152,8 +154,8 @@ class ModelsTest extends TestCase
                 $this->error(
                     $auditModel->reflectionClass->name,
                     $column->getName(),
-                    'must not null'
-                )
+                    'must not null',
+                ),
             );
         }
     }
@@ -179,7 +181,8 @@ class ModelsTest extends TestCase
             ->filter(fn ($column) => $auditModel->isColumnVisble($column))
             ->filter(fn ($column) => in_array($column, $this->columnsShouldHidden))
             ->values()
-            ->toArray();
+            ->toArray()
+        ;
 
         static::assertEmpty(
             $hiddenMissingColumns,
@@ -187,7 +190,7 @@ class ModelsTest extends TestCase
                 $auditModel->reflectionClass->getName(),
                 'mising hidden',
                 $hiddenMissingColumns,
-            )
+            ),
         );
     }
 
@@ -198,7 +201,7 @@ class ModelsTest extends TestCase
     {
         $hasSoftDeletesTrail = in_array(
             SoftDeletes::class,
-            class_uses_recursive($auditModel->reflectionClass->getName())
+            class_uses_recursive($auditModel->reflectionClass->getName()),
         );
 
         if ($hasSoftDeletesTrail) {
@@ -209,8 +212,8 @@ class ModelsTest extends TestCase
                     'use SoftDeletes',
                     'but column',
                     $auditModel->model->getDeletedAtColumn(),
-                    'not found'
-                )
+                    'not found',
+                ),
             );
         }
 
@@ -223,8 +226,8 @@ class ModelsTest extends TestCase
                     $this->warning(
                         $auditModel->reflectionClass->getName(),
                         'missing trait',
-                        'Illuminate\Database\Eloquent\SoftDeletes'
-                    )
+                        'Illuminate\Database\Eloquent\SoftDeletes',
+                    ),
                 );
             });
         }
@@ -242,32 +245,32 @@ class ModelsTest extends TestCase
     public function testRelations(AuditModel $auditModel)
     {
         $relations = collect($auditModel->reflectionClass->getMethods())
-            ->map(function (\ReflectionMethod $method) use ($auditModel) {
+            ->map(function (ReflectionMethod $method) use ($auditModel) {
                 if ($method->getNumberOfParameters() > 0) {
-                    return null;
+                    return;
                 }
 
                 if ($method->isPublic() === false) {
-                    return null;
+                    return;
                 }
 
                 if (in_array($method->class, $this->igoreClass)) {
-                    return null;
+                    return;
                 }
 
                 if (Str::start($method->getName(), 'get') && Str::endsWith($method->getName(), 'Attribute')) {
-                    return null;
+                    return;
                 }
 
                 if (in_array($auditModel::getClassByFile($method->getFileName()), [
                     'Illuminate\Database\Eloquent\SoftDeletes',
                 ])) {
-                    return null;
+                    return;
                 }
 
                 if ($method->getReturnType() != null) {
                     if ($method->getReturnType()->isBuiltin()) {
-                        return null;
+                        return;
                     }
 
                     if ((
@@ -276,13 +279,13 @@ class ModelsTest extends TestCase
                     )
                         && is_subclass_of($method->getReturnType()->getName(), Relation::class) === false
                     ) {
-                        return null;
+                        return;
                     }
                 }
 
                 try {
                     $response = $auditModel->model->{$method->getName()}();
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
 //                    dd(
 //                        [
 //                            '$auditModel->reflectionClass->getName()' => $auditModel->reflectionClass->getName(),
@@ -295,11 +298,11 @@ class ModelsTest extends TestCase
 //                        $exception
 //                    );
 
-                    return null;
+                    return;
                 }
 
                 if (!is_object($response) || ($response instanceof Relation) != true) {
-                    return null;
+                    return;
                 }
 
                 return [
@@ -309,7 +312,8 @@ class ModelsTest extends TestCase
                     'relation' => $response,
                 ];
             })
-            ->filter(fn ($e) => $e != null);
+            ->filter(fn ($e) => $e != null)
+        ;
         $relationByTypes = $relations->groupBy('type');
 
         foreach ($relationByTypes as $relations) {
@@ -353,7 +357,7 @@ class ModelsTest extends TestCase
                                     "{$auditModel->reflectionClass->getName()}::{$relation['method']->getName()}",
                                     'Comming Soon: relation not handle',
                                     $relation['type'],
-                                )
+                                ),
                             );
                         });
 
@@ -377,11 +381,11 @@ class ModelsTest extends TestCase
             $foreign,
             $relation->getForeignKeyName(),
             $className,
-            $methodName
+            $methodName,
         );
     }
 
-    public function followRelationHasOne(AuditModel $auditModel, HasOne $relation, \ReflectionMethod $method)
+    public function followRelationHasOne(AuditModel $auditModel, HasOne $relation, ReflectionMethod $method)
     {
         $className = get_class($relation->getParent());
         $methodName = $method->getName();
@@ -395,7 +399,7 @@ class ModelsTest extends TestCase
             $foreign,
             $relation->getForeignKeyName(),
             $className,
-            $methodName
+            $methodName,
         );
 
         $this->shouldWarning(function () use ($auditModel, $relation, $method, $foreign) {
@@ -404,13 +408,13 @@ class ModelsTest extends TestCase
                 $this->error(
                     "{$method->getDeclaringClass()->getName()}::{$method->getName()}()",
                     $foreign->model->getTable(),
-                    "missing unique(".implode(', ', Arr::wrap($relation->getForeignKeyName())).")",
-                )
+                    'missing unique('.implode(', ', Arr::wrap($relation->getForeignKeyName())).')',
+                ),
             );
         });
     }
 
-    public function followRelationHasMany(HasMany $relation, \ReflectionMethod $method)
+    public function followRelationHasMany(HasMany $relation, ReflectionMethod $method)
     {
         $className = get_class($relation->getParent());
         $methodName = $method->getName();
@@ -424,11 +428,11 @@ class ModelsTest extends TestCase
             $foreign,
             $relation->getForeignKeyName(),
             $className,
-            $methodName
+            $methodName,
         );
     }
 
-    public function followRelationMorphMany(MorphMany $relation, \ReflectionMethod $method)
+    public function followRelationMorphMany(MorphMany $relation, ReflectionMethod $method)
     {
         $className = get_class($relation->getParent());
         $methodName = $method->getName();
@@ -442,11 +446,11 @@ class ModelsTest extends TestCase
             $foreign,
             Str::after($relation->getQualifiedForeignKeyName(), '.'),
             $className,
-            $methodName
+            $methodName,
         );
     }
 
-    public function followRelationBelongsToMany(BelongsToMany $relation, \ReflectionMethod $method)
+    public function followRelationBelongsToMany(BelongsToMany $relation, ReflectionMethod $method)
     {
         $className = get_class($relation->getParent());
         $methodName = $method->getName();
@@ -456,8 +460,8 @@ class ModelsTest extends TestCase
             $relation->getPivotClass(),
             $this->error(
                 "{$method->getDeclaringClass()->getName()}::{$method->getName()}()",
-                "argument \$this->belongsToMany::\$table should is class extend Illuminate\Database\Eloquent\Relations\Pivot",
-            )
+                'argument $this->belongsToMany::$table should is class extend Illuminate\\Database\\Eloquent\\Relations\\Pivot',
+            ),
         );
         $owner = AuditModel::makeByClass(get_class($relation->getParent()));
         $using = AuditModel::makeByClass($relation->getPivotClass());
@@ -469,7 +473,7 @@ class ModelsTest extends TestCase
             $using,
             $relation->getForeignPivotKeyName(),
             $className,
-            $methodName
+            $methodName,
         );
 
         $this->followTestRelationKeys(
@@ -478,7 +482,7 @@ class ModelsTest extends TestCase
             $foreign,
             $relation->getRelatedKeyName(),
             $className,
-            $methodName
+            $methodName,
         );
     }
 
@@ -498,7 +502,7 @@ class ModelsTest extends TestCase
                 $foreignKeyName,
                 'not found in table',
                 $foreign->model->getTable(),
-            )
+            ),
         );
 
         static::assertTrue(
@@ -508,15 +512,15 @@ class ModelsTest extends TestCase
                 'column',
                 $ownerKeyName,
                 'not found in table',
-                $owner->model->getTable()
-            )
+                $owner->model->getTable(),
+            ),
         );
     }
 
     /**
      * @dataProvider modelExistsDataProvider
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testAppends(AuditModel $auditModel)
     {
@@ -529,21 +533,22 @@ class ModelsTest extends TestCase
                 return $auditModel->model->hasAttributeGetMutator($e) === false;
             })
             ->values()
-            ->toArray();
+            ->toArray()
+        ;
 
         static::assertEmpty(
             $wrongAppends,
             $this->error(
                 '$appends missing get{Attribute}Attribute method',
                 $wrongAppends,
-            )
+            ),
         );
     }
 
     /**
      * @dataProvider modelDataProvider
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testColumnShouldNotNull(AuditModel $auditModel)
     {
@@ -558,15 +563,15 @@ class ModelsTest extends TestCase
             $this->error(
                 $auditModel->reflectionClass->getName(),
                 '$columnsShouldNotNull = ',
-                $columnsShouldNotNull
-            )
+                $columnsShouldNotNull,
+            ),
         );
     }
 
     /**
      * @dataProvider modelDataProvider
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testColumnShouldUnsigned(AuditModel $auditModel)
     {
@@ -582,31 +587,31 @@ class ModelsTest extends TestCase
                 $this->error(
                     $auditModel->reflectionClass->getName(),
                     '$columnsShouldUnsigned = ',
-                    $columnsShouldUnsigned
-                )
+                    $columnsShouldUnsigned,
+                ),
             );
         });
     }
 
     /**
      * @dataProvider modelDataProvider
-     * @param AuditModel $auditModel
-     * @return void
-     * @throws \JsonException
+     *
+     * @throws JsonException
      */
     public function testColumnName(AuditModel $auditModel)
     {
         $columnsWrongFormat = collect(array_keys($auditModel->columns))
             ->filter(fn ($columnName) => preg_match('/^[a-z0-9_]+$/', $columnName) == false)
             ->values()
-            ->toArray();
+            ->toArray()
+        ;
 
         static::assertEmpty(
             $columnsWrongFormat,
             $this->error(
                 '$auditModel->reflectionClass->getName()::$columns should be snake_case',
-                $columnsWrongFormat
-            )
+                $columnsWrongFormat,
+            ),
         );
     }
 }

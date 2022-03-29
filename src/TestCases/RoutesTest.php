@@ -2,7 +2,9 @@
 
 namespace SocolaDaiCa\LaravelAudit\TestCases;
 
+use Closure;
 use Illuminate\Http\Request;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
 use SocolaDaiCa\LaravelAudit\Audit\AuditClass;
@@ -45,8 +47,8 @@ class RoutesTest extends TestCase
             $duplicateMiddlewares,
             $this->error(
                 'duplicate middleware',
-                $duplicateMiddlewares
-            )
+                $duplicateMiddlewares,
+            ),
         );
     }
 
@@ -65,8 +67,8 @@ class RoutesTest extends TestCase
             $method && $postfix,
             $this->error(
                 "remove postfix \"{$postfix}\" on route({$auditRoute->route->getName()})",
-                "{$method} {$auditRoute->route->uri()}"
-            )
+                "{$method} {$auditRoute->route->uri()}",
+            ),
         );
     }
 
@@ -78,14 +80,15 @@ class RoutesTest extends TestCase
             ->filter(fn ($routeName) => !empty($routeName))
             ->filter(fn ($routeName) => preg_match('/^[a-z0-9\-\/\\\.]+$/', $routeName) == false)
             ->values()
-            ->toArray();
+            ->toArray()
+        ;
 
         static::assertEmpty(
             $routesWrongName,
             $this->error(
                 'route name should is kebab-case',
-                $routesWrongName
-            )
+                $routesWrongName,
+            ),
         );
     }
 
@@ -99,20 +102,18 @@ class RoutesTest extends TestCase
                      */
                     $auditRoute = $e[0];
 
-                    if ($auditRoute->route->action['uses'] instanceof \Closure) {
+                    if ($auditRoute->route->action['uses'] instanceof Closure) {
                         return false;
                     }
 
-                    if (LocalAudit::isClassExist($auditRoute->getControllerClass()) == false) {
-                        return false;
-                    }
-
-                    return true;
+                    return !(LocalAudit::isClassExist($auditRoute->getControllerClass()) == false)
+                     ;
                 })
                 ->map(function ($e) {
                     /* @var AuditRoute $auditRoute */
                     $auditRoute = $e[0];
                     $auditClass = AuditClass::makeByClass($e[0]->getControllerClass());
+
                     return [
                         $e[0],
                         $auditClass,
@@ -120,14 +121,15 @@ class RoutesTest extends TestCase
                     ];
                 })
                 ->values()
-                ->toArray();
+                ->toArray()
+            ;
         });
     }
 
     /**
      * @dataProvider routeHandleControllerDataProvider
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testHandleControllerRequest(AuditRoute $auditRoute, AuditClass $auditClass, ReflectionMethod $method)
     {
@@ -136,7 +138,8 @@ class RoutesTest extends TestCase
                 return $parameter->getType() != null && $parameter->getType()->isBuiltin() == false;
             })
             ->map(fn (ReflectionParameter $parameter) => $parameter->getType()->getName())
-            ->values();
+            ->values()
+        ;
 
         static::assertEmpty(
             $parameterTypes->filter(fn ($type) => $type == Request::class)->count(),
@@ -144,18 +147,18 @@ class RoutesTest extends TestCase
                 "{$auditRoute->route->action['uses']}",
                 "\nuse php artisan make:request instead",
                 Request::class,
-            )
+            ),
         );
     }
 
     /**
      * @dataProvider routeDataProvider
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testParameters(AuditRoute $auditRoute)
     {
-        $this->assertLessThanOrEqual(
+        static::assertLessThanOrEqual(
             1,
             count($auditRoute->route->parameterNames()),
             $this->error(
@@ -165,7 +168,7 @@ class RoutesTest extends TestCase
                 "\nToo many parameters",
                 $auditRoute->route->parameterNames(),
                 "\nparameters should less than or equal 1",
-            )
+            ),
         );
 //        dd();
 //        dd($auditRoute->route->parameters());

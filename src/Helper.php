@@ -2,10 +2,13 @@
 
 namespace SocolaDaiCa\LaravelAudit;
 
+use Exception;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
+use ReflectionClass;
+use ReflectionMethod;
 use SocolaDaiCa\LaravelAudit\Audit\Audit1;
 
 class Helper
@@ -22,7 +25,7 @@ class Helper
             $classes = Audit1::getClassMap();
 
             $autoloadPsr4 = array_keys(
-                (array) data_get($composer, 'autoload.psr-4', [])
+                (array) data_get($composer, 'autoload.psr-4', []),
             );
 
             return collect($classes)
@@ -31,11 +34,12 @@ class Helper
                     return Str::startsWith($item, $autoloadPsr4);
                 })
                 ->map(function ($item) {
-                    return new \ReflectionClass($item);
+                    return new ReflectionClass($item);
                 })
-                ->mapWithKeys(function (\ReflectionClass $item) {
+                ->mapWithKeys(function (ReflectionClass $item) {
                     return [$item->name => $item];
-                });
+                })
+            ;
         });
     }
 
@@ -45,19 +49,21 @@ class Helper
     }
 
     /**
-     * @return Collection|\ReflectionMethod[]
+     * @return Collection|ReflectionMethod[]
      */
     public static function getReflectionClassMethods()
     {
         return once(function () {
             return static::getReflectionClasses()
-                ->map(function (\ReflectionClass $reflectionClass) {
+                ->map(function (ReflectionClass $reflectionClass) {
                     return collect($reflectionClass->getMethods())
-                        ->filter(function (\ReflectionMethod $reflectionMethod) use (&$reflectionClass) {
+                        ->filter(function (ReflectionMethod $reflectionMethod) use (&$reflectionClass) {
                             return $reflectionMethod->class === $reflectionClass->getName();
-                        });
+                        })
+                    ;
                 })
-                ->flatten(1);
+                ->flatten(1)
+            ;
         });
     }
 
@@ -81,7 +87,7 @@ class Helper
 //             * @type Validator $validator
 //             */
 //            $validator = $request->getValidator();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw $exception;
             $request = null;
         }
@@ -93,10 +99,10 @@ class Helper
     {
         return once(function () {
             return $this->getReflectionClasses()
-                ->filter(function (\ReflectionClass $item) {
+                ->filter(function (ReflectionClass $item) {
                     return $item->isSubclassOf(FormRequest::class);
                 })
-                ->map(function (\ReflectionClass $requestReflectionClass) {
+                ->map(function (ReflectionClass $requestReflectionClass) {
                     $requestClassName = trim($requestReflectionClass->getName(), '\\');
                     $className = str_replace('\\', '__', $requestClassName);
 
@@ -131,7 +137,7 @@ class Helper
                          * @var Validator $validator
                          */
                         $validator = $request->getValidator();
-                    } catch (\Exception $exception) {
+                    } catch (Exception $exception) {
                         $this->echo('Cant Create Request instance', $requestReflectionClass->getName());
                         $request = null;
                         $validator = null;
@@ -146,7 +152,8 @@ class Helper
                 ->filter(function ($item) {
                     return $item[1] !== null;
                 })
-                ->toArray();
+                ->toArray()
+            ;
         });
     }
 }

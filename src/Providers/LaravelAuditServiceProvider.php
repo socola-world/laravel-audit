@@ -2,6 +2,7 @@
 
 namespace SocolaDaiCa\LaravelAudit\Providers;
 
+use Config;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelAuditServiceProvider extends ServiceProvider
@@ -56,7 +57,7 @@ class LaravelAuditServiceProvider extends ServiceProvider
         ], 'config');
         $this->mergeConfigFrom(
             module_path($this->moduleName, 'config/config.php'),
-            $this->moduleNameLower
+            $this->moduleNameLower,
         );
     }
 
@@ -123,7 +124,7 @@ class LaravelAuditServiceProvider extends ServiceProvider
     {
         $paths = [];
 
-        foreach (\Config::get('view.paths') as $path) {
+        foreach (Config::get('view.paths') as $path) {
             if (is_dir($path.'/modules/'.$this->moduleNameLower)) {
                 $paths[] = $path.'/modules/'.$this->moduleNameLower;
             }

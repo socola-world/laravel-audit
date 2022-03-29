@@ -36,7 +36,7 @@ class AuditRequest extends AuditClass
                 use SocolaDaiCa\LaravelAudit\FormRequestTrait;
             }',
             $className,
-            $requestClassName
+            $requestClassName,
         );
 
         if (class_exists($className) === false) {

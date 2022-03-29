@@ -10,6 +10,5 @@ trait AssertTable
 
     public function assertUnique(string $table, array $columns)
     {
-
     }
 }

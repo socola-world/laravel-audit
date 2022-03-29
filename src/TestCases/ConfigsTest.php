@@ -2,6 +2,7 @@
 
 namespace SocolaDaiCa\LaravelAudit\TestCases;
 
+use Closure;
 use Illuminate\Support\Arr;
 
 class ConfigsTest extends TestCase
@@ -17,12 +18,12 @@ class ConfigsTest extends TestCase
             ->toArray()
         ;
 
-        $this->shouldWarning(fn () => $this->assertEmpty(
+        $this->shouldWarning(fn () => static::assertEmpty(
             $configKeysWrongFormat,
             $this->error(
                 'config key should be lower snake_case',
                 $configKeysWrongFormat,
-            )
+            ),
         ));
     }
 
@@ -31,17 +32,17 @@ class ConfigsTest extends TestCase
         $configDots = Arr::dot(config()->all());
 
         $configValuesWrongType = collect($configDots)
-            ->filter(fn ($configDot) => $configDot instanceof \Closure)
+            ->filter(fn ($configDot) => $configDot instanceof Closure)
             ->keys()
             ->toArray()
         ;
 
-        $this->assertEmpty(
+        static::assertEmpty(
             $configValuesWrongType,
             $this->error(
                 'config value should not be Closure',
                 $configValuesWrongType,
-            )
+            ),
         );
     }
 }

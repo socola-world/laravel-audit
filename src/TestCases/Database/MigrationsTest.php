@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use JsonException;
 use SocolaDaiCa\LaravelAudit\Audit\AuditTable;
 use SocolaDaiCa\LaravelAudit\Migrator;
 use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
@@ -27,7 +28,7 @@ class MigrationsTest extends TestCase
 //
 //        $defaultConnection = DB::getDefaultConnection();
 //        DB::setDefaultConnection('laravel_audit_sqlite');
-////        Artisan::call('migrate:reset', ['--force' => true]);
+// //        Artisan::call('migrate:reset', ['--force' => true]);
 //
 //        \DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
 //        $tables = \DB::select('SHOW TABLES');
@@ -40,7 +41,7 @@ class MigrationsTest extends TestCase
 //        $function();
 //        DB::setDefaultConnection($defaultConnection);
 //
-////        $schema = DB::connection('laravel_audit_sqlite')->getSchemaBuilder();
+// //        $schema = DB::connection('laravel_audit_sqlite')->getSchemaBuilder();
 //        $dbDesign = DB::connection('laravel_audit_sqlite')->getDoctrineSchemaManager();
 //        $db = DB::connection()->getDoctrineSchemaManager();
 //
@@ -67,10 +68,10 @@ class MigrationsTest extends TestCase
 //
 //        foreach ($dbDesignTables as $table) {
 //            $dbDesignColumns = $dbDesign->listTableColumns($table);
-////            if (array_key_exists('"action"', $dbDesignColumns)) {
-////                $dbDesignColumns['action'] = $dbDesignColumns['"action"'];
-////                unset($dbDesignColumns['"action"']);
-////            }
+// //            if (array_key_exists('"action"', $dbDesignColumns)) {
+// //                $dbDesignColumns['action'] = $dbDesignColumns['"action"'];
+// //                unset($dbDesignColumns['"action"']);
+// //            }
 //
 //            $dbColumns = $db->listTableColumns($table);
 //
@@ -126,21 +127,21 @@ class MigrationsTest extends TestCase
 //            }
 //        }
 //
-////        $this->assesêm
-////        $tables = ->listTableNames();
+// //        $this->assesêm
+// //        $tables = ->listTableNames();
 //
-////        $columns = DB::connection('laravel_audit_sqlite')
-////            ->getDoctrineSchemaManager()
-////            ->listTableColumns($tables[0]);
-////        dd($columns);
-////        dd(Schema::connection('laravel_audit_sqlite')
-////            ->getDoctrineSchemaManager()
-////            ->listTableColumns();
+// //        $columns = DB::connection('laravel_audit_sqlite')
+// //            ->getDoctrineSchemaManager()
+// //            ->listTableColumns($tables[0]);
+// //        dd($columns);
+// //        dd(Schema::connection('laravel_audit_sqlite')
+// //            ->getDoctrineSchemaManager()
+// //            ->listTableColumns();
     }
 
     /**
      * @throws \Doctrine\DBAL\Exception
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testRollback()
     {
@@ -208,7 +209,7 @@ class MigrationsTest extends TestCase
 //            dd($query);
 //            $queries = DB::getQueryLog();
 //            DB::flushQueryLog();
-////            $migrator->run()
+            // //            $migrator->run()
 //            dump($queries);
             $databaseDescribesUp = $this->getDatabaseDescribes();
 
@@ -244,11 +245,11 @@ class MigrationsTest extends TestCase
                         ],
                         'down_missing' => array_diff_assoc(
                             $databaseDescribesDot,
-                            $databaseDescribesDownDot
+                            $databaseDescribesDownDot,
                         ),
                         'down_need_remove' => array_diff_assoc($databaseDescribesDownDot, $databaseDescribesDot),
                     ],
-                )
+                ),
             );
 
             $databaseDescribes = $databaseDescribesUp;

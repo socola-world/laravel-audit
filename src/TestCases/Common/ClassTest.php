@@ -2,6 +2,7 @@
 
 namespace SocolaDaiCa\LaravelAudit\TestCases\Common;
 
+use ReflectionMethod;
 use SocolaDaiCa\LaravelAudit\Audit\Audit1;
 use SocolaDaiCa\LaravelAudit\Audit\AuditClass;
 use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
@@ -17,7 +18,7 @@ class ClassTest extends TestCase
         $maxLines = 50;
         $methodsTooLong = [];
         collect($auditClass->reflectionClass->getMethods())
-            ->each(function (\ReflectionMethod $reflectionMethod) use ($maxLines, &$methodsTooLong, $auditClass) {
+            ->each(function (ReflectionMethod $reflectionMethod) use ($maxLines, &$methodsTooLong, $auditClass) {
                 if ($auditClass->reflectionClass->getFileName() != $reflectionMethod->getFileName()) {
                     return;
                 }
@@ -29,7 +30,8 @@ class ClassTest extends TestCase
                 }
 
                 $methodsTooLong["{$reflectionMethod->getName()}()"] = $linesCount;
-            });
+            })
+        ;
 
         $this->shouldWarning(function () use ($auditClass, $maxLines, $methodsTooLong) {
             static::assertEmpty(
@@ -38,7 +40,7 @@ class ClassTest extends TestCase
                     "Method too long, should <= {$maxLines} lines",
                     "\n{$auditClass->reflectionClass->getName()}",
                     $methodsTooLong,
-                )
+                ),
             );
         });
     }
@@ -66,8 +68,8 @@ class ClassTest extends TestCase
             $useStatementsNotFounds,
             $this->error(
                 '$useStatementsNotFounds = ',
-                $useStatementsNotFounds
-            )
+                $useStatementsNotFounds,
+            ),
         );
     }
 }

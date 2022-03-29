@@ -8,11 +8,6 @@ trait Cacheable
 {
     protected array $cache = [];
 
-    /**
-     * @param string $key
-     * @param Closure $closure
-     * @return mixed
-     */
     public function cache(string $key, Closure $closure)
     {
         if (array_key_exists($key, $this->cache) == false) {
@@ -26,6 +21,7 @@ trait Cacheable
     {
         if ($key) {
             unset($this->cache[$key]);
+
             return;
         }
 

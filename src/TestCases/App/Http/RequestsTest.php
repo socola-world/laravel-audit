@@ -26,7 +26,7 @@ class RequestsTest extends TestCase
             foreach ($this->typeDontTogethers as $typeDontTogether) {
                 $intersect = array_intersect(
                     $typeDontTogether,
-                    array_values(array_filter($inputRules, fn ($item) => is_string($item)))
+                    array_values(array_filter($inputRules, fn ($item) => is_string($item))),
                 );
 
                 static::assertLessThanOrEqual(
@@ -38,7 +38,7 @@ class RequestsTest extends TestCase
                         'dont put rules',
                         $intersect,
                         'together',
-                    )
+                    ),
                 );
             }
         }
@@ -56,7 +56,7 @@ class RequestsTest extends TestCase
         });
         $missingAttributes = array_diff(
             array_keys($rules),
-            array_keys($attributes)
+            array_keys($attributes),
         );
         $missingAttributes = array_values($missingAttributes);
         $missingAttributes = array_fill_keys($missingAttributes, '?_?');
@@ -66,8 +66,8 @@ class RequestsTest extends TestCase
             $missingAttributes,
             $this->error(
                 $auditRequest->reflectionClass->getName().'::attributes() missing',
-                $missingAttributes
-            )
+                $missingAttributes,
+            ),
         );
     }
 
@@ -86,7 +86,7 @@ class RequestsTest extends TestCase
     {
         $ruleKeysShouldNotExists = array_intersect(
             $this->ruleKeysShouldNotExists,
-            array_keys($auditRequest->getRules())
+            array_keys($auditRequest->getRules()),
         );
 
         static::assertEmpty(
@@ -94,8 +94,8 @@ class RequestsTest extends TestCase
             $this->error(
                 $auditRequest->reflectionClass->getName().'::rules()',
                 'remove key',
-                $ruleKeysShouldNotExists
-            )
+                $ruleKeysShouldNotExists,
+            ),
         );
     }
 
@@ -114,8 +114,8 @@ class RequestsTest extends TestCase
             $duplicateRuleNames = array_unique(
                 array_diff_assoc(
                     $rulenames,
-                    array_unique($rulenames)
-                )
+                    array_unique($rulenames),
+                ),
             );
             $duplicateRuleNames = array_values($duplicateRuleNames);
             $duplicateRuleNames = array_diff($duplicateRuleNames, ['Exists']);
@@ -132,8 +132,8 @@ class RequestsTest extends TestCase
             $this->error(
                 $auditRequest->reflectionClass->getName().'::rules()',
                 'duplicate rule',
-                $duplicateRuleNamesByAttribute
-            )
+                $duplicateRuleNamesByAttribute,
+            ),
         );
     }
 
@@ -184,7 +184,7 @@ class RequestsTest extends TestCase
         .');
     }
 }',
-            )
+            ),
         );
     }
 
@@ -235,7 +235,7 @@ class RequestsTest extends TestCase
 //        );
 //    }
 
-    //'String', 'Boolean', 'Date'
+    // 'String', 'Boolean', 'Date'
     protected array $ruleTypes = [
         'Array',
         'Date',
@@ -272,7 +272,7 @@ class RequestsTest extends TestCase
                 $auditRequest->reflectionClass->getName().'::rules()',
                 'attribute missing type',
                 $rulesMissingType,
-            )
+            ),
         );
     }
 
@@ -306,7 +306,8 @@ class RequestsTest extends TestCase
                     }
 
                     $rulesMissingType[$attribute] = Str::snake($this->ruleFollowTypes[$ruleName]);
-                });
+                })
+            ;
         }
 
         static::assertEmpty(
@@ -315,7 +316,7 @@ class RequestsTest extends TestCase
                 $auditRequest->reflectionClass->getName().'::rules()',
                 'type of attribute should be',
                 $rulesMissingType,
-            )
+            ),
         );
     }
 }

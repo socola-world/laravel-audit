@@ -2,10 +2,12 @@
 
 namespace SocolaDaiCa\LaravelAudit\TestCases;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
+use ReflectionClass;
 use SocolaDaiCa\LaravelAudit\Audit\AuditClass;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
@@ -20,7 +22,7 @@ trait DataProvider
         return once(function () {
             $this->refreshApplication();
 
-            return $this->getReflectionClass()->map(function (\ReflectionClass $reflectionClass) {
+            return $this->getReflectionClass()->map(function (ReflectionClass $reflectionClass) {
                 return [AuditClass::make($reflectionClass)];
             })->toArray();
         });
@@ -31,7 +33,7 @@ trait DataProvider
         return once(function () {
             $this->refreshApplication();
 
-            return $this->getModelReflectionClass()->map(function (\ReflectionClass $modelReflectionClass) {
+            return $this->getModelReflectionClass()->map(function (ReflectionClass $modelReflectionClass) {
                 /**
                  * @var Model $model
                  */
@@ -62,7 +64,8 @@ trait DataProvider
         return once(function () {
             return collect(Route::getRoutes()->getRoutes())
                 ->map(fn (\Illuminate\Routing\Route $route) => [AuditRoute::make($route)])
-                ->toArray();
+                ->toArray()
+            ;
         });
     }
 
@@ -72,10 +75,10 @@ trait DataProvider
             $this->refreshApplication();
 
             return $this->getReflectionClass()
-                ->filter(function (\ReflectionClass $item) {
+                ->filter(function (ReflectionClass $item) {
                     return $item->isSubclassOf(FormRequest::class);
                 })
-                ->map(function (\ReflectionClass $requestReflectionClass) {
+                ->map(function (ReflectionClass $requestReflectionClass) {
                     $auditRequest = null;
                     /*
                      * @type \Illuminate\Foundation\Http\FormRequest $request
@@ -83,7 +86,7 @@ trait DataProvider
                     try {
                         $auditRequest = AuditRequest::make($requestReflectionClass);
                         $auditRequest->getRequest();
-                    } catch (\Exception $exception) {
+                    } catch (Exception $exception) {
                         dd($exception);
                     }
 
@@ -94,7 +97,8 @@ trait DataProvider
                 ->filter(function ($item) {
                     return $item[0] !== null;
                 })
-                ->toArray();
+                ->toArray()
+            ;
         });
     }
 }

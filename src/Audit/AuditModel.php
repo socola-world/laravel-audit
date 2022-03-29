@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use ReflectionClass;
+use ReflectionException;
+use Throwable;
 
 class AuditModel extends AuditClass
 {
@@ -25,14 +28,13 @@ class AuditModel extends AuditClass
      */
     public $relations;
 
-
     public AuditTable $auditTable;
 
     /**
      * @throws \Doctrine\DBAL\Exception
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    public function __construct(\ReflectionClass $reflectionClass)
+    public function __construct(ReflectionClass $reflectionClass)
     {
         $this->reflectionClass = $reflectionClass;
 
@@ -41,14 +43,14 @@ class AuditModel extends AuditClass
 
         $this->columns = Schema::getConnection()
             ->getDoctrineSchemaManager()
-            ->listTableColumns($this->model->getTable());
+            ->listTableColumns($this->model->getTable())
+        ;
 
         $this->auditTable = AuditTable::make($this->model->getTable());
     }
 
     /**
      * @param array|string $columns
-     * @return bool
      */
     public function isColumnExist($columns): bool
     {
@@ -58,9 +60,7 @@ class AuditModel extends AuditClass
     }
 
     /**
-     * @param mixed $relation
-     *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function isRelation($relation)
     {
@@ -88,15 +88,12 @@ class AuditModel extends AuditClass
 
         try {
             $response = $this->model->{$method->getName()}();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             return false;
         }
 
-        if (!is_object($response) || ($response instanceof Relation) === false) {
-            return false;
-        }
-
-        return true;
+        return !(!is_object($response) || ($response instanceof Relation) === false)
+         ;
     }
 
     public function isColumnVisble($column)
@@ -105,7 +102,7 @@ class AuditModel extends AuditClass
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getAppends()
     {

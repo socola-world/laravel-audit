@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use ReflectionClass;
+use ReflectionFunction;
+use ReflectionMethod;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
 use SocolaDaiCa\LaravelAudit\Audit\LocalAudit;
 use SocolaDaiCa\LaravelAudit\ValidatorX;
@@ -31,7 +34,8 @@ class DocController extends Controller
             ->filter(function (\Illuminate\Routing\Route $item) use ($ignoreClass) {
                 return Str::startsWith($item->getActionName(), $ignoreClass) === false;
             })
-            ->values();
+            ->values()
+        ;
 
         $items = [];
 
@@ -56,9 +60,9 @@ class DocController extends Controller
             $item['rules'] = [];
 
             if ($item['controller'] == 'Closure') {
-                $method = new \ReflectionFunction($route->action['uses']);
+                $method = new ReflectionFunction($route->action['uses']);
             } else {
-                $method = new \ReflectionMethod($item['controller'], $item['method']);
+                $method = new ReflectionMethod($item['controller'], $item['method']);
             }
 
             if (!empty($method->getParameters())) {
@@ -75,7 +79,7 @@ class DocController extends Controller
                         continue;
                     }
 
-                    $x = new \ReflectionClass($parameter->getType()->getName());
+                    $x = new ReflectionClass($parameter->getType()->getName());
 
                     if ($x->isSubclassOf(FormRequest::class) === false) {
                         continue;

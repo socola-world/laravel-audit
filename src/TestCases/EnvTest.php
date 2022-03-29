@@ -3,6 +3,7 @@
 namespace SocolaDaiCa\LaravelAudit\TestCases;
 
 use Dotenv\Dotenv;
+use JsonException;
 use function base_path;
 
 class EnvTest extends TestCase
@@ -21,7 +22,7 @@ class EnvTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testKeyNotDefineInEnvExample()
     {
@@ -41,8 +42,8 @@ class EnvTest extends TestCase
             $keyNotDefineInEnvExample,
             $this->error(
                 '.env.example missing keys',
-                $keyNotDefineInEnvExample
-            )
+                $keyNotDefineInEnvExample,
+            ),
         );
     }
 }

@@ -2,13 +2,14 @@
 
 namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http;
 
+use ReflectionClass;
 use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 
 class ControllersTest extends TestCase
 {
     public function testViewPath()
     {
-        $this->getControllerReflectionClass()->each(function (\ReflectionClass $controllerReflectionClass) {
+        $this->getControllerReflectionClass()->each(function (ReflectionClass $controllerReflectionClass) {
             $content = file_get_contents($controllerReflectionClass->getFileName());
             preg_match_all('/view\([\s\t\r\n]*["\']([^"\']+)["\']/', $content, $viewPaths);
 
@@ -22,7 +23,7 @@ class ControllersTest extends TestCase
                 $this->assertMatchesRegularExpression(
                     $viewPathFormat,
                     $viewPath,
-                    "{$controllerReflectionClass->getName()} view {$viewPath} wrong format"
+                    "{$controllerReflectionClass->getName()} view {$viewPath} wrong format",
                 );
             }
         });

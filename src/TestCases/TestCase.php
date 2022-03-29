@@ -10,13 +10,15 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use JsonException;
 use PHPUnit\Framework\ExpectationFailedException;
+use ReflectionClass;
+use ReflectionClassConstant;
 use SocolaDaiCa\LaravelAudit\Helper;
 use SocolaDaiCa\LaravelAudit\Migrator;
 use Symfony\Component\Finder\SplFileInfo;
 use function once;
 use function optional;
-use function resource_path;
 
 class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
@@ -97,7 +99,7 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
     }
 
     /**
-     * @return Collection|\ReflectionClass[]
+     * @return Collection|ReflectionClass[]
      */
     public function getReflectionClass()
     {
@@ -115,7 +117,7 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
     }
     ...
 }
-and run "composer dumpautoload" again'
+and run "composer dumpautoload" again',
             );
 
             return Helper::getReflectionClasses();
@@ -125,12 +127,12 @@ and run "composer dumpautoload" again'
     /**
      * @param $parentClass
      *
-     * @return Collection|\ReflectionClass[]
+     * @return Collection|ReflectionClass[]
      */
     public function getReflectionClassByParent($parentClass)
     {
         return once(function () use ($parentClass) {
-            return $this->getReflectionClass()->filter(function (\ReflectionClass $item) use ($parentClass) {
+            return $this->getReflectionClass()->filter(function (ReflectionClass $item) use ($parentClass) {
                 if (in_array($item->getName(), config('socoladaica__laravel_audit.ignore.class'))) {
                     return false;
                 }
@@ -141,7 +143,7 @@ and run "composer dumpautoload" again'
     }
 
     /**
-     * @return Collection|\ReflectionClass[]
+     * @return Collection|ReflectionClass[]
      */
     public function getModelReflectionClass()
     {
@@ -151,7 +153,7 @@ and run "composer dumpautoload" again'
     }
 
     /**
-     * @return Collection|\ReflectionClass[]
+     * @return Collection|ReflectionClass[]
      */
     public function getControllerReflectionClass()
     {
@@ -173,12 +175,12 @@ and run "composer dumpautoload" again'
     }
 
     /**
-     * @return Collection|\ReflectionClassConstant[]
+     * @return Collection|ReflectionClassConstant[]
      */
     public function getReflectionConstants()
     {
         return once(function () {
-            return $this->getReflectionClass()->map(function (\ReflectionClass $item) {
+            return $this->getReflectionClass()->map(function (ReflectionClass $item) {
                 return $item->getReflectionConstants();
             })->flatten(1);
         });
@@ -215,13 +217,13 @@ and run "composer dumpautoload" again'
         }
         $export = var_export($expression, true);
         $patterns = [
-            "/array \(/" => '[',
-            "/^([ ]*)\)(,?)$/m" => '$1]$2',
-            "/=>[ ]?\n[ ]+\[/" => '=> [',
-            "/([ ]*)(\'[^\']+\') => ([\[\'])/" => '$1$2 => $3',
+            '/array \\(/' => '[',
+            '/^([ ]*)\\)(,?)$/m' => '$1]$2',
+            "/=>[ ]?\n[ ]+\\[/" => '=> [',
+            "/([ ]*)(\\'[^\\']+\\') => ([\\[\\'])/" => '$1$2 => $3',
         ];
         $export = preg_replace(array_keys($patterns), array_values($patterns), $export);
-        $export = preg_replace("/\n(\s*)/", "\n$1$1{$tab}", $export);
+        $export = preg_replace("/\n(\\s*)/", "\n$1$1{$tab}", $export);
 
 //        if (Arr::isAssoc($expression)) {
 //            (\n\t+)
@@ -229,13 +231,11 @@ and run "composer dumpautoload" again'
 //        }
 
 //        (\n\t+)
-        $export = preg_replace('/(\n\s*)\d+ => /', '$1', $export);
-
-        return $export;
+        return preg_replace('/(\n\s*)\d+ => /', '$1', $export);
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function echo(string $color, array $args)
     {
@@ -263,7 +263,7 @@ and run "composer dumpautoload" again'
     protected static $color = '';
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function error(...$args): string
     {
@@ -271,7 +271,7 @@ and run "composer dumpautoload" again'
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function warning(...$args): string
     {

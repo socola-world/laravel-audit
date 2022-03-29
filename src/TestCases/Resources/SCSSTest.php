@@ -16,7 +16,7 @@ class SCSSTest extends TestCase
 //            'background',
 //            'font',
 //        ];
-////        dd($this->getResources());
+// //        dd($this->getResources());
 //    }
 
     /*

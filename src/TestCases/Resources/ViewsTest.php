@@ -44,14 +44,15 @@ class ViewsTest extends TestCase
             ->filter(fn (string $path) => preg_match('/^[a-z0-9\-\/\\\.]+$/', $path) == false)
             ->map(fn (string $path) => Str::replace('\\', '/', $path))
             ->values()
-            ->toArray();
+            ->toArray()
+        ;
 
         static::assertEmpty(
             $bladeWrongPaths,
             $this->error(
                 'View path should is kebab case',
-                $bladeWrongPaths
-            )
+                $bladeWrongPaths,
+            ),
         );
     }
 
@@ -68,14 +69,14 @@ class ViewsTest extends TestCase
                     preg_match_all(
                         '/\{\{(?!--)(?:.*[^\s]|[^\s].*)(?<!--)}}/',
                         $content,
-                        $maches
+                        $maches,
                     ),
                     $this->warning(
                         $file->getPathname(),
                         'missing space between {{ $variable }}',
                         $maches[0],
-                        'use "(\{\{(?!--)([^\s].*[^\s])(?<!--)}}|\{\{(?!--)([^\s].*[^\s])\s(?<!--)}}|\{\{(?!--)\s([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)}})" => "{{ $2$3$3$4$5$6 }}" for fast replace'
-                    )
+                        'use "(\{\{(?!--)([^\s].*[^\s])(?<!--)}}|\{\{(?!--)([^\s].*[^\s])\s(?<!--)}}|\{\{(?!--)\s([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)}})" => "{{ $2$3$3$4$5$6 }}" for fast replace',
+                    ),
                 );
             });
 
@@ -85,14 +86,14 @@ class ViewsTest extends TestCase
                     preg_match_all(
                         '/\{\{(?!--)(?:.*\s{2,}|\s{2,}.*)(?<!--)}}/',
                         $content,
-                        $maches
+                        $maches,
                     ),
                     $this->warning(
                         $file->getPathname(),
                         'too many space between {{ $variable }}',
                         $maches[0],
-                        'use "(\{\{(?!--)([^\s].*[^\s])(?<!--)}}|\{\{(?!--)([^\s].*[^\s])\s(?<!--)}}|\{\{(?!--)\s([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)}})" => "{{ $2$3$3$4$5$6 }}" for fast replace'
-                    )
+                        'use "(\{\{(?!--)([^\s].*[^\s])(?<!--)}}|\{\{(?!--)([^\s].*[^\s])\s(?<!--)}}|\{\{(?!--)\s([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])(?<!--)}}|\{\{(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)}})" => "{{ $2$3$3$4$5$6 }}" for fast replace',
+                    ),
                 );
             });
 
@@ -103,14 +104,14 @@ class ViewsTest extends TestCase
                     preg_match_all(
                         '/\{!!(?:.*[^\s]|[^\s].*)!!}/',
                         $content,
-                        $maches
+                        $maches,
                     ),
                     $this->warning(
                         $file->getPathname(),
                         'missing space between {!! $variable !!}',
                         $maches[0],
-                        'use "(\{!!(?!--)([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)([^\s].*[^\s])\s(?<!--)!!}|\{!!(?!--)\s([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)!!})" => "{!! $2$3$3$4$5$6 !!}" for fast replace'
-                    )
+                        'use "(\{!!(?!--)([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)([^\s].*[^\s])\s(?<!--)!!}|\{!!(?!--)\s([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)!!})" => "{!! $2$3$3$4$5$6 !!}" for fast replace',
+                    ),
                 );
             });
 
@@ -120,14 +121,14 @@ class ViewsTest extends TestCase
                     preg_match_all(
                         '/\{!!(?:.*\s]{2,}|\s{2,}.*)!!}/',
                         $content,
-                        $maches
+                        $maches,
                     ),
                     $this->warning(
                         $file->getPathname(),
                         'too many space between {!! $variable !!}',
                         $maches[0],
-                        'use "(\{!!(?!--)([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)([^\s].*[^\s])\s(?<!--)!!}|\{!!(?!--)\s([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)!!})" => "{!! $2$3$3$4$5$6 !!}" for fast replace'
-                    )
+                        'use "(\{!!(?!--)([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)([^\s].*[^\s])\s(?<!--)!!}|\{!!(?!--)\s([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])(?<!--)!!}|\{!!(?!--)\s{2,}([^\s].*[^\s])\s{2,}(?<!--)!!})" => "{!! $2$3$3$4$5$6 !!}" for fast replace',
+                    ),
                 );
             });
 
@@ -137,14 +138,14 @@ class ViewsTest extends TestCase
                     preg_match_all(
                         '/\{!!\s*(?:action|asset|route|secure_asset|url|mix)\((?:.*)\)\s*!!}/',
                         $content,
-                        $maches
+                        $maches,
                     ),
                     $this->warning(
                         $file->getPathname(),
                         'should use {{ $variable }} instead {!! $variable !!}',
                         $maches[0],
-                        'use "\{!! (.*) !!}" => "{{ $1 }}" for fast replace'
-                    )
+                        'use "\{!! (.*) !!}" => "{{ $1 }}" for fast replace',
+                    ),
                 );
             });
 
@@ -153,13 +154,13 @@ class ViewsTest extends TestCase
                 preg_match_all(
                     '/(?:\{\{\s|\{\{\s|@)(?:dd|dump)\(.*\)(?:}}|!!}|)/',
                     $content,
-                    $maches
+                    $maches,
                 ),
                 $this->error(
                     $file->getPathname(),
                     'remove dd or dump in blade',
                     $maches[0],
-                )
+                ),
             );
         }
     }

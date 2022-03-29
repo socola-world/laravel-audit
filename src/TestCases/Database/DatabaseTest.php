@@ -13,10 +13,10 @@ class DatabaseTest extends TestCase
 //    public function test_database_missing_table()
 //    {
 //        $x = require(__DIR__.'/../../config/socoladaica/audit.php');
-////        dd($x['database']['tables']);
-////
-////        $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-////        dd($tables);
+// //        dd($x['database']['tables']);
+// //
+// //        $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+// //        dd($tables);
 //
 //        $basicDesignTables = array_keys($x['database']['tables']);
 //        $databaseTables = array_values(DB::connection()->getDoctrineSchemaManager()->listTableNames());
@@ -62,13 +62,13 @@ class DatabaseTest extends TestCase
 //    public function testDatabaseDesign()
 //    {
 //        Schema::shouldReceive('create')->andReturn(null);
-////        \Schema::shouldReceive('create')->andReturn('sss');
-////        $y = $this->createMock(Builder::class)->getMock();
-////        $y->method('create')->willReturn(function ($table, Closure $callback) {
-////            dd('xxx');
-////        });
-////
-////        Artisan::call('migrate');
+// //        \Schema::shouldReceive('create')->andReturn('sss');
+// //        $y = $this->createMock(Builder::class)->getMock();
+// //        $y->method('create')->willReturn(function ($table, Closure $callback) {
+// //            dd('xxx');
+// //        });
+// //
+// //        Artisan::call('migrate');
 //    }
 
 //    public function testColumnName()
