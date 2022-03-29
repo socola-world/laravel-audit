@@ -1070,7 +1070,9 @@ $rules = [
         'elements' => [
             \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::ELEMENTS_ARRAYS,
             \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS,
-            \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS,
+            ...(version_compare(phpversion(), '8.0+', '>=') ? [
+                \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS,
+            ] : []),
         ],
     ],
     'trim_array_spaces' => true,
@@ -1126,6 +1128,7 @@ $finder = Finder::create()
     ->notName('*.blade.php')
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
+
 
 return (new Config())
     ->setFinder($finder)
