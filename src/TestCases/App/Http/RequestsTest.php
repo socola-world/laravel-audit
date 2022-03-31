@@ -277,13 +277,13 @@ class RequestsTest extends TestCase
     }
 
     protected array $ruleFollowTypes = [
-        'After' => 'Date',
-        'AfterOrEqual' => 'Date',
-        'Before' => 'Date',
-        'BeforeOrEqual' => 'Date',
-        'DateEquals' => 'Date',
-        'Digits' => 'Numeric',
-        'DigitsBetween' => 'Numeric',
+        'After' => ['Date'],
+        'AfterOrEqual' => ['Date'],
+        'Before' => ['Date'],
+        'BeforeOrEqual' => ['Date'],
+        'DateEquals' => ['Date'],
+        'Digits' => ['Numeric', 'Integer'],
+        'DigitsBetween' => ['Numeric', 'Integer'],
         //        'Dimensions' => 'image',
         //        'Dimensions' => 'mine',
     ];
@@ -296,13 +296,18 @@ class RequestsTest extends TestCase
         $rulesMissingType = [];
 
         foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
-//            [$ruleName, $parameters] = $ruleParse;
             collect($ruleParses)
-                ->each(function ($ruleParse) use (&$rulesMissingType, $attribute) {
+                ->each(function ($ruleParse) use (&$rulesMissingType, $attribute, $ruleParses, $auditRequest) {
                     [$ruleName, $parameters] = $ruleParse;
 
                     if (array_key_exists($ruleName, $this->ruleFollowTypes) == false) {
                         return;
+                    }
+
+                    foreach ($ruleParses as $otherRuleParse) {
+                        if (in_array($otherRuleParse[0], $this->ruleFollowTypes[$ruleName])) {
+                            return;
+                        }
                     }
 
                     $rulesMissingType[$attribute] = Str::snake($this->ruleFollowTypes[$ruleName]);
