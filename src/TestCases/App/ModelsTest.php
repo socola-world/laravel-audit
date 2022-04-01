@@ -19,6 +19,7 @@ use JsonException;
 use ReflectionMethod;
 use SocolaDaiCa\LaravelAudit\Audit\AuditDatabase;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
+use SocolaDaiCa\LaravelAudit\Helper;
 use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 use SocolaDaiCa\LaravelAudit\Traits\Assert\AssertTable;
 use Throwable;
@@ -601,7 +602,7 @@ class ModelsTest extends TestCase
     public function testColumnName(AuditModel $auditModel)
     {
         $columnsWrongFormat = collect(array_keys($auditModel->columns))
-            ->filter(fn ($columnName) => preg_match('/^[a-z0-9_]+$/', $columnName) == false)
+            ->filter(fn ($columnName) => !Helper::isSnakeCase($columnName))
             ->values()
             ->toArray()
         ;
@@ -609,9 +610,25 @@ class ModelsTest extends TestCase
         static::assertEmpty(
             $columnsWrongFormat,
             $this->error(
-                '$auditModel->reflectionClass->getName()::$columns should be snake_case',
+                "{$auditModel->reflectionClass->getName()}::\$columns should be snake_case",
                 $columnsWrongFormat,
             ),
+        );
+    }
+
+    public function testAppendsSnakeCase(AuditModel $auditModel)
+    {
+        $columnsWrongFormat = collect($auditModel->getAppends())
+            ->filter(fn($appendItem) => !Helper::isSnakeCase($appendItem))
+            ->toArray()
+        ;
+
+        static::assertEmpty(
+            $columnsWrongFormat,
+            $this->error(
+                "{$auditModel->reflectionClass->getName()}::\$appends should be snake_case",
+                $columnsWrongFormat
+            )
         );
     }
 }
