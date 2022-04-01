@@ -66,7 +66,7 @@ Make sure you run `composer dumpautoload before run any testcase`
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Http\\ControllersTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Http\\RequestsTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\ModelsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Http\\Models\\ModelsTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Common\\ClassTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\ConfigsTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Database\\DatabaseTest"
@@ -119,55 +119,61 @@ vendor\bin\phpstan analyse
 ## Coming Soon
 
 - **Request**
-  - test missing addCustomValues -> **done**
-    - date_from addCustomValues today, yesterday
-  - rule missing type -> **done**
-  - attributeShouldNotExists
-  - instead, rule (between instead min max)
-  - follow type digits_between
-  - exists 
-    - missing soft delete
-    - model not Exists
-  - duplicate rule
+  - [x] test missing addCustomValues
+    - [ ] date_from addCustomValues today, yesterday
+  - [x] rule missing type
+  - [ ] attributeShouldNotExists
+  - [ ] instead, rule (between instead min max)
+  - [ ] follow type digits_between
+  - [ ] exists 
+    - [ ] missing soft delete
+    - [ ] model not Exists
+  - [ ] duplicate rule
+  - [ ] cast type
 - **Model**
-  - relation using pivot class instead table string -> **done**
-  - column name snake_case -> **done**
-  - split big model
-  - pivot name
-  - test relation foregin key
-  - relation should be index
-  - using pivot instead table string
-  - mising cast
+  - [x] relation using pivot class instead table string
+  - [x] column name snake_case
+  - [ ] split big model
+  - [ ] pivot name
+  - [ ] test relation foregin key
+  - [ ] relation should be index
+  - [ ] using pivot instead table string
+  - [ ] mising cast
 - **Migrattion**
-  - test can roll back -> **done**
-  - test migrate match db design -> **done**
-  - test foregin key
+  - [x] test can roll back
+  - [x] test migrate match db design
+  - [ ] test foregin key
 - **Cast**
 - **Routes**
-  - route kebab-case -> **done**
-  - dont use closure callback
-  - use FormRequest instead Request
+  - [x] route kebab-case
+  - [ ] dont use closure callback
+  - [ ] use FormRequest instead Request
 - **resources**
 - **resources/lang**
-  - key snake_case
+  - [ ] key snake_case
 - **resources/assets**
-  - dùng `mix.scripts` thay cho `mix.copy`
+  - [ ] dùng `mix.scripts` thay cho `mix.copy`
 - **resources/views**
-  - use `{{ URL::asset() }}` instead `{!! URL::asset() !!}`
+  - [ ] use `{{ URL::asset() }}` instead `{!! URL::asset() !!}`
 - **database**
-  - column should not null -> **done**
-  - column should be unsigned -> **done**
-  - column should not negative
+  - [x] column should not null
+  - [x] column should be unsigned
+  - [ ] column should not negative
+- **storage**:
+  - [ ] chmod
+- **public**
+  - [] chmod
 - **Other**
-  - remove all todo
-  - add log delete transaction
-  - document.on insteam element.{event}
-  - custom 404
-    - https://codepen.io/knolcoder/pen/ZEewZaY
-    - https://stackoverflow.com/questions/35774500/how-to-remove-focus-from-a-button-after-botstrap-modal-closed
-    - https://stackoverflow.com/questions/30322918/bootstrap-modal-restores-button-focus-on-close
-    - check css support
-    - tìm hiểu về zerowith character
+  - [ ] remove all todo
+  - [ ] add log delete transaction
+  - [ ] document.on insteam element.{event}
+  - [ ] custom 404
+    - [ ] https://codepen.io/knolcoder/pen/ZEewZaY
+    - [ ] https://stackoverflow.com/questions/35774500/how-to-remove-focus-from-a-button-after-botstrap-modal-closed
+    - [ ] https://stackoverflow.com/questions/30322918/bootstrap-modal-restores-button-focus-on-close
+    - [ ] check css support
+    - [ ] tìm hiểu về zerowith character
+    - [ ] https://github.com/shufo/blade-formatter
 
 ## Develop
 

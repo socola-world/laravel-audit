@@ -77,8 +77,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         Resolver $resolver,
         Filesystem $files,
         ?Dispatcher $dispatcher = null
-    )
-    {
+    ) {
         $this->files = $files;
         $this->events = $dispatcher;
         $this->resolver = $resolver;

@@ -297,7 +297,7 @@ class RequestsTest extends TestCase
 
         foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
             collect($ruleParses)
-                ->each(function ($ruleParse) use (&$rulesMissingType, $attribute, $ruleParses, $auditRequest) {
+                ->each(function ($ruleParse) use (&$rulesMissingType, $attribute, $ruleParses) {
                     [$ruleName, $parameters] = $ruleParse;
 
                     if (array_key_exists($ruleName, $this->ruleFollowTypes) == false) {
