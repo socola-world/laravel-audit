@@ -27,14 +27,15 @@
     "require": {
         "php": "^7.4|^8.0",
         "ext-json": "*",
-        "friendsofphp/php-cs-fixer": "^v3.8.0",
+        "friendsofphp/php-cs-fixer": "^v2.19.3|^v3.8.0",
         "laravel/framework": "^v6|^v7|^v8",
         "composer/composer": "^1.6 || ^2.2",
         "phpunit/phpunit": "*",
         "spatie/once": "^2.2",
-        "doctrine/dbal": "^3.3",
+        "doctrine/dbal": "^2.13|^3.3",
         "nunomaduro/larastan": "^1.0|^2.0",
-        "spaze/phpstan-disallowed-calls": "^2.2"
+        "spaze/phpstan-disallowed-calls": "^2.2",
+        "larswiegers/laravel-translations-checker": "^0.2.0"
     },
     "require-dev": {
         "beyondcode/laravel-query-detector": "^1.5"

@@ -1,6 +1,6 @@
 <?php
 /*
- * https://mlocati.github.io/php-cs-fixer-configurator/#version:3.0
+ * https://mlocati.github.io/php-cs-fixer-configurator/#version:3.8
  *
  * */
 use PhpCsFixer\Config;
@@ -639,7 +639,8 @@ $rules = [
 //    'modernize_types_casting' => false,
     'multiline_comment_opening_closing' => true,
     'multiline_whitespace_before_semicolons' => [
-        'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NEW_LINE_FOR_CHAINED_CALLS,
+//        'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NEW_LINE_FOR_CHAINED_CALLS, // should
+        'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NO_MULTI_LINE,
     ],
     'native_function_casing' => true,
 //    native_constant_invocation
@@ -975,7 +976,7 @@ $rules = [
     ],
     'single_import_per_statement' => true,
     'single_line_after_imports' => true,
-    'single_line_comment_spacing' => true,
+    'single_line_comment_spacing' => false,
     'single_line_comment_style' => [
         'comment_types' => [
 //            'asterisk',
@@ -1069,7 +1070,7 @@ $rules = [
         'after_heredoc' => true,
         'elements' => [
             \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::ELEMENTS_ARRAYS,
-            \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS,
+//            \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::ELEMENTS_ARGUMENTS, apply late has issue
             ...(version_compare(phpversion(), '8.0+', '>=') ? [
                 \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::ELEMENTS_PARAMETERS,
             ] : []),
