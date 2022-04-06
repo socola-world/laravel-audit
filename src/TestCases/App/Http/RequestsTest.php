@@ -15,6 +15,7 @@ class RequestsTest extends TestCase
         ['required', 'nullable'],
         ['required', 'sometimes'],
         ['numeric', 'file', 'string', 'array', 'integer', 'email', 'password'],
+        ['nullable', 'array'],
     ];
 
     /**
@@ -300,6 +301,9 @@ class RequestsTest extends TestCase
                 ->each(function ($ruleParse) use (&$rulesMissingType, $attribute, $ruleParses) {
                     [$ruleName, $parameters] = $ruleParse;
 
+                    if (is_object($ruleName)) {
+                        return;
+                    }
                     if (array_key_exists($ruleName, $this->ruleFollowTypes) == false) {
                         return;
                     }
@@ -310,7 +314,7 @@ class RequestsTest extends TestCase
                         }
                     }
 
-                    $rulesMissingType[$attribute] = Str::snake($this->ruleFollowTypes[$ruleName]);
+                    $rulesMissingType[$attribute] = Str::snake($this->ruleFollowTypes[$ruleName][0]);
                 })
             ;
         }
