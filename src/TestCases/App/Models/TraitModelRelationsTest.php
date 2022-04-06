@@ -1,6 +1,6 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http\Models;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use ReflectionMethod;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use Throwable;
+use function collect;
 
 trait TraitModelRelationsTest
 {

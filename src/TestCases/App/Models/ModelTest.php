@@ -1,6 +1,6 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http\Models;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App\Models;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Model;
