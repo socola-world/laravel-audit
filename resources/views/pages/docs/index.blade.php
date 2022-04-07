@@ -39,6 +39,9 @@
                         <th>フォルダ (Folder)</th>
                         <th>クラス名 (Class Name)</th>
                         <th>メソッド名 (Method Name)</th>
+                        <th>リクエストメソッド (Request Method)</th>
+                        <th>リクエスト名 (Request Name)</th>
+                        <th>リクエストURL (Request URL)</th>
                         <th>概要 (Overview)</th>
                         <th>Middleware</th>
                     </tr>
@@ -60,6 +63,13 @@
                                                 {{ $item['method'] }}
                                             </strong>
                                         </a>
+                                    </td>
+                                    <td>
+                                        {{ implode('|', $item['methods']) }}
+                                    </td>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td>
+                                        {!! preg_replace('/({[^}]+})/', '<strong class="text-red">$1</strong>', $item['url']) !!}
                                     </td>
                                     <td></td>
                                     <td>

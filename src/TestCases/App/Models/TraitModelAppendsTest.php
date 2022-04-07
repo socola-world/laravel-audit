@@ -1,11 +1,12 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http\Models;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App\Models;
 
 use JsonException;
 use ReflectionException;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use SocolaDaiCa\LaravelAudit\Helper;
+use function collect;
 
 trait TraitModelAppendsTest
 {

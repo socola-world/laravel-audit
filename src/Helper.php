@@ -159,6 +159,6 @@ class Helper
 
     public static function isSnakeCase($str)
     {
-        return preg_match('/^[a-z][a-z0-9]*$/', $str);
+        return preg_match('/^[a-z][a-z0-9_]*$/', $str);
     }
 }

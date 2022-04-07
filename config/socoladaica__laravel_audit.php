@@ -18,7 +18,7 @@ return [
         //        \SocolaDaiCa\LaravelAudit\TestCases\App\Http\RequestsTest::class => [
         //
         //        ],
-        //        \SocolaDaiCa\LaravelAudit\TestCases\App\Http\Models\ModelTest::class => [
+        //        \SocolaDaiCa\LaravelAudit\TestCases\App\Models\ModelTest::class => [
         //            'testSoftDelete',
         //            'testColumnShouldNotNull',
         //        ],

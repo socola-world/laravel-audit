@@ -1,6 +1,6 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http\Models;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use ReflectionMethod;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use Throwable;
+use function collect;
 
 trait TraitModelRelationsTest
 {
@@ -24,39 +25,39 @@ trait TraitModelRelationsTest
         $relations = collect($auditModel->reflectionClass->getMethods())
             ->map(function (ReflectionMethod $method) use ($auditModel) {
                 if ($method->getNumberOfParameters() > 0) {
-                    return;
+                    return null;
                 }
 
                 if ($method->isPublic() === false) {
-                    return;
+                    return null;
                 }
 
                 if (in_array($method->class, $this->igoreClass)) {
-                    return;
+                    return null;
                 }
 
                 if (Str::start($method->getName(), 'get') && Str::endsWith($method->getName(), 'Attribute')) {
-                    return;
+                    return null;
                 }
 
                 if (in_array($auditModel::getClassByFile($method->getFileName()), [
                     'Illuminate\Database\Eloquent\SoftDeletes',
                 ])) {
-                    return;
+                    return null;
                 }
 
                 if ($method->getReturnType() != null) {
                     if ($method->getReturnType()->isBuiltin()) {
-                        return;
+                        return null;
                     }
 
                     if ((
-                        class_exists($method->getReturnType()->getName())
+                            class_exists($method->getReturnType()->getName())
                             || interface_exists($method->getReturnType()->getName())
-                    )
+                        )
                         && is_subclass_of($method->getReturnType()->getName(), Relation::class) === false
                     ) {
-                        return;
+                        return null;
                     }
                 }
 
@@ -75,11 +76,11 @@ trait TraitModelRelationsTest
 //                        $exception
 //                    );
 
-                    return;
+                    return null;
                 }
 
                 if (!is_object($response) || ($response instanceof Relation) != true) {
-                    return;
+                    return null;
                 }
 
                 return [

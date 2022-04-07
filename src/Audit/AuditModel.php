@@ -96,7 +96,7 @@ class AuditModel extends AuditClass
          ;
     }
 
-    public function isColumnVisble($column)
+    public function isColumnVisible($column)
     {
         return in_array($column, $this->model->getVisible()) || !in_array($column, $this->model->getHidden());
     }

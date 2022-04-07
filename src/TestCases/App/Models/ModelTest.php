@@ -1,6 +1,6 @@
 <?php
 
-namespace SocolaDaiCa\LaravelAudit\TestCases\App\Http\Models;
+namespace SocolaDaiCa\LaravelAudit\TestCases\App\Models;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Model;
@@ -172,7 +172,7 @@ class ModelTest extends TestCase
         $hiddenMissingColumns = array_keys($auditModel->columns);
 
         $hiddenMissingColumns = collect($hiddenMissingColumns)
-            ->filter(fn ($column) => $auditModel->isColumnVisble($column))
+            ->filter(fn ($column) => $auditModel->isColumnVisible($column))
             ->filter(fn ($column) => in_array($column, $this->columnsShouldHidden))
             ->values()
             ->toArray()

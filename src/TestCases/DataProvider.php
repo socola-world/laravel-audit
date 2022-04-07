@@ -4,6 +4,7 @@ namespace SocolaDaiCa\LaravelAudit\TestCases;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,21 @@ trait DataProvider
 
                 return [AuditModel::make($modelReflectionClass)];
             })->toArray();
+        });
+    }
+
+    public function pivotDataProvider()
+    {
+        return once(function () {
+            return collect($this->modelDataProvider())
+                ->filter(function ($item) {
+                    /* @var AuditModel $auditMode */
+                    $auditMode = $item[0];
+
+                    return $auditMode->reflectionClass->isSubclassOf(Pivot::class);
+                })
+                ->toArray()
+            ;
         });
     }
 

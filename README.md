@@ -66,7 +66,8 @@ Make sure you run `composer dumpautoload before run any testcase`
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Http\\ControllersTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Http\\RequestsTest"
-vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Http\\Models\\ModelsTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Models\\ModelTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\App\\Models\\PivotTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Common\\ClassTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\ConfigsTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Database\\DatabaseTest"
@@ -116,6 +117,16 @@ parameters:
 vendor\bin\phpstan analyse 
 ```
 
+## blade-formatter
+
+```
+cd vendor\socoladaica\laravel-audit
+cd ../../../
+vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/**/*.blade.php --w --wrap 999999999999
+
+ vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/views/layouts/**/*.blade.php --w --wrap 999999999999
+```
+
 ## Coming Soon
 
 - **Request**
@@ -137,7 +148,7 @@ vendor\bin\phpstan analyse
   - [ ] pivot name
   - [ ] test relation foregin key
   - [ ] relation should be index
-  - [ ] using pivot instead table string
+  - [x] using pivot instead table string
   - [ ] mising cast
 - **Migrattion**
   - [x] test can roll back

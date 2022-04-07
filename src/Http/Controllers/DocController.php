@@ -115,6 +115,21 @@ class DocController extends Controller
             return strcmp($a['controller'], $b['controller']) ?: strcmp($a['method'], $b['method']);
         })->values()->toArray();
 
+        $xxxs = [];
+
+        foreach ($items as $item) {
+            $x = [
+                implode('|', $item['methods']),
+                $item['name'],
+                $item['url'],
+            ];
+
+            $xxxs[] = implode("\t", $x);
+        }
+
+        $xxxs = implode("\n", $xxxs);
+        return $xxxs;
+
         $groupItems = collect($items)->groupBy('controller');
 
         return view('laravel-audit::pages.docs.index', [
