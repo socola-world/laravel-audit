@@ -1,5 +1,5 @@
 includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
+#    - ./vendor/nunomaduro/larastan/extension.neon
     - ./vendor/spaze/phpstan-disallowed-calls/extension.neon
 #    - ./../../../vendor/nunomaduro/larastan/extension.neon
 #    - ./../../../vendor/spaze/phpstan-disallowed-calls/extension.neon
@@ -198,7 +198,6 @@ parameters:
 #        - ../../../_ide_helper_models.php
 #        - ../../../.phpstorm.meta.php
     paths:
-#        - src/TestPhpStan.php
         - ./../../../app
 #        - ./../../../app/Services/Shopify/OtpService.php
 #        - ./../../../app/Services/CompanyService.php
@@ -224,11 +223,6 @@ parameters:
     level: 9
 
     ignoreErrors:
-        #
-        - '#Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable::\$[a-zA-Z0-9_]+\.#'
-        - '#Call to an undefined method Illuminate\\Contracts\\Auth\\Factory|Illuminate\\Contracts\\Auth\\Guard::[a-zA-Z0-9_]+\(\)\.#'
-        #
-
 #        - '#PHPDoc tag @var#'
         - "#Called 'pluck' on Laravel collection, but could have been retrieved as a query.#"
         - '#Access to an undefined property App\\Models\\[a-zA-Z0-9]+::\$[a-zA-Z0-9_]+\.#'
@@ -253,12 +247,11 @@ parameters:
         - '#Method App\\Helper\\QueryBuilderMixin::[a-zA-Z0-9]+\(\) invoked with .*#'
 
     excludePaths:
-#         - ../../../.phpstorm.meta.php
-#         - ../../../_ide_helper.php
-#         - ../../../_ide_helper_models.php
+         - ../../../.phpstorm.meta.php
+         - ../../../_ide_helper.php
+         - ../../../_ide_helper_models.php
 #        - ./*/*/FileToBeExcluded.php
 
     checkMissingIterableValueType: false
 rules:
-#    - SocolaDaiCa\LaravelAudit\Stan\Rules\VariableNameRule
-#    - SocolaDaiCa\LaravelAudit\Stan\Rules\ClassMethodNameRule
+    - SocolaDaiCa\LaravelAudit\Stan\Rules\VariableNameRule

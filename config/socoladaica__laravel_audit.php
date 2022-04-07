@@ -11,7 +11,9 @@ return [
         'model' => [
         ],
     ],
-    'skip_testcase' => [
+    'skip_testcases' => [
+        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testParameters',
+        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testRouteName',
         //        \SocolaDaiCa\LaravelAudit\TestCases\App\Http\ControllersTest::class => [
         //
         //        ],

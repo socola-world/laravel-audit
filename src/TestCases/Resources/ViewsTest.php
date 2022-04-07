@@ -164,4 +164,9 @@ class ViewsTest extends TestCase
             );
         }
     }
+
+    public function testAssetMix()
+    {
+
+    }
 }

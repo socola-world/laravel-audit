@@ -103,7 +103,8 @@ trait DataProvider
                         $auditRequest = AuditRequest::make($requestReflectionClass);
                         $auditRequest->getRequest();
                     } catch (Exception $exception) {
-                        dd($exception);
+                        return [null];
+//                        dd($exception);
                     }
 
                     return [

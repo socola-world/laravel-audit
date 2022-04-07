@@ -35,8 +35,12 @@
         "doctrine/dbal": "^2.13|^3.3",
         "nunomaduro/larastan": "^1.0|^2.0",
         "spaze/phpstan-disallowed-calls": "^2.2",
-        "larswiegers/laravel-translations-checker": "^0.2.0",
-        "phpunit/php-code-coverage": "^9.2",
+        "phpunit/php-code-coverage": "^9.2"
+    },
+    "require-dev": {
         "beyondcode/laravel-query-detector": "^1.5"
+    },
+    "suggest": {
+        "larswiegers/laravel-translations-checker": "Get direct feedback where and what translations you are missing!"
     }
 }

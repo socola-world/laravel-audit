@@ -28,12 +28,9 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
     {
         parent::setUp();
 
-        $skipTestCase = \config('socoladaica__laravel_audit.skip_testcase');
+        $testCase = static::class."::{$this->getName(false)}";
 
-        if (
-            array_key_exists(static::class, $skipTestCase)
-            && in_array($this->getName(false), $skipTestCase[static::class])
-        ) {
+        if (in_array($testCase, \config('socoladaica__laravel_audit.skip_testcases'))) {
             static::markTestSkipped('socoladaica__laravel_audit.skip_testcase');
         }
     }

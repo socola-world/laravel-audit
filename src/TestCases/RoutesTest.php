@@ -63,7 +63,7 @@ class RoutesTest extends TestCase
         preg_match('/(?<postfix>\/create|store|edit|update|delete\/?)$/', $auditRoute->route->uri(), $matches);
         $postfix = $matches['postfix'] ?? null;
 
-        static::assertEmpty(
+        static::assertFalse(
             $method && $postfix,
             $this->error(
                 "remove postfix \"{$postfix}\" on route({$auditRoute->route->getName()})",

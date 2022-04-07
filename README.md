@@ -114,7 +114,13 @@ parameters:
 ```
 
 ```shell
-vendor\bin\phpstan analyse 
+vendor\bin\phpstan analyse
+```
+
+## translations-checker 
+
+```shell
+php artisan translations:check
 ```
 
 ## blade-formatter
