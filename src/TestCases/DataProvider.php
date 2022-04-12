@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use ReflectionClass;
 use SocolaDaiCa\LaravelAudit\Audit\AuditClass;
 use SocolaDaiCa\LaravelAudit\Audit\AuditModel;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRequest;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRoute;
+use SocolaDaiCa\LaravelAudit\Audit\AuditView;
 use Symfony\Component\Finder\SplFileInfo;
 use function once;
 
@@ -117,5 +119,34 @@ trait DataProvider
                 ->toArray()
             ;
         });
+    }
+
+    /**
+     * @return Collection|SplFileInfo[]
+     */
+    public function views(): Collection
+    {
+        return once(function () {
+            $dir = resource_path('views');
+
+            if (is_dir($dir) === false) {
+                return collect([]);
+            }
+
+            /**
+             * @var SplFileInfo[] $files
+             */
+            $files = File::allFiles($dir);
+
+            return collect($files);
+        });
+    }
+
+    public function viewDataProvider(): array
+    {
+        return $this->views()
+            ->map(fn ($file) => [AuditView::make($file)])
+            ->toArray()
+        ;
     }
 }

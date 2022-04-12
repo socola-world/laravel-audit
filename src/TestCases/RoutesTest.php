@@ -106,8 +106,7 @@ class RoutesTest extends TestCase
                         return false;
                     }
 
-                    return !(LocalAudit::isClassExist($auditRoute->getControllerClass()) == false)
-                     ;
+                    return !(LocalAudit::isClassExist($auditRoute->getControllerClass()) == false);
                 })
                 ->map(function ($e) {
                     /* @var AuditRoute $auditRoute */

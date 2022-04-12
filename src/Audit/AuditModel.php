@@ -92,8 +92,7 @@ class AuditModel extends AuditClass
             return false;
         }
 
-        return !(!is_object($response) || ($response instanceof Relation) === false)
-         ;
+        return !(!is_object($response) || ($response instanceof Relation) === false);
     }
 
     public function isColumnVisible($column)

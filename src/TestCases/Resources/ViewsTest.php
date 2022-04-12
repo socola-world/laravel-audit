@@ -2,39 +2,16 @@
 
 namespace SocolaDaiCa\LaravelAudit\TestCases\Resources;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use SocolaDaiCa\LaravelAudit\Audit\AuditView;
 use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 use Symfony\Component\Finder\SplFileInfo;
-use function once;
 
 class ViewsTest extends TestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
-    }
-
-    /**
-     * @return Collection|SplFileInfo[]
-     */
-    public function views(): Collection
-    {
-        return once(function () {
-            $dir = resource_path('views');
-
-            if (is_dir($dir) == false) {
-                return [];
-            }
-
-            /**
-             * @var SplFileInfo[] $files
-             */
-            $files = File::allFiles($dir);
-
-            return collect($files);
-        });
     }
 
     public function testRelativePathname()
@@ -165,8 +142,66 @@ class ViewsTest extends TestCase
         }
     }
 
-    public function testAssetMix()
-    {
+    protected static ?array $mixManifestAssets = null;
 
+    public function mixManifestAssets()
+    {
+        if (static::$mixManifestAssets !== null) {
+            return static::$mixManifestAssets;
+        }
+
+        $this->addWarning('Make sure you run npm run dev before run this testcase');
+        $mixManifestPath = public_path('mix-manifest.json');
+
+        if (!file_exists($mixManifestPath)) {
+            return static::$mixManifestAssets = [];
+        }
+
+        $assets = file_get_contents($mixManifestPath);
+        $assets = json_decode($assets);
+        $assets = (array) $assets;
+        $assets = array_keys($assets);
+        $assets = array_map(fn ($file) => trim($file, '/'), $assets);
+
+        return static::$mixManifestAssets = $assets;
+    }
+
+    /**
+     * @dataProvider viewDataProvider
+     */
+    public function testAssetMix(AuditView $auditView)
+    {
+        $content = $auditView->getContent();
+        $assetDirString = implode('|', config('socoladaica__laravel_audit.asset_dir'));
+
+        $assetDirString = implode('|', $this->mixManifestAssets());
+
+        $assetDirString = str_replace('/', '\/', $assetDirString);
+
+        preg_match_all('/(?:\{\{|\{!!)\s*(?:secure_asset|asset|url)\(["\']\/?(?:'.$assetDirString.').*(?:}}|!!})/', $content, $matches);
+        $matches = $matches[0];
+
+        $matchNews = [];
+
+        foreach ($matches as $match) {
+            $matchNew = $match;
+
+            $matchNew = preg_replace(
+                '/^(\{\{|\{!!)\s*(secure_asset|asset|url)\((["\']\/?)('.$assetDirString.')(.*)\s+(}}|!!})$/',
+                '$1 $2(mix($3$4$5) $6',
+                $matchNew
+            );
+
+            $matchNews[$match] = $matchNew;
+        }
+
+        static::assertEmpty(
+            $matches,
+            $this->error(
+                $auditView->fileInfo->getPathname(),
+                'missing mix',
+                $matchNews,
+            )
+        );
     }
 }

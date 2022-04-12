@@ -190,7 +190,7 @@ vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/**/
     - [ ] https://stackoverflow.com/questions/30322918/bootstrap-modal-restores-button-focus-on-close
     - [ ] check css support
     - [ ] tìm hiểu về zerowith character
-    - [ ] https://github.com/shufo/blade-formatter
+    - [x] https://github.com/shufo/blade-formatter
 
 ## Develop
 

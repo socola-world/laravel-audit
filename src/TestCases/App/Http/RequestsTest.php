@@ -156,17 +156,22 @@ class RequestsTest extends TestCase
             foreach ($ruleParses as $ruleParse) {
                 [$ruleName, $parameters] = $ruleParse;
 
-                if (in_array($ruleName, $this->ruleKeysNeedCustomValue) == false) {
-                    continue;
+                if (in_array($ruleName, $this->ruleKeysNeedCustomValue)
+                    && empty($auditRequest->getValidator()->customValues[$parameters[0]][''.$parameters[1]])
+                ) {
+                    $rulesMissingCustomValue[$parameters[0]][''.$parameters[1]] = '?_?';
+
+                    break;
                 }
 
-                if (!empty($auditRequest->getValidator()->customValues[$parameters[0]][''.$parameters[1]])) {
-                    continue;
+                if (in_array($ruleName, ['After', 'AfterOrEqual', 'Before', 'BeforeOrEqual'])
+                    && in_array($parameters[0], ['today', 'yesterday', 'tomorrow'])
+                    && empty($auditRequest->getValidator()->customValues[$parameters[0]][''.$parameters[1]])
+                ) {
+                    $rulesMissingCustomValue[$parameters[0]][''.$parameters[1]] = '?_?';
+
+                    break;
                 }
-
-                $rulesMissingCustomValue[$parameters[0]][''.$parameters[1]] = '?_?';
-
-                break;
             }
         }
 
@@ -285,6 +290,11 @@ class RequestsTest extends TestCase
         'DateEquals' => ['Date'],
         'Digits' => ['Numeric', 'Integer'],
         'DigitsBetween' => ['Numeric', 'Integer'],
+        'Between' => ['Numeric', 'Integer', 'Array', 'String'],
+        'Size' => ['Numeric', 'Integer', 'Array', 'String'],
+        'Gt' => ['Numeric', 'Integer', 'Array', 'String'],
+        'Gte' => ['Numeric', 'Integer', 'Array', 'String'],
+        'String' => ['Required', 'Nullable', 'Min', 'Between'],
         //        'Dimensions' => 'image',
         //        'Dimensions' => 'mine',
     ];
@@ -304,7 +314,8 @@ class RequestsTest extends TestCase
                     if (is_object($ruleName)) {
                         return;
                     }
-                    if (array_key_exists($ruleName, $this->ruleFollowTypes) == false) {
+
+                    if (array_key_exists($ruleName, $this->ruleFollowTypes) === false) {
                         return;
                     }
 
@@ -314,7 +325,9 @@ class RequestsTest extends TestCase
                         }
                     }
 
-                    $rulesMissingType[$attribute] = Str::snake($this->ruleFollowTypes[$ruleName][0]);
+                    $recommendTypes = array_map(fn ($e) => Str::snake($e), $this->ruleFollowTypes[$ruleName]);
+                    $recommendTypeString = implode('|', $recommendTypes);
+                    $rulesMissingType[$attribute] = $recommendTypeString;
                 })
             ;
         }

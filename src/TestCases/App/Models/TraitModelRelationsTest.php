@@ -25,39 +25,39 @@ trait TraitModelRelationsTest
         $relations = collect($auditModel->reflectionClass->getMethods())
             ->map(function (ReflectionMethod $method) use ($auditModel) {
                 if ($method->getNumberOfParameters() > 0) {
-                    return null;
+                    return;
                 }
 
                 if ($method->isPublic() === false) {
-                    return null;
+                    return;
                 }
 
                 if (in_array($method->class, $this->igoreClass)) {
-                    return null;
+                    return;
                 }
 
                 if (Str::start($method->getName(), 'get') && Str::endsWith($method->getName(), 'Attribute')) {
-                    return null;
+                    return;
                 }
 
                 if (in_array($auditModel::getClassByFile($method->getFileName()), [
                     'Illuminate\Database\Eloquent\SoftDeletes',
                 ])) {
-                    return null;
+                    return;
                 }
 
                 if ($method->getReturnType() != null) {
                     if ($method->getReturnType()->isBuiltin()) {
-                        return null;
+                        return;
                     }
 
                     if ((
-                            class_exists($method->getReturnType()->getName())
+                        class_exists($method->getReturnType()->getName())
                             || interface_exists($method->getReturnType()->getName())
-                        )
+                    )
                         && is_subclass_of($method->getReturnType()->getName(), Relation::class) === false
                     ) {
-                        return null;
+                        return;
                     }
                 }
 
@@ -76,11 +76,11 @@ trait TraitModelRelationsTest
 //                        $exception
 //                    );
 
-                    return null;
+                    return;
                 }
 
                 if (!is_object($response) || ($response instanceof Relation) != true) {
-                    return null;
+                    return;
                 }
 
                 return [

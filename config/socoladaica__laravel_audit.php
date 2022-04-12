@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'asset_dir' => [
+        'css',
+        'js',
+        'assets/css',
+        'assets/js',
+    ],
     'database' => [
         'tables' => [
         ],
@@ -12,8 +18,17 @@ return [
         ],
     ],
     'skip_testcases' => [
-        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testParameters',
-        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testRouteName',
+        /* \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class */
+        //        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testParameters',
+        //        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testRouteName',
+        /* \SocolaDaiCa\LaravelAudit\TestCases\Resources\ViewsTest::class */
+        //        \SocolaDaiCa\LaravelAudit\TestCases\Resources\ViewsTest::class.'::testRelativePathname',
+        //        \SocolaDaiCa\LaravelAudit\TestCases\Resources\ViewsTest::class.'::testBracketSpace',
+        /* \SocolaDaiCa\LaravelAudit\TestCases\App\Http\RequestsTest::class */
+        //        \SocolaDaiCa\LaravelAudit\TestCases\App\Http\RequestsTest::class.'::testMissingAttributes',
+        //        \SocolaDaiCa\LaravelAudit\TestCases\App\Http\RequestsTest::class.'::testRuleFollowType',
+        //        \SocolaDaiCa\LaravelAudit\TestCases\App\Http\RequestsTest::class.'::testRuleMissingType',
+        //        \SocolaDaiCa\LaravelAudit\TestCases\App\Http\RequestsTest::class.'::testRulesDontTogether',
         //        \SocolaDaiCa\LaravelAudit\TestCases\App\Http\ControllersTest::class => [
         //
         //        ],
