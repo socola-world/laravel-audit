@@ -274,14 +274,14 @@ class ModelTest extends TestCase
 
         $columnsShouldNotNull = array_keys($columnsShouldNotNull);
 
-        static::assertEmpty(
+        static::shouldWarning(fn () => static::assertEmpty(
             $columnsShouldNotNull,
             $this->error(
                 $auditModel->reflectionClass->getName(),
                 '$columnsShouldNotNull = ',
                 $columnsShouldNotNull,
             ),
-        );
+        ));
     }
 
     /**
