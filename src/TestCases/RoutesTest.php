@@ -4,12 +4,15 @@ namespace SocolaDaiCa\LaravelAudit\TestCases;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
 use SocolaDaiCa\LaravelAudit\Audit\AuditClass;
 use SocolaDaiCa\LaravelAudit\Audit\AuditRoute;
 use SocolaDaiCa\LaravelAudit\Audit\LocalAudit;
+use Symfony\Component\Finder\SplFileInfo;
 use function collect;
 use function once;
 
@@ -49,6 +52,39 @@ class RoutesTest extends TestCase
                 'duplicate middleware',
                 $duplicateMiddlewares,
             ),
+        );
+    }
+
+    public function testFilePath()
+    {
+        $fileWrongPaths = collect(File::allFiles(base_path('routes')))
+            ->map(fn (SplFileInfo $file) => $file->getRelativePathname())
+            ->filter(fn ($relativePathName) => Str::contains($relativePathName, ['/', '\\']))
+            ->values()
+            ->toArray()
+        ;
+
+        $fileWrongPaths = array_flip($fileWrongPaths);
+        $fileWrongPathsReals = [];
+
+        foreach ($fileWrongPaths as $fromPath => $index) {
+            $fromPath = str_replace('\\', '/', $fromPath);
+            $toPath = str_replace('/', '_', $fromPath);
+
+            $fromPath = 'routes/'.$fromPath;
+            $toPath = 'routes/'.$toPath;
+
+            $fileWrongPathsReals[$fromPath] = $toPath;
+        }
+
+        $fileWrongPaths = $fileWrongPathsReals;
+
+        $this->assertEmpty(
+            $fileWrongPaths,
+            $this->error(
+                'dont put file route in nested folder',
+                $fileWrongPaths
+            )
         );
     }
 
@@ -157,7 +193,7 @@ class RoutesTest extends TestCase
      */
     public function testParameters(AuditRoute $auditRoute)
     {
-        static::assertLessThanOrEqual(
+        $this->shouldWarning(fn () => static::assertLessThanOrEqual(
             1,
             count($auditRoute->route->parameterNames()),
             $this->error(
@@ -168,26 +204,6 @@ class RoutesTest extends TestCase
                 $auditRoute->route->parameterNames(),
                 "\nparameters should less than or equal 1",
             ),
-        );
-//        dd();
-//        dd($auditRoute->route->parameters());
-//        $auditClass = AuditClass::makeByClass($auditRoute->getControllerClass());
-//        $method = $auditClass->reflectionClass->getMethod($auditRoute->getControllerMethod());
-//
-//        $parameterTypes = collect($method->getParameters())
-//            ->filter(function (ReflectionParameter $parameter) {
-//                return $parameter->getType() != null && $parameter->getType()->isBuiltin() == false;
-//            })
-//            ->map(fn (ReflectionParameter $parameter) => $parameter->getType()->getName())
-//            ->values();
-//
-//        static::assertEmpty(
-//            $parameterTypes->filter(fn ($type) => $type == Request::class)->count(),
-//            $this->error(
-//                "{$auditRoute->route->action['uses']}",
-//                "\nuse php artisan make:request instead",
-//                Request::class,
-//            )
-//        );
+        ));
     }
 }

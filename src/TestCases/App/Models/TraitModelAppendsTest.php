@@ -12,6 +12,7 @@ trait TraitModelAppendsTest
 {
     /**
      * https://github.com/laravel/framework/issues/41704.
+     * @dataProvider modelDataProvider
      *
      * @throws JsonException
      * @throws ReflectionException
