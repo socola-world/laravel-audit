@@ -17,7 +17,7 @@ $rules = [
     'array_syntax' => [
         'syntax' => 'short',
     ],
-    'assign_null_coalescing_to_coalesce_equal' => false, // version_compare(phpversion(), '7.4', '>='),
+    'assign_null_coalescing_to_coalesce_equal' => version_compare(phpversion(), '7.4', '>='),
     'backtick_to_shell_exec' => true,
     'binary_operator_spaces' => [
         'default' => 'single_space',
@@ -639,8 +639,8 @@ $rules = [
 //    'modernize_types_casting' => false,
     'multiline_comment_opening_closing' => true,
     'multiline_whitespace_before_semicolons' => [
-//        'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NEW_LINE_FOR_CHAINED_CALLS, // should
-        'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NO_MULTI_LINE,
+        'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NEW_LINE_FOR_CHAINED_CALLS, // should
+//        'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NO_MULTI_LINE,
     ],
     'native_function_casing' => true,
 //    native_constant_invocation
