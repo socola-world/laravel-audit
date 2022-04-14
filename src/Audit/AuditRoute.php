@@ -4,17 +4,19 @@ namespace SocolaDaiCa\LaravelAudit\Audit;
 
 use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
+use SocolaDaiCa\LaravelAudit\Invades\Invade;
+use SocolaDaiCa\LaravelAudit\Invades\InvadeRoute;
 
 class AuditRoute
 {
     /**
-     * @var Route
+     * @var InvadeRoute|Route
      */
     public $route;
 
     public function __construct(Route $route)
     {
-        $this->route = $route;
+        $this->route = Invade::make($route);
     }
 
     public static function make(Route $route)

@@ -27,6 +27,7 @@ class DotFileTest extends TestCase
         ];
 
         $gitignoreLines = [];
+
         if (file_exists(base_path('.gitignore'))) {
             $gitignoreLines = file_get_contents(base_path('.gitignore'));
             $gitignoreLines = explode("\r\n", $gitignoreLines);
@@ -39,6 +40,7 @@ class DotFileTest extends TestCase
         ;
 
         $gitignoreLinesMissing = [];
+
         foreach (array_merge($files, $folders) as $item) {
             if (in_array($item, $gitignoreLines)) {
                 continue;
@@ -49,10 +51,10 @@ class DotFileTest extends TestCase
             }
         }
 
-        $this->assertEmpty(
+        static::assertEmpty(
             $gitignoreLinesMissing,
             $this->error(
-                ".gitignore missing",
+                '.gitignore missing',
                 "\n".implode("\n", $gitignoreLinesMissing)
             )
         );

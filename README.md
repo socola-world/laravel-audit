@@ -77,6 +77,7 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Psr\\Psr1
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Resources\\SCSSTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\Resources\\ViewsTest"
 vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\RoutesTest"
+vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\DotFileTest"
 ```
 ## Code Fixer
 
@@ -117,20 +118,21 @@ parameters:
 vendor\bin\phpstan analyse
 ```
 
-## translations-checker 
+### translations-checker 
 
 ```shell
 php artisan translations:check
 ```
 
-## blade-formatter
+### blade-formatter
 
 ```
 cd vendor\socoladaica\laravel-audit
+npm i
 cd ../../../
 vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/**/*.blade.php --w --wrap 999999999999
 
- vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/views/layouts/**/*.blade.php --w --wrap 999999999999
+vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/views/layouts/**/*.blade.php --w --wrap 999999999999
 ```
 
 ## Coming Soon
@@ -147,6 +149,7 @@ vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/**/
     - [ ] model not Exists
   - [ ] duplicate rule
   - [ ] cast type
+  - [ ] request soft delete
 - **Model**
   - [x] relation using pivot class instead table string
   - [x] column name snake_case
@@ -161,10 +164,16 @@ vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/**/
   - [x] test migrate match db design
   - [ ] test foregin key
 - **Cast**
+- **Controller**
+  - [ ] only public resource method
 - **Routes**
   - [x] route kebab-case
-  - [ ] dont use closure callback
-  - [ ] use FormRequest instead Request
+  - [x] dont use closure callback
+  - [x] use FormRequest instead Request
+  - [ ] controller method not found
+  - [ ] request match controller
+  - [ ] method update should put or patch
+  - [ ] remove route empty action
 - **resources**
 - **resources/lang**
   - [ ] key snake_case
@@ -179,9 +188,22 @@ vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/**/
 - **storage**:
   - [ ] chmod
 - **public**
-  - [] chmod
+  - [ ] chmod
+- **DotFile**
+  - [x] test gitignore
 - **Other**
   - [ ] remove all todo
+  - [ ] project setup
+  - [ ] vimeo/psalm
+  - [ ] browserlint
+  - [ ] carbon comparerDate
+  - [ ] nên dùng laravel Carbon
+  - [ ] dont use external url
+  - [ ]
+  - [ ]
+  - [ ]
+  - [ ]
+  - [ ]
   - [ ] add log delete transaction
   - [ ] document.on insteam element.{event}
   - [ ] custom 404

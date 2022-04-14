@@ -33,6 +33,12 @@ class RoutesTest extends TestCase
                 $auditRoute->route->middleware()
             );
 
+            $middlewares = collect($middlewares)
+                ->filter(fn ($middleware) => ($middleware instanceof Closure) === false)
+                ->values()
+                ->toArray()
+            ;
+
             $duplicateMiddleware = $middlewares;
             $duplicateMiddleware = array_count_values($duplicateMiddleware);
             $duplicateMiddleware = array_filter($duplicateMiddleware, fn ($e) => $e > 1);
@@ -44,7 +50,7 @@ class RoutesTest extends TestCase
 
             $duplicateMiddlewares[] = [
                 'url' => $auditRoute->route->uri(),
-                'controller' => $auditRoute->route->getController(),
+                'controller' => $auditRoute->route->getActionName(),
                 'middleware' => $middlewares,
             ];
         }
@@ -74,7 +80,7 @@ class RoutesTest extends TestCase
         }
 
         $duplicateActionNames = array_count_values($duplicateActionNames);
-        $duplicateActionNames = array_filter($duplicateActionNames, fn($count) => $count > 1);
+        $duplicateActionNames = array_filter($duplicateActionNames, fn ($count) => $count > 1);
         $duplicateActionNames = array_keys($duplicateActionNames);
 
         static::assertEmpty(
@@ -110,7 +116,7 @@ class RoutesTest extends TestCase
 
         $fileWrongPaths = $fileWrongPathsReals;
 
-        $this->assertEmpty(
+        static::assertEmpty(
             $fileWrongPaths,
             $this->error(
                 'dont put file route in nested folder',
@@ -145,7 +151,7 @@ class RoutesTest extends TestCase
             ->map(fn ($e) => $e[0])
             ->map(fn (AuditRoute $auditRoute) => $auditRoute->route->getName())
             ->filter(fn ($routeName) => !empty($routeName))
-            ->filter(fn ($routeName) => preg_match('/^[a-z0-9\-\/\\\.]+$/', $routeName) == false)
+            ->filter(fn ($routeName) => preg_match('/^[a-z0-9\-\/\\\.]+$/', $routeName) === false)
             ->values()
             ->toArray()
         ;
@@ -159,6 +165,22 @@ class RoutesTest extends TestCase
         );
     }
 
+    /**
+     * @dataProvider routeDataProvider
+     */
+    public function testHandleControllerAction(AuditRoute $auditRoute)
+    {
+        static::assertTrue(
+            $auditRoute->route->isControllerAction(),
+            $this->error(
+                'route should use Controller action instead Closure',
+                $auditRoute->route->methods(),
+                $auditRoute->route->getName(),
+                $auditRoute->route->uri(),
+            )
+        );
+    }
+
     public function routeHandleControllerDataProvider(): array
     {
         return once(function () {
@@ -169,11 +191,11 @@ class RoutesTest extends TestCase
                      */
                     $auditRoute = $e[0];
 
-                    if ($auditRoute->route->action['uses'] instanceof Closure) {
+                    if ($auditRoute->route->isControllerAction() === false) {
                         return false;
                     }
 
-                    return !(LocalAudit::isClassExist($auditRoute->getControllerClass()) == false);
+                    return LocalAudit::isClassExist($auditRoute->getControllerClass()) === true;
                 })
                 ->map(function ($e) {
                     /* @var AuditRoute $auditRoute */
@@ -201,7 +223,7 @@ class RoutesTest extends TestCase
     {
         $parameterTypes = collect($method->getParameters())
             ->filter(function (ReflectionParameter $parameter) {
-                return $parameter->getType() != null && $parameter->getType()->isBuiltin() == false;
+                return $parameter->getType() != null && $parameter->getType()->isBuiltin() === false;
             })
             ->map(fn (ReflectionParameter $parameter) => $parameter->getType()->getName())
             ->values()
