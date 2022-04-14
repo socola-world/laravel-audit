@@ -58,6 +58,34 @@ class RoutesTest extends TestCase
         );
     }
 
+    public function testDuplicateActionName()
+    {
+        $duplicateActionNames = [];
+
+        foreach ($this->routeDataProvider() as $routeProvider) {
+            /**
+             * @var AuditRoute $auditRoute
+             */
+            $auditRoute = $routeProvider[0];
+
+            $actionName = $auditRoute->route->getActionName();
+
+            $duplicateActionNames[] = $actionName;
+        }
+
+        $duplicateActionNames = array_count_values($duplicateActionNames);
+        $duplicateActionNames = array_filter($duplicateActionNames, fn($count) => $count > 1);
+        $duplicateActionNames = array_keys($duplicateActionNames);
+
+        static::assertEmpty(
+            $duplicateActionNames,
+            $this->error(
+                'duplicate action name',
+                $duplicateActionNames,
+            ),
+        );
+    }
+
     public function testFilePath()
     {
         $fileWrongPaths = collect(File::allFiles(base_path('routes')))
