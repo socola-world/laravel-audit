@@ -28,7 +28,10 @@ class RoutesTest extends TestCase
              */
             $auditRoute = $routeProvider[0];
 
-            $middlewares = $auditRoute->route->getAction('middleware');
+            $middlewares = array_merge(
+                $auditRoute->route->controllerMiddleware(),
+                $auditRoute->route->middleware()
+            );
 
             $duplicateMiddleware = $middlewares;
             $duplicateMiddleware = array_count_values($duplicateMiddleware);
