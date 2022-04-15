@@ -27,7 +27,7 @@
     "require": {
         "php": "^7.4|^8.0",
         "ext-json": "*",
-        "friendsofphp/php-cs-fixer": "^v2.19.3|^v3.8.0",
+        "friendsofphp/php-cs-fixer": "^v3.8.0",
         "laravel/framework": "^v6|^v7|^v8",
         "composer/composer": "^1.6 || ^2.2",
         "phpunit/phpunit": "*",
