@@ -213,7 +213,9 @@ vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/vie
     - [ ] check css support
     - [ ] tìm hiểu về zerowith character
     - [x] https://github.com/shufo/blade-formatter
-
+    - [ ] Locate request https://github.com/laravel/framework/compare/02fdd82690...503f6e280c
+    - [ ] dont allow delete when child relation exist
+    - [ ] try cath đúng cách
 ## Develop
 
 **composer.json**

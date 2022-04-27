@@ -940,7 +940,7 @@ $rules = [
         'sort_algorithm' => 'alpha',
     ],
     'phpdoc_var_annotation_correct_order' => true,
-    'phpdoc_var_without_name' => true,
+    'phpdoc_var_without_name' => true, // ??
     'pow_to_exponentiation' => false,
     'protected_to_private' => false,
 //    'psr_autoloading' => false,

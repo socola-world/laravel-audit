@@ -21,6 +21,7 @@ return [
         /* \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class */
         //        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testParameters',
         //        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testRouteName',
+        //        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testHandleControllerRequest',
         /* \SocolaDaiCa\LaravelAudit\TestCases\Resources\ViewsTest::class */
         //        \SocolaDaiCa\LaravelAudit\TestCases\Resources\ViewsTest::class.'::testRelativePathname',
         //        \SocolaDaiCa\LaravelAudit\TestCases\Resources\ViewsTest::class.'::testBracketSpace',
