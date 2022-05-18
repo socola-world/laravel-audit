@@ -120,15 +120,15 @@ class DocController extends Controller
         foreach ($items as $item) {
             $x = [
                 implode('|', $item['methods']),
-                $item['name'],
                 $item['url'],
+                $item['name'],
             ];
 
             $xxxs[] = implode("\t", $x);
         }
 
         $xxxs = implode("\n", $xxxs);
-        return $xxxs;
+//        return $xxxs;
 
         $groupItems = collect($items)->groupBy('controller');
 

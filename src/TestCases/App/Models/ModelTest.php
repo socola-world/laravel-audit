@@ -55,7 +55,7 @@ class ModelTest extends TestCase
      */
     public function testColumnOfFillableNotExistInDatabase(AuditModel $auditModel)
     {
-        $columnsNotExist = array_diff($auditModel->model->getFillable(), array_keys($auditModel->columns));
+        $columnsNotExist = array_diff($x = $auditModel->model->getFillable(), $auditModel->columnNames());
         static::assertEmpty(
             $columnsNotExist,
             $this->error(
@@ -71,7 +71,7 @@ class ModelTest extends TestCase
      */
     public function testColumnOfGuaredNotExistInDatabase(AuditModel $auditModel)
     {
-        $columnsNotExist = array_diff($auditModel->model->getGuarded(), [...array_keys($auditModel->columns), '*']);
+        $columnsNotExist = array_diff($auditModel->model->getGuarded(), [...$auditModel->columnNames(), '*']);
         static::assertEmpty(
             $columnsNotExist,
             $this->error(
@@ -169,7 +169,7 @@ class ModelTest extends TestCase
      */
     public function testHidden(AuditModel $auditModel)
     {
-        $hiddenMissingColumns = array_keys($auditModel->columns);
+        $hiddenMissingColumns = $auditModel->columnNames();
 
         $hiddenMissingColumns = collect($hiddenMissingColumns)
             ->filter(fn ($column) => $auditModel->isColumnVisible($column))
@@ -316,7 +316,7 @@ class ModelTest extends TestCase
      */
     public function testColumnName(AuditModel $auditModel)
     {
-        $columnsWrongFormat = collect(array_keys($auditModel->columns))
+        $columnsWrongFormat = collect($auditModel->columnNames())
             ->filter(fn ($columnName) => !Helper::isSnakeCase($columnName))
             ->values()
             ->toArray()

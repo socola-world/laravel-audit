@@ -7,6 +7,13 @@ use Composer\Autoload\ClassMapGenerator;
 
 class Audit1
 {
+    /**
+     * @return void
+     */
+    public function abc()
+    {
+    }
+
     protected static ClassLoader $loader;
 
     public static function getLoader(): ClassLoader

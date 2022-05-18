@@ -283,18 +283,6 @@ class RequestsTest extends TestCase
     }
 
     /**
-     * @param string[] $ruleNames
-     * @return bool
-     */
-    private function isAttributeShouldPlural(string $attribute, array $ruleNames): bool
-    {
-        if (in_array('Array', $ruleNames) === true && $attribute != Str::plural($attribute)) {
-            return true;
-        }
-
-        return false;
-    }
-    /**
      * @dataProvider requestDataProvider
      */
     public function testAttributeShouldPlural(AuditRequest $auditRequest)
@@ -303,9 +291,9 @@ class RequestsTest extends TestCase
 
         foreach ($auditRequest->getRulesParse() as $attribute => $ruleParses) {
 //            [$ruleName, $parameters] = $ruleParse;
-            $ruleNames = collect($ruleParses)->map(fn($e) => $e[0])->values()->toArray();
+            $ruleNames = collect($ruleParses)->map(fn ($e) => $e[0])->values()->toArray();
 
-            if ($auditRequest->isAttributeShouldPlural($attribute, $ruleNames) == false) {
+            if ($auditRequest->isAttributeShouldPlural($attribute) === false) {
                 continue;
             }
 

@@ -2,6 +2,7 @@
 
 namespace SocolaDaiCa\LaravelAudit\Audit;
 
+use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
@@ -41,10 +42,15 @@ class AuditModel extends AuditClass
         $className = $reflectionClass->getName();
         $this->model = new $className();
 
-        $this->columns = Schema::getConnection()
+        $this->columns = [];
+        $tableColumns = Schema::getConnection()
             ->getDoctrineSchemaManager()
             ->listTableColumns($this->model->getTable())
         ;
+
+        foreach ($tableColumns as $tableColumn) {
+            $this->columns[$tableColumn->getName()] = $tableColumn;
+        }
 
         $this->auditTable = AuditTable::make($this->model->getTable());
     }
@@ -143,6 +149,7 @@ class AuditModel extends AuditClass
         'amounts',
         'number',
         'total',
+        'length',
     ];
 
     public function isColumnShouldUnsigned(string $column): bool
@@ -159,5 +166,13 @@ class AuditModel extends AuditClass
         }
 
         return false;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function columnNames(): array
+    {
+        return array_map(fn (Column $column) => $column->getName(), $this->columns);
     }
 }

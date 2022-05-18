@@ -6,7 +6,6 @@ class TestPhpStan
 {
     public function a(): int
     {
-        $x = 100;
-        return $x;
+        return 100;
     }
 }

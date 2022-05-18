@@ -2,6 +2,7 @@
 
 namespace SocolaDaiCa\LaravelAudit\Audit;
 
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationRuleParser;
 use Illuminate\Validation\Validator;
@@ -46,8 +47,8 @@ class AuditRequest extends AuditClass
 
         try {
             $this->request = app($className);
-        } catch (\Exception $exception) {
-            return null;
+        } catch (Exception $exception) {
+            return;
         }
 
         return $this->request;
@@ -101,7 +102,7 @@ class AuditRequest extends AuditClass
         $this->ruleNames = [];
 
         foreach ($this->getRulesParse() as $attribute => $ruleParses) {
-            $this->ruleNames[$attribute] = collect($ruleParses)->map(fn($e) => $e[0])->values()->toArray();
+            $this->ruleNames[$attribute] = collect($ruleParses)->map(fn ($e) => $e[0])->values()->toArray();
         }
 
         return $this->rulesParse;
@@ -112,16 +113,8 @@ class AuditRequest extends AuditClass
         return $this->getRequest()->attributes();
     }
 
-    /**
-     * @param string[] $ruleNames
-     * @return bool
-     */
     public function isAttributeShouldPlural(string $attribute): bool
     {
-        if (in_array('Array', $this->getRuleNames()[$attribute]) === true && $attribute != Str::plural($attribute)) {
-            return true;
-        }
-
-        return false;
+        return (bool) (in_array('Array', $this->getRuleNames()[$attribute]) === true && $attribute != Str::plural($attribute));
     }
 }

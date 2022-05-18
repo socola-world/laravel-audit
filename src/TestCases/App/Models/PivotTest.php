@@ -8,14 +8,14 @@ use SocolaDaiCa\LaravelAudit\TestCases\TestCase;
 
 class PivotTest extends TestCase
 {
-    /**
-     * @dataProvider pivotDataProvider
-     */
-    public function testPrimaryKey(AuditModel $auditModel)
-    {
-        /* @var Pivot $pivot */
-        $pivot = $auditModel->model;
-        $auditModel->
-        dd($pivot->getKey());
-    }
+//    /**
+//     * @dataProvider pivotDataProvider
+//     */
+//    public function testPrimaryKey(AuditModel $auditModel)
+//    {
+//        /* @var Pivot $pivot */
+//        $pivot = $auditModel->model;
+//        $auditModel->
+//        dd($pivot->getKey());
+//    }
 }

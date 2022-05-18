@@ -102,7 +102,7 @@ class ValidatorX extends Validator
         // //            dd('sss');
 //        }
 
-        $this->errorMessagesV2[$attribute] = $this->errorMessagesV2[$attribute] ?? [];
+        $this->errorMessagesV2[$attribute] ??= [];
 
         if ($realRule instanceof RuleContract) {
             $realRule = $rule;

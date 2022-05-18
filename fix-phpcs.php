@@ -7,7 +7,8 @@ $laravelAuditDir = __DIR__;
 
 shell_exec("cd {$projectDir}");
 
-$fileChanges = shell_exec('git diff master --name-only --diff-filter=A');
+//$fileChanges = shell_exec('git diff master --name-only --diff-filter=A');
+$fileChanges = shell_exec('git diff ticket-coupon --name-only --diff-filter=AM');
 //
 //var_dump($fileChanges);
 //die();
@@ -40,3 +41,8 @@ echo shell_exec("{$laravelAuditDir}\\node_modules\\.bin\\blade-formatter {$blade
 
 
 //    php ..\socola-cms-demo-v2\cms-dev\laravel-audit\fix-phpcs.php
+//    php ..\labs\laravel-audit\fix-phpcs.php
+//..lab\node_modules\\.bin\\blade-formatter --w --wrap 999999999999
+//..\lab\node_modules\.bin\blade-formatter --w --wrap 999999999999 resources/views/store_manager/tournaments/applyers/index.blade.php
+
+//..\labs\laravel-audit\node_modules\.bin\blade-formatter --w --wrap 999999999999 resources\views\store_manager\tournaments\applyers\index.blade.php

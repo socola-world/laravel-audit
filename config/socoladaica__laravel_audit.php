@@ -18,6 +18,7 @@ return [
         ],
     ],
     'skip_testcases' => [
+        //        \SocolaDaiCa\LaravelAudit\TestCases\Database\MigrationsTest::class.'::MigrationsTest',
         /* \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class */
         //        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testParameters',
         //        \SocolaDaiCa\LaravelAudit\TestCases\RoutesTest::class.'::testRouteName',

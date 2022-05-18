@@ -5,7 +5,6 @@ namespace SocolaDaiCa\LaravelAudit\Stan\Rules;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
-use PHPStan\Node\ClassMethodsNode;
 use PHPStan\Node\InClassMethodNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -33,7 +32,7 @@ class VariableNameRule implements Rule
 //        var_dump(get_class($node));
         return [
             RuleErrorBuilder::message(
-                'New Person instance can be created only in PersonFactory.'. $node->name
+                'New Person instance can be created only in PersonFactory.'.$node->name
             )->build(),
         ];
 //        dd('123');
