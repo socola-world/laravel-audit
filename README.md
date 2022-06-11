@@ -86,7 +86,7 @@ vendor\bin\phpunit.bat --filter="SocolaDaiCa\\LaravelAudit\\TestCases\\DotFileTe
 ```shell
 vendor\bin\php-cs-fixer.bat --config=.php_cs.php fix
 vendor\bin\php-cs-fixer.bat --config=vendor/socoladaica/laravel-audit/.php_cs.php fix
-..\labs\laravel-audit\vendor\bin\php-cs-fixer.bat --config=..\labs\laravel-audit.php_cs.php fix
+..\labs\laravel-audit\vendor\bin\php-cs-fixer.bat --config=..\labs\laravel-audit\.php_cs.php fix
 ```
 
 ### Phpstan
@@ -231,7 +231,7 @@ vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/vie
             "type": "path",
             "url": "../socola-cms-demo-v2/cms-dev/laravel-audit"
         }
-    ]
+    ],
 }
 ```
 
@@ -241,7 +241,7 @@ vendor\socoladaica\laravel-audit\node_modules\.bin\blade-formatter resources/vie
         "type": "path",
         "url": "../labs/laravel-audit"
     }
-]
+],
 ```
 
 ```shell

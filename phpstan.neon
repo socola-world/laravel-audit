@@ -1,6 +1,6 @@
 includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
-    - ./vendor/spaze/phpstan-disallowed-calls/extension.neon
+#    - ./vendor/nunomaduro/larastan/extension.neon
+#    - ./vendor/spaze/phpstan-disallowed-calls/extension.neon
 #    - ./../../../vendor/nunomaduro/larastan/extension.neon
 #    - ./../../../vendor/spaze/phpstan-disallowed-calls/extension.neon
 
@@ -185,11 +185,12 @@ parameters:
 #            function: '()'
 #            message: ''
     stubFiles:
-#        - ./alias.stub
+#        - ./larastan/stubs/Alias.stub
 #        - ../../../_ide_helper_models.php
 #         - ../../../.phpstorm.meta.php
 #         - ../../../_ide_helper.php
     bootstrapFiles:
+        - larastan/Alias.php
 #        - ../../../_ide_helper.php
 #        - ../../../_ide_helper_models.php
 #        - ../../../.phpstorm.meta.php

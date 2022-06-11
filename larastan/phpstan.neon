@@ -1,7 +1,6 @@
 includes:
 #    - ./vendor/nunomaduro/larastan/extension.neon
-    - ./vendor/spaze/phpstan-disallowed-calls/extension.neon
-#    - ./../../../vendor/nunomaduro/larastan/extension.neon
+#- ../../../../../nunomaduro/larastan/extension.neon
 #    - ./../../../vendor/spaze/phpstan-disallowed-calls/extension.neon
 
 parameters:

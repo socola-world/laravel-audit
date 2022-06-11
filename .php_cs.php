@@ -127,15 +127,15 @@ $rules = [
         'multi_line_extends_each_single_line' => true,
         'single_item_single_line' => true,
         'single_line' => false,
-//        'space_before_parenthesis' => false,
+        'space_before_parenthesis' => false,
     ],
     'class_keyword_remove' => false,
     'class_reference_name_casing' => true,
     'clean_namespace' => true,
     'combine_consecutive_issets' => true,
     'combine_consecutive_unsets' => true,
-//    'combine_nested_dirname' => false,
-//    'comment_to_phpdoc' => false,
+    'combine_nested_dirname' => false,
+    'comment_to_phpdoc' => false,
     'compact_nullable_typehint' => true,
     'concat_space' => [
         'spacing' => 'none',
@@ -922,9 +922,9 @@ $rules = [
         ],
     ],
 //    'phpdoc_to_comment' => true,
-//    'phpdoc_to_param_type' => false,
+    'phpdoc_to_param_type' => false,
 //    'phpdoc_to_property_type' => false,
-//    'phpdoc_to_return_type' => false // option
+    'phpdoc_to_return_type' => false, // option
     'phpdoc_trim' => true,
     'phpdoc_trim_consecutive_blank_line_separation' => true,
     'phpdoc_types' => [
@@ -982,7 +982,7 @@ $rules = [
             'hash',
         ],
     ],
-//    'single_line_throw' => false, // option
+    'single_line_throw' => false, // option
     'single_quote' => [
         'strings_containing_single_quote_chars' => false,
     ],
@@ -1052,19 +1052,19 @@ $rules = [
     ],
     'single_trait_insert_per_statement' => true, // option
     'space_after_semicolon' => true,
-//    'standardize_increment' => false,
+    'standardize_increment' => false,
     'standardize_not_equals' => true,
-//    'static_lambda' => false,
-//    'strict_comparison' => false, // option
+    'static_lambda' => false,
+    'strict_comparison' => false,
     'strict_param' => false,
-//    'string_length_to_empty' => false,
+    'string_length_to_empty' => false,
 //    'string_line_ending' => false,
     'switch_case_semicolon_to_colon' => true,
     'switch_case_space' => true,
     'switch_continue_to_break' => true,
     'ternary_operator_spaces' => true,
-//    'ternary_to_elvis_operator' => true,
-    'ternary_to_null_coalescing' => true,
+    'ternary_to_elvis_operator' => true,
+//    'ternary_to_null_coalescing' => true,
     'trailing_comma_in_multiline' => [
         'after_heredoc' => true,
         'elements' => [
@@ -1101,11 +1101,25 @@ $rules = [
 ];
 
 /* only 545 */
-//$rules = array_merge($rules, [
-//    'multiline_whitespace_before_semicolons' => [
-//        'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NO_MULTI_LINE,
+if (!true) {
+    $rules = array_merge($rules, [
+//    'no_superfluous_phpdoc_tags' => [
+//        'allow_mixed' => false,
+//        'allow_unused_params' => false,
+//        'remove_inheritdoc' => false,
 //    ],
-//]);
+        'no_superfluous_phpdoc_tags' => true,
+//    'not_operator_with_successor_space' => true,
+        'cast_spaces' => false,
+        'single_trait_insert_per_statement' => false,
+        'phpdoc_types_order' => false,
+        'function_typehint_space' => false,
+        'concat_space' => false,
+        'multiline_whitespace_before_semicolons' => [
+            'strategy' => \PhpCsFixer\Fixer\Semicolon\MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NO_MULTI_LINE,
+        ],
+    ]);
+}
 
 $finder = Finder::create()
     ->in(

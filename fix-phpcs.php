@@ -7,8 +7,8 @@ $laravelAuditDir = __DIR__;
 
 shell_exec("cd {$projectDir}");
 
-//$fileChanges = shell_exec('git diff master --name-only --diff-filter=A');
-$fileChanges = shell_exec('git diff ticket-coupon --name-only --diff-filter=AM');
+$fileChanges = shell_exec('git diff origin/master --name-only --diff-filter=A');
+//$fileChanges = shell_exec('git diff ticket-coupon --name-only --diff-filter=AM');
 //
 //var_dump($fileChanges);
 //die();
@@ -28,8 +28,8 @@ $fileChanges = str_replace("\n", ' ', $fileChanges);
 $bladeFileChangesString = implode(" ", $bladeFileChanges);
 //$bladeFileChangesString = $bladeFileChanges[0];
 
-echo shell_exec("{$laravelAuditDir}\\vendor\\bin\\php-cs-fixer.bat --config={$laravelAuditDir}/.php_cs.php fix {$fileChangesString}");
-
+//echo shell_exec("{$laravelAuditDir}\\vendor\\bin\\php-cs-fixer.bat --config={$laravelAuditDir}/.php_cs.php fix {$fileChangesString}");
+$bladeFileChangesString = "resources/**/*.blade.php";
 //echo "{$laravelAuditDir}\\node_modules\\.bin\\blade-formatter {$bladeFileChangesString} --w --wrap 999999999999";
 echo shell_exec("{$laravelAuditDir}\\node_modules\\.bin\\blade-formatter {$bladeFileChangesString} --w --wrap 999999999999");
 //echo shell_exec("{$laravelAuditDir}\\node_modules\\.bin\\blade-formatter resources/admin/**/*.blade.php --w --wrap 999999999999");
